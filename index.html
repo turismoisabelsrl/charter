@@ -16,9 +16,9 @@
     --navy: #0f172a;
     --navy-2: #1e293b;
     --navy-3: #334155;
-    --sky: #38bdf8; /* Celeste principal */
-    --morning: #38bdf8; /* Celeste claro para mañana */
-    --afternoon: #0284c7; /* Celeste oscuro para tarde */
+    --sky: #38bdf8;
+    --morning: #38bdf8;
+    --afternoon: #0284c7;
     --sky-dim: #7dd3fc;
     --red: #ef4444;
     --text: #f8fafc;
@@ -195,8 +195,10 @@
   .toggle-btn.active.both { background: linear-gradient(135deg, var(--morning) 50%, var(--afternoon) 50%); color: #fff; border: 0; }
 
   /* ---------------- MAPA ---------------- */
-  #tab-mapa.tab-panel { padding: 0; }
-  #map { width: 100%; height: 100%; background: var(--navy); z-index: 1; }
+  /* FIX DEL MAPA: Posición absoluta para ocupar todo el contenedor */
+  #tab-mapa.tab-panel { padding: 0; overflow: hidden; }
+  #map { position: absolute; top: 0; bottom: 0; left: 0; right: 0; width: 100%; height: 100%; background: var(--navy); z-index: 1; }
+  
   .map-overlay-top {
     position: absolute; top: 12px; left: 12px; right: 12px; z-index: 500; padding: 12px 14px;
   }
@@ -389,11 +391,12 @@
     selected: new Set(),
     selectedEstado: "viaja",
     selectedTurno: "manana",
-    abonoTipo: "ambos", // Default
+    abonoTipo: "ambos",
     activeTab: "calendario",
     map: null,
     mapMarker: null,
     pollTimer: null,
+    wasPanelOpen: false,
   };
 
   function pad2(n) { return String(n).padStart(2, "0"); }
@@ -460,15 +463,12 @@
     state.profile = profile;
     document.getElementById("topbar-name").textContent = profile.nombre || "Pasajero";
     
-    // Determinar tipo de abono
     if (profile.abono_tipo) {
       const tipo = profile.abono_tipo.toLowerCase();
       if (tipo.includes('manana')) state.abonoTipo = "manana";
       else if (tipo.includes('tarde')) state.abonoTipo = "tarde";
       else state.abonoTipo = "ambos";
     }
-    
-    renderTurnoButtons();
     
     document.getElementById("screen-login").classList.add("hidden");
     document.getElementById("screen-app").classList.remove("hidden");
@@ -491,9 +491,9 @@
     if (tab === "mapa") {
       actionPanel.style.display = "none";
       initMapIfNeeded();
-      setTimeout(() => {
-        if (state.map) state.map.invalidateSize();
-      }, 100);
+      // Doble invalidateSize para asegurar que Leaflet dibuje correctamente
+      setTimeout(() => { if (state.map) state.map.invalidateSize(); }, 50);
+      setTimeout(() => { if (state.map) state.map.invalidateSize(); }, 300);
       startMapPolling();
     } else {
       actionPanel.style.display = "block"; 
@@ -651,7 +651,7 @@
       if (day !== null) {
         const iso = toISODate(state.viewYear, state.viewMonth, day);
         const dateObj = new Date(iso + "T00:00:00");
-        if (dateObj.getDay() !== 0 && dateObj.getDay() !== 6) { // Solo hábiles
+        if (dateObj.getDay() !== 0 && dateObj.getDay() !== 6) {
           dates.push(iso);
         }
       }
@@ -665,7 +665,7 @@
       if (day !== null) {
         const iso = toISODate(state.viewYear, state.viewMonth, day);
         const dateObj = new Date(iso + "T00:00:00");
-        if (dateObj.getDay() !== 0 && dateObj.getDay() !== 6) { // Solo hábiles
+        if (dateObj.getDay() !== 0 && dateObj.getDay() !== 6) {
           dates.push(iso);
         }
       }
@@ -685,6 +685,7 @@
 
   function clearSelection() {
     state.selected.clear();
+    state.wasPanelOpen = false; // Resetear estado al limpiar
     renderActionPanel();
   }
   document.getElementById("action-clear").addEventListener("click", (ev) => {
@@ -698,17 +699,14 @@
     
     if (state.abonoTipo === 'manana') {
       html = `<button class="toggle-btn active morning" data-turno="manana">Mañana</button>`;
-      state.selectedTurno = "manana";
     } else if (state.abonoTipo === 'tarde') {
       html = `<button class="toggle-btn active afternoon" data-turno="tarde">Tarde</button>`;
-      state.selectedTurno = "tarde";
     } else {
       html = `
-        <button class="toggle-btn active morning" data-turno="manana">Mañana</button>
+        <button class="toggle-btn morning" data-turno="manana">Mañana</button>
         <button class="toggle-btn afternoon" data-turno="tarde">Tarde</button>
-        <button class="toggle-btn both" data-turno="ambos">Ambos</button>
+        <button class="toggle-btn active both" data-turno="ambos">Ambos</button>
       `;
-      state.selectedTurno = "manana";
     }
     group.innerHTML = html;
 
@@ -730,18 +728,35 @@
 
       const turnoGroup = document.getElementById('turno-group');
       if (state.selectedEstado === 'noviaja') {
-        turnoGroup.style.display = 'none'; // Ocultar botones de turno si es "No Viaja"
+        turnoGroup.style.display = 'none'; 
       } else {
         turnoGroup.style.display = 'flex';
       }
     });
   });
 
-  // PANEL DE ACCIÓN
+  // PANEL DE ACCIÓN CON RESET AUTOMÁTICO DE ESTADO
   function renderActionPanel() {
     const panel = document.getElementById("action-panel");
     const n = state.selected.size;
-    panel.classList.toggle("open", n > 0);
+    const isOpen = n > 0;
+    
+    panel.classList.toggle("open", isOpen);
+
+    // FIX: Si el panel se abre por primera vez (venía de estar cerrado), reseteamos la selección de estado a "Viaja" y "Ambos"
+    if (isOpen && !state.wasPanelOpen) {
+      state.selectedEstado = "viaja";
+      
+      // Reset visual de botones de estado
+      document.querySelectorAll('.toggle-btn[data-estado]').forEach(b => b.classList.remove('active'));
+      document.querySelector('.toggle-btn[data-estado="viaja"]').classList.add('active');
+      document.getElementById('turno-group').style.display = 'flex';
+      
+      // Renderizar y resetear botones de turno
+      renderTurnoButtons();
+    }
+    state.wasPanelOpen = isOpen;
+
     document.getElementById("action-count").textContent = n === 1 ? "1 día seleccionado" : `${n} días seleccionados`;
   }
 
