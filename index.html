@@ -12,14 +12,12 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 
 <style>
-  /* ---------------------------------------------------------------------
-     CHARTER TI — Design tokens (respetar en admin.html también)
-  --------------------------------------------------------------------- */
   :root {
     --navy: #071020;
     --navy-2: #0c1a2e;
     --navy-3: #10233c;
     --sky: #3a8fd1;
+    --blue-sky: #55b3f5; /* Nuevo color para Tarde */
     --sky-dim: #6fb0e0;
     --green: #2cb87a;
     --red: #e04444;
@@ -45,6 +43,30 @@
     font-family: "Inter", system-ui, sans-serif;
     -webkit-tap-highlight-color: transparent;
     overscroll-behavior-y: contain;
+    display: flex;
+    justify-content: center;
+  }
+
+  /* Adaptabilidad Desktop */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: url('https://images.unsplash.com/photo-1502602898657-3e91760c9834?q=80&w=2070&auto=format&fit=crop') no-repeat center center fixed;
+    background-size: cover;
+    filter: blur(8px);
+    z-index: -1;
+  }
+
+  .app-wrapper {
+    width: 100%;
+    max-width: 450px; /* Limitar ancho en desktop */
+    background: var(--navy);
+    min-height: 100dvh;
+    box-shadow: 0 0 40px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
   }
 
   h1, h2, h3, .display {
@@ -62,11 +84,9 @@
     color: inherit;
   }
 
-  input {
-    font-family: "Inter", sans-serif;
-  }
+  input { font-family: "Inter", sans-serif; }
 
-  .screen { min-height: 100dvh; }
+  .screen { min-height: 100dvh; display: flex; flex-direction: column; width: 100%; }
   .hidden { display: none !important; }
 
   .glass {
@@ -78,350 +98,166 @@
   }
 
   /* ---------------- LOGIN ---------------- */
-  #screen-login {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-  }
-  .login-card {
-    width: 100%;
-    max-width: 380px;
-    padding: 32px 28px;
-    text-align: center;
-  }
-  .login-card .brand {
-    font-size: 0.78rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--sky-dim);
-    margin-bottom: 6px;
-  }
+  #screen-login { display: flex; align-items: center; justify-content: center; padding: 24px; }
+  .login-card { width: 100%; max-width: 380px; padding: 32px 28px; text-align: center; }
+  .login-card .brand { font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--sky-dim); margin-bottom: 6px; }
   .login-card h1 { font-size: 1.6rem; color: var(--text); margin-bottom: 4px; }
   .login-card p { color: var(--text-dim); font-size: 0.9rem; line-height: 1.5; margin: 8px 0 22px; }
 
-  .field {
-    text-align: left;
-    margin-bottom: 16px;
-  }
-  .field label {
-    display: block;
-    font-size: 0.78rem;
-    color: var(--text-dim);
-    margin-bottom: 6px;
-  }
+  .field { text-align: left; margin-bottom: 16px; }
+  .field label { display: block; font-size: 0.78rem; color: var(--text-dim); margin-bottom: 6px; }
   .field input {
-    width: 100%;
-    padding: 13px 14px;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--glass-border);
-    background: rgba(255, 255, 255, 0.04);
-    color: var(--text);
-    font-size: 1.05rem;
-    letter-spacing: 0.02em;
+    width: 100%; padding: 13px 14px; border-radius: var(--radius-sm);
+    border: 1px solid var(--glass-border); background: rgba(255, 255, 255, 0.04);
+    color: var(--text); font-size: 1.05rem; letter-spacing: 0.02em;
   }
-  .field input:focus {
-    outline: none;
-    border-color: var(--sky);
-    box-shadow: 0 0 0 3px rgba(58, 143, 209, 0.25);
-  }
+  .field input:focus { outline: none; border-color: var(--sky); box-shadow: 0 0 0 3px rgba(58, 143, 209, 0.25); }
 
   .btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    width: 100%;
-    padding: 14px 18px;
-    border-radius: var(--radius-sm);
-    font-size: 0.98rem;
-    transition: transform 0.12s ease, opacity 0.12s ease, filter 0.12s ease;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%; padding: 14px 18px; border-radius: var(--radius-sm);
+    font-size: 0.98rem; transition: transform 0.12s ease, opacity 0.12s ease, filter 0.12s ease;
   }
   .btn:active { transform: scale(0.98); }
   .btn:disabled { opacity: 0.55; pointer-events: none; }
   .btn-primary { background: var(--sky); color: #071020; }
-  .btn-primary:hover { filter: brightness(1.08); }
   .btn-green { background: var(--green); color: #06251a; }
+  .btn-blue { background: var(--blue-sky); color: #071020; }
   .btn-red { background: transparent; color: var(--red); border: 1px solid rgba(224, 68, 68, 0.5); }
   .btn-ghost { background: transparent; color: var(--text-dim); border: 1px solid var(--glass-border); }
 
-  .login-error {
-    margin-top: 14px;
-    font-size: 0.85rem;
-    color: var(--red);
-    min-height: 1.2em;
-  }
+  .login-error { margin-top: 14px; font-size: 0.85rem; color: var(--red); min-height: 1.2em; }
 
   /* ---------------- APP SHELL ---------------- */
-  #screen-app {
-    display: flex;
-    flex-direction: column;
-    height: 100dvh;
-  }
-  .topbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: calc(14px + var(--safe-t)) 18px 12px;
-    flex-shrink: 0;
-  }
+  .topbar { display: flex; align-items: center; justify-content: space-between; padding: calc(14px + var(--safe-t)) 18px 12px; flex-shrink: 0; }
   .topbar .who { display: flex; flex-direction: column; }
   .topbar .who .hello { font-size: 0.72rem; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.1em; }
   .topbar .who .name { font-size: 1.05rem; font-family: "Syne", sans-serif; font-weight: 700; }
   .icon-btn {
-    width: 38px; height: 38px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
-    color: var(--text-dim);
-    font-size: 1rem;
+    width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text-dim);
   }
+  .icon-btn svg { width: 18px; height: 18px; fill: currentColor; }
 
-  .tabs {
-    display: flex;
-    gap: 8px;
-    padding: 0 18px 14px;
-    flex-shrink: 0;
-  }
+  .tabs { display: flex; gap: 8px; padding: 0 18px 14px; flex-shrink: 0; }
   .tab {
-    flex: 1;
-    padding: 10px 0;
-    text-align: center;
-    border-radius: 999px;
-    font-size: 0.88rem;
-    background: transparent;
-    color: var(--text-dim);
-    border: 1px solid var(--glass-border);
+    flex: 1; padding: 10px 0; text-align: center; border-radius: 999px; font-size: 0.88rem;
+    background: transparent; color: var(--text-dim); border: 1px solid var(--glass-border);
   }
-  .tab.active {
-    background: var(--sky);
-    color: #071020;
-    border-color: var(--sky);
-  }
+  .tab.active { background: var(--sky); color: #071020; border-color: var(--sky); }
 
   main { flex: 1; overflow: hidden; position: relative; }
-  .tab-panel { height: 100%; overflow-y: auto; padding: 0 18px calc(24px + var(--safe-b)); }
+  .tab-panel { height: 100%; overflow-y: auto; padding: 0 18px calc(24px + var(--safe-b)); position: relative; }
 
   /* ---------------- CALENDARIO ---------------- */
-  .turno-switch {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 14px;
-  }
-  .turno-switch button {
-    flex: 1;
-    padding: 9px 0;
-    border-radius: var(--radius-sm);
-    font-size: 0.85rem;
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
-    color: var(--text-dim);
-  }
-  .turno-switch button.active {
-    background: rgba(58, 143, 209, 0.18);
-    border-color: var(--sky);
-    color: var(--sky-dim);
-  }
-
-  .month-nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 14px;
-  }
+  .month-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
   .month-nav .label { font-size: 1.05rem; text-transform: capitalize; }
   .month-nav button {
-    width: 34px; height: 34px;
-    border-radius: 50%;
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
-    color: var(--text-dim);
+    width: 34px; height: 34px; border-radius: 50%; background: var(--glass-bg);
+    border: 1px solid var(--glass-border); color: var(--text-dim);
   }
 
-  .cal-grid {
-    padding: 14px 10px 16px;
+  /* Botón Hoy Flotante */
+  .today-btn {
+    position: absolute; top: 12px; right: 18px; z-index: 10;
+    width: 36px; height: 36px; border-radius: 50%; background: var(--sky); color: #071020;
+    display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
   }
+
+  .cal-grid { padding: 14px 10px 16px; }
   .cal-row { display: grid; grid-template-columns: 30px repeat(7, 1fr); gap: 4px; }
   .cal-row.head { margin-bottom: 6px; }
   .cal-head-cell {
-    text-align: center;
-    font-size: 0.72rem;
-    color: var(--text-faint);
-    padding: 6px 0;
-    border-radius: 8px;
+    text-align: center; font-size: 0.72rem; color: var(--text-faint); padding: 6px 0; border-radius: 8px;
   }
   .cal-head-cell.clickable { cursor: pointer; }
+  .cal-head-cell.disabled { opacity: 0.4; pointer-events: none; }
   .cal-head-cell.clickable:active { background: var(--glass-bg-strong); }
+  
   .week-num {
-    display: flex; align-items: center; justify-content: center;
-    font-size: 0.66rem;
-    color: var(--text-faint);
-    border-radius: 8px;
-    cursor: pointer;
+    display: flex; align-items: center; justify-content: center; font-size: 0.66rem;
+    color: var(--text-faint); border-radius: 8px; cursor: pointer;
   }
   .week-num:active { background: var(--glass-bg-strong); }
 
   .day-cell {
-    aspect-ratio: 1 / 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    border-radius: 10px;
-    font-size: 0.86rem;
-    position: relative;
-    cursor: pointer;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid transparent;
-    color: var(--text-dim);
+    aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center;
+    border-radius: 10px; font-size: 0.86rem; position: relative; cursor: pointer;
+    background: rgba(255, 255, 255, 0.03); border: 1px solid transparent; color: var(--text-dim);
+    transition: background 0.2s ease;
   }
   .day-cell.empty { visibility: hidden; cursor: default; }
-  .day-cell .dot {
-    width: 5px; height: 5px; border-radius: 50%;
-    margin-top: 3px;
-  }
-  .day-cell.viaja { background: rgba(44, 184, 122, 0.16); color: var(--text); }
-  .day-cell.viaja .dot { background: var(--green); }
+  .day-cell.disabled { opacity: 0.3; pointer-events: none; }
+  
+  .day-cell.viaja-ambos { background: linear-gradient(135deg, var(--green) 50%, var(--blue-sky) 50%); color: #fff; font-weight: 700; }
+  .day-cell.viaja-manana { background: rgba(44, 184, 122, 0.7); color: #fff; font-weight: 600; }
+  .day-cell.viaja-tarde { background: rgba(85, 179, 245, 0.7); color: #fff; font-weight: 600; }
   .day-cell.noviaja { background: rgba(255, 255, 255, 0.03); color: var(--text-faint); }
-  .day-cell.noviaja .dot { background: var(--text-faint); }
+  
   .day-cell.today { border-color: var(--sky); }
   .day-cell.selected {
-    outline: 2px solid var(--sky);
-    outline-offset: -2px;
-    background: rgba(58, 143, 209, 0.22);
+    outline: 2px solid var(--sky); outline-offset: -2px; background: rgba(58, 143, 209, 0.22) !important; color: #fff;
   }
 
-  .cal-legend {
-    display: flex;
-    gap: 16px;
-    justify-content: center;
-    font-size: 0.72rem;
-    color: var(--text-faint);
-    margin-top: 4px;
-  }
+  .cal-legend { display: flex; gap: 12px; justify-content: center; font-size: 0.72rem; color: var(--text-faint); margin-top: 4px; flex-wrap: wrap; }
   .cal-legend span { display: inline-flex; align-items: center; gap: 5px; }
   .cal-legend i { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
 
-  .hint-card {
-    margin-top: 16px;
-    padding: 14px 16px;
-    font-size: 0.8rem;
-    color: var(--text-dim);
-    line-height: 1.5;
-  }
+  .hint-card { margin-top: 16px; padding: 14px 16px; font-size: 0.8rem; color: var(--text-dim); line-height: 1.5; }
 
   /* ---------------- FLOATING ACTION PANEL ---------------- */
   #action-panel {
-    position: fixed;
-    left: 14px; right: 14px;
-    bottom: calc(14px + var(--safe-b));
-    padding: 16px;
-    z-index: 40;
-    transform: translateY(140%);
-    transition: transform 0.22s ease;
+    position: fixed; left: 14px; right: 14px; bottom: calc(14px + var(--safe-b));
+    padding: 16px; z-index: 40; transform: translateY(140%); transition: transform 0.22s ease;
+    max-width: 422px; margin: 0 auto;
   }
   #action-panel.open { transform: translateY(0); }
-  #action-panel .count {
-    font-size: 0.85rem;
-    color: var(--text-dim);
-    margin-bottom: 12px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
+  #action-panel .count { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
   #action-panel .count a { color: var(--sky-dim); font-size: 0.8rem; }
-  .action-row { display: flex; gap: 10px; margin-bottom: 12px; }
-  .switch-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 0.83rem;
-    color: var(--text-dim);
-  }
-  .switch {
-    position: relative;
-    width: 42px; height: 24px;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.12);
-    border: 1px solid var(--glass-border);
-    cursor: pointer;
-    flex-shrink: 0;
-  }
-  .switch .knob {
-    position: absolute;
-    top: 2px; left: 2px;
-    width: 18px; height: 18px;
-    border-radius: 50%;
-    background: var(--text-dim);
-    transition: transform 0.15s ease, background 0.15s ease;
-  }
-  .switch.on { background: rgba(58, 143, 209, 0.35); border-color: var(--sky); }
-  .switch.on .knob { transform: translateX(18px); background: var(--sky); }
+  
+  .rec-options { margin-top: 12px; border-top: 1px solid var(--glass-border); padding-top: 12px; }
+  .rec-option { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 0.85rem; cursor: pointer; }
+  .rec-option input { accent-color: var(--sky); }
+  .month-exclude { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+  .month-exclude button { background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text-faint); font-size: 0.7rem; padding: 4px 8px; border-radius: 6px; }
+  .month-exclude button.active { background: var(--red); color: #fff; border-color: var(--red); }
+  .range-select { width: 100%; margin-top: 8px; padding: 8px; background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text); border-radius: var(--radius-sm); }
+
+  /* ---------------- MODAL CONFIRM ---------------- */
+  .modal { position: fixed; inset: 0; background: rgba(7,16,32,0.8); z-index: 50; display: flex; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(6px); }
+  .modal-content { width: 100%; max-width: 340px; padding: 24px; text-align: center; }
+  .modal-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
 
   /* ---------------- MAPA ---------------- */
-  #tab-mapa.tab-panel { padding: 0; position: relative; }
+  #tab-mapa.tab-panel { padding: 0; }
   #map { width: 100%; height: 100%; background: var(--navy); }
   .map-overlay-top {
-    position: absolute;
-    top: 12px; left: 12px; right: 12px;
-    z-index: 500;
-    padding: 12px 14px;
+    position: absolute; top: 12px; left: 12px; right: 12px; z-index: 500; padding: 12px 14px;
   }
   .map-overlay-top .row1 { display: flex; justify-content: space-between; align-items: baseline; }
   .map-overlay-top .chofer { font-family: "Syne", sans-serif; font-weight: 700; font-size: 0.95rem; }
+  .map-overlay-top .street { font-size: 0.8rem; color: var(--sky-dim); margin-top: 2px; }
   .map-overlay-top .meta { font-size: 0.75rem; color: var(--text-dim); margin-top: 2px; }
-  .map-overlay-top .speed { font-size: 1.1rem; font-family: "Syne", sans-serif; color: var(--sky-dim); }
-  .map-overlay-top .speed small { font-size: 0.62rem; color: var(--text-faint); display: block; text-align: right; }
+  .map-overlay-top .ts { font-size: 0.8rem; font-family: "Syne", sans-serif; color: var(--text); text-align: right; }
 
   .map-unavailable {
-    position: absolute;
-    inset: 0;
-    z-index: 600;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-    background: rgba(7, 16, 32, 0.92);
-    text-align: center;
+    position: absolute; inset: 0; z-index: 600; display: flex; align-items: center; justify-content: center;
+    padding: 24px; background: rgba(7, 16, 32, 0.92); text-align: center;
   }
   .map-unavailable .box { max-width: 300px; }
   .map-unavailable h3 { font-size: 1.05rem; margin-bottom: 8px; }
   .map-unavailable p { color: var(--text-dim); font-size: 0.85rem; line-height: 1.5; }
-  .map-unavailable .pulse {
-    width: 10px; height: 10px; border-radius: 50%;
-    background: var(--sky-dim);
-    margin: 0 auto 14px;
-    animation: pulse 1.6s ease-in-out infinite;
-  }
-  @keyframes pulse {
-    0%, 100% { opacity: 0.4; transform: scale(0.9); }
-    50% { opacity: 1; transform: scale(1.15); }
-  }
+  .map-unavailable .pulse { width: 10px; height: 10px; border-radius: 50%; background: var(--sky-dim); margin: 0 auto 14px; animation: pulse 1.6s ease-in-out infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 0.4; transform: scale(0.9); } 50% { opacity: 1; transform: scale(1.15); } }
 
-  .marker-pulse {
-    width: 16px; height: 16px;
-    border-radius: 50%;
-    background: var(--sky);
-    border: 3px solid rgba(58, 143, 209, 0.35);
-    box-shadow: 0 0 0 4px rgba(58, 143, 209, 0.18);
-  }
+  .marker-pulse { width: 16px; height: 16px; border-radius: 50%; background: var(--sky); border: 3px solid rgba(58, 143, 209, 0.35); box-shadow: 0 0 0 4px rgba(58, 143, 209, 0.18); }
 
   /* ---------------- TOAST ---------------- */
   #toast {
-    position: fixed;
-    left: 50%; bottom: calc(24px + var(--safe-b));
-    transform: translate(-50%, 12px);
-    padding: 11px 18px;
-    border-radius: 999px;
-    font-size: 0.85rem;
-    z-index: 999;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s ease, transform 0.2s ease;
-    background: var(--navy-3);
-    border: 1px solid var(--glass-border);
-    white-space: nowrap;
+    position: fixed; left: 50%; bottom: calc(24px + var(--safe-b)); transform: translate(-50%, 12px);
+    padding: 11px 18px; border-radius: 999px; font-size: 0.85rem; z-index: 999;
+    opacity: 0; pointer-events: none; transition: opacity 0.2s ease, transform 0.2s ease;
+    background: var(--navy-3); border: 1px solid var(--glass-border); white-space: nowrap;
   }
   #toast.show { opacity: 1; transform: translate(-50%, 0); }
   #toast.err { border-color: rgba(224, 68, 68, 0.5); color: #ffb3b3; }
@@ -431,6 +267,8 @@
 </style>
 </head>
 <body>
+
+<div class="app-wrapper">
 
 <!-- =====================================================================
      PANTALLA: LOGIN POR DNI
@@ -461,7 +299,9 @@
       <span class="hello">Hola</span>
       <span class="name" id="topbar-name">—</span>
     </div>
-    <button id="btn-logout" class="icon-btn" title="Cerrar sesión" aria-label="Cerrar sesión">⏻</button>
+    <button id="btn-logout" class="icon-btn" title="Cerrar sesión" aria-label="Cerrar sesión">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 4.25A2.25 2.25 0 015.25 2h4.5A2.25 2.25 0 0112 4.25v4.5A2.25 2.25 0 019.75 11h-4.5A2.25 2.25 0 013 8.75v-4.5zm8.25 7.5a.75.75 0 01.75.75v3.25a.75.75 0 01-1.5 0V12.5a.75.75 0 01.75-.75z" clip-rule="evenodd" /><path fill-rule="evenodd" d="M3 4.25A2.25 2.25 0 015.25 2h4.5A2.25 2.25 0 0112 4.25v4.5A2.25 2.25 0 019.75 11h-4.5A2.25 2.25 0 013 8.75v-4.5zm8.25 7.5a.75.75 0 01.75.75v3.25a.75.75 0 01-1.5 0V12.5a.75.75 0 01.75-.75z" clip-rule="evenodd" /></svg>
+    </button>
   </header>
 
   <nav class="tabs">
@@ -472,10 +312,9 @@
   <main>
     <!-- ---------------- TAB: CALENDARIO ---------------- -->
     <section id="tab-calendario" class="tab-panel">
-      <div class="turno-switch">
-        <button data-turno="manana" class="active">Mañana</button>
-        <button data-turno="tarde">Tarde</button>
-      </div>
+      <button class="today-btn" id="btn-today" title="Ir a hoy">
+        <svg viewBox="0 0 20 20" fill="currentColor" style="width:16px;height:16px"><path d="M5.25 12.75a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5H6a.75.75 0 01-.75-.75z" /><path fill-rule="evenodd" d="M1 5.25A2.25 2.25 0 013.25 3h13.5A2.25 2.25 0 0119 5.25v9.5A2.25 2.25 0 0116.75 17H3.25A2.25 2.25 0 011 14.75v-9.5zm1.5 5.25v4.25c0 .414.336.75.75.75h13.5a.75.75 0 00.75-.75V10.5H2.5zm0-1.5h15V5.25a.75.75 0 00-.75-.75H3.25a.75.75 0 00-.75.75V9z" clip-rule="evenodd" /></svg>
+      </button>
 
       <div class="month-nav">
         <button id="btn-prev-month" aria-label="Mes anterior">‹</button>
@@ -486,26 +325,25 @@
       <div class="cal-grid glass">
         <div class="cal-row head">
           <div class="cal-head-cell">Sem</div>
-          <div class="cal-head-cell clickable" data-weekday="0">L</div>
-          <div class="cal-head-cell clickable" data-weekday="1">M</div>
-          <div class="cal-head-cell clickable" data-weekday="2">X</div>
-          <div class="cal-head-cell clickable" data-weekday="3">J</div>
-          <div class="cal-head-cell clickable" data-weekday="4">V</div>
-          <div class="cal-head-cell clickable" data-weekday="5">S</div>
-          <div class="cal-head-cell clickable" data-weekday="6">D</div>
+          <div class="cal-head-cell clickable" data-weekday="1">L</div>
+          <div class="cal-head-cell clickable" data-weekday="2">M</div>
+          <div class="cal-head-cell clickable" data-weekday="3">M</div>
+          <div class="cal-head-cell clickable" data-weekday="4">J</div>
+          <div class="cal-head-cell clickable" data-weekday="5">V</div>
+          <div class="cal-head-cell clickable disabled" data-weekday="6">S</div>
+          <div class="cal-head-cell clickable disabled" data-weekday="0">D</div>
         </div>
         <div id="cal-body"><!-- filas generadas por JS --></div>
       </div>
 
       <div class="cal-legend">
-        <span><i style="background:var(--green)"></i> Viajo</span>
-        <span><i style="background:var(--text-faint)"></i> No viajo</span>
-        <span><i style="background:var(--sky)"></i> Hoy / seleccionado</span>
+        <span><i style="background:var(--green)"></i> Mañana</span>
+        <span><i style="background:var(--blue-sky)"></i> Tarde</span>
+        <span><i style="background:linear-gradient(135deg, var(--green) 50%, var(--blue-sky) 50%)"></i> Ambos</span>
       </div>
 
       <div class="hint-card glass">
-        Tocá un día para marcarlo. Tocá una letra (L, M, X…) para seleccionar todos esos días del mes,
-        o tocá el número de semana para seleccionar la fila completa.
+        Tocá un día para marcarlo. Tocá una letra para seleccionar todos los días, o el número de semana para la fila completa. Selecciona las opciones de repetición abajo.
       </div>
     </section>
 
@@ -517,9 +355,10 @@
         <div class="row1">
           <div>
             <div class="chofer" id="map-chofer">—</div>
+            <div class="street" id="map-street">—</div>
             <div class="meta" id="map-unidad">—</div>
           </div>
-          <div class="speed" id="map-speed">—<small>km/h</small></div>
+          <div class="ts" id="map-ts">--:--</div>
         </div>
       </div>
 
@@ -527,10 +366,7 @@
         <div class="box">
           <div class="pulse"></div>
           <h3>Seguimiento no disponible</h3>
-          <p id="map-unavailable-text">
-            No hay una unidad en vivo para mostrarte en este turno. Esto puede ser porque no estás
-            confirmado para viajar hoy, o porque el despacho todavía no inició el recorrido.
-          </p>
+          <p id="map-unavailable-text">No hay una unidad en vivo para mostrarte en este turno.</p>
         </div>
       </div>
     </section>
@@ -538,20 +374,38 @@
 </section>
 
 <!-- =====================================================================
-     PANEL FLOTANTE DE ACCIÓN (selección de días)
+     PANEL FLOTANTE DE ACCIÓN
 ===================================================================== -->
 <div id="action-panel" class="glass">
   <div class="count">
     <span id="action-count">0 días seleccionados</span>
     <a href="#" id="action-clear">Cancelar</a>
   </div>
-  <div class="action-row">
-    <button id="btn-viajo" class="btn btn-green">Viajo</button>
-    <button id="btn-noviajo" class="btn btn-red">No viajo</button>
-  </div>
-  <div class="switch-row">
-    <span>Repetir siempre (actualiza mi rutina semanal)</span>
-    <div class="switch" id="switch-repetir"><div class="knob"></div></div>
+
+  <div id="recurrence-container"></div>
+
+  <button class="btn btn-primary" id="btn-guardar" style="margin-top:12px;">Guardar Cambios</button>
+</div>
+
+<!-- =====================================================================
+     MODAL CONFIRMACIÓN
+===================================================================== -->
+<div id="modal-confirm" class="modal hidden">
+  <div class="modal-content glass">
+    <h3>Confirmar Viaje</h3>
+    <p id="modal-text" style="color:var(--text-dim);font-size:0.85rem;margin-top:8px;">¿En qué turno vas a aplicar esto?</p>
+    
+    <div class="switch-row" style="margin-top:15px; border-top:1px solid var(--glass-border); padding-top:15px;">
+      <span>Marcar como "NO viaja"</span>
+      <div class="switch" id="switch-noviaja"><div class="knob"></div></div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-green" data-turno="manana">Mañana</button>
+      <button class="btn btn-blue" data-turno="tarde">Tarde</button>
+      <button class="btn btn-primary" data-turno="ambos">Ambos</button>
+    </div>
+    <button class="btn btn-ghost" id="modal-cancel" style="margin-top:10px;">Cerrar</button>
   </div>
 </div>
 
@@ -564,45 +418,29 @@
 (function () {
   "use strict";
 
-  // =========================================================================
-  // CONFIG — completar con los valores reales del proyecto antes de publicar.
-  // =========================================================================
   const SUPABASE_URL = "https://hmhbhjztlmklmhzzfbgz.supabase.co";
   const SUPABASE_ANON_KEY = "sb_publishable_HMwjMRn_QNztV3zhp0eAsw_OINb11YI";
-  // La Edge Function easytrack-gps (Paso 2) vive en /functions/v1/easytrack-gps
   const EASYTRACK_FN_URL = SUPABASE_URL + "/functions/v1/easytrack-gps";
-  const POLL_MS = 15000; // frecuencia del mapa en vivo, según Paso 3
+  const POLL_MS = 15000;
 
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  const WEEKDAY_LABELS = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
-  const MONTH_LABELS = [
-    "enero", "febrero", "marzo", "abril", "mayo", "junio",
-    "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre",
-  ];
+  const WEEKDAY_LABELS = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
+  const MONTH_LABELS = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+  const MONTH_FULL = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
 
-  // =========================================================================
-  // ESTADO
-  // =========================================================================
   const state = {
-    profile: null,          // { dni, nombre, telefono, punto_subida, horario_subida, abono_tipo }
-    turno: defaultTurno(),  // 'manana' | 'tarde'
+    profile: null,
     viewYear: new Date().getFullYear(),
-    viewMonth: new Date().getMonth() + 1, // 1-12
-    calendarByDate: {},     // "YYYY-MM-DD" -> { manana:{viaja,origen}, tarde:{viaja,origen} }
-    selected: new Set(),    // "YYYY-MM-DD"
-    repetir: false,
+    viewMonth: new Date().getMonth() + 1,
+    calendarByDate: {},
+    selected: new Set(),
+    isNoviaja: false,
     activeTab: "calendario",
     map: null,
     mapMarker: null,
     pollTimer: null,
   };
-
-  function defaultTurno() {
-    // Solo para default de UI — la seguridad real la aplica fn_turno_actual() en el server.
-    const hourART = new Date().getUTCHours() - 3; // aproximación ART = UTC-3
-    return ((hourART + 24) % 24) < 13 ? "manana" : "tarde";
-  }
 
   function pad2(n) { return String(n).padStart(2, "0"); }
   function toISODate(y, m, d) { return `${y}-${pad2(m)}-${pad2(d)}`; }
@@ -611,9 +449,7 @@
     return toISODate(t.getFullYear(), t.getMonth() + 1, t.getDate());
   }
 
-  // =========================================================================
   // TOAST
-  // =========================================================================
   let toastTimer = null;
   function toast(msg, kind) {
     const el = document.getElementById("toast");
@@ -623,52 +459,38 @@
     toastTimer = setTimeout(() => { el.className = ""; }, 2600);
   }
 
-  // =========================================================================
-  // PERSISTENCIA LOCAL
-  // =========================================================================
+  // PERSISTENCIA
   const STORAGE_KEY = "charterti_pasajero_profile";
-  function saveProfile(p) { localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); }
-  function loadProfile() {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? JSON.parse(raw) : null;
-    } catch (e) { return null; }
-  }
-  function clearProfile() { localStorage.removeItem(STORAGE_KEY); }
+  const saveProfile = (p) => localStorage.setItem(STORAGE_KEY, JSON.stringify(p));
+  const loadProfile = () => { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch { return null; } };
+  const clearProfile = () => localStorage.removeItem(STORAGE_KEY);
 
-  // =========================================================================
   // LOGIN
-  // =========================================================================
-  const formLogin = document.getElementById("form-login");
-  const btnLogin = document.getElementById("btn-login");
-  const loginError = document.getElementById("login-error");
-
-  formLogin.addEventListener("submit", async (ev) => {
+  document.getElementById("form-login").addEventListener("submit", async (ev) => {
     ev.preventDefault();
     const dni = document.getElementById("input-dni").value.trim();
+    const loginError = document.getElementById("login-error");
     loginError.textContent = "";
     if (!/^[0-9]{6,9}$/.test(dni)) {
-      loginError.textContent = "Ingresá un DNI válido (solo números).";
+      loginError.textContent = "Ingresá un DNI válido.";
       return;
     }
-    btnLogin.disabled = true;
-    btnLogin.textContent = "Verificando...";
+    const btnLogin = document.getElementById("btn-login");
+    btnLogin.disabled = true; btnLogin.textContent = "Verificando...";
     try {
       const { data, error } = await supabase.rpc("rpc_login_pasajero", { p_dni: dni });
       if (error) throw error;
       const row = Array.isArray(data) ? data[0] : data;
       if (!row) {
-        loginError.textContent = "DNI no encontrado o no es abonado. Consultá con administración.";
+        loginError.textContent = "DNI no encontrado o no es abonado.";
         return;
       }
       saveProfile(row);
       enterApp(row);
     } catch (e) {
-      console.error(e);
-      loginError.textContent = "No pudimos verificar tu DNI. Probá de nuevo en unos segundos.";
+      loginError.textContent = "Error de conexión.";
     } finally {
-      btnLogin.disabled = false;
-      btnLogin.textContent = "Ingresar";
+      btnLogin.disabled = false; btnLogin.textContent = "Ingresar";
     }
   });
 
@@ -678,7 +500,6 @@
     state.profile = null;
     document.getElementById("screen-app").classList.add("hidden");
     document.getElementById("screen-login").classList.remove("hidden");
-    document.getElementById("input-dni").value = "";
   });
 
   function enterApp(profile) {
@@ -690,9 +511,7 @@
     loadCalendar();
   }
 
-  // =========================================================================
   // TABS
-  // =========================================================================
   document.querySelectorAll(".tab").forEach((btn) => {
     btn.addEventListener("click", () => switchTab(btn.dataset.tab));
   });
@@ -705,42 +524,37 @@
 
     if (tab === "mapa") {
       initMapIfNeeded();
+      setTimeout(() => state.map && state.map.invalidateSize(), 100);
       startMapPolling();
     } else {
       stopMapPolling();
     }
   }
 
-  // =========================================================================
-  // CALENDARIO — carga de datos
-  // =========================================================================
-  document.querySelectorAll(".turno-switch button").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      state.turno = btn.dataset.turno;
-      document.querySelectorAll(".turno-switch button").forEach((b) => b.classList.toggle("active", b === btn));
-      clearSelection();
-      renderCalendar();
-    });
-  });
-
+  // CALENDARIO NAV
   document.getElementById("btn-prev-month").addEventListener("click", () => shiftMonth(-1));
   document.getElementById("btn-next-month").addEventListener("click", () => shiftMonth(1));
+  document.getElementById("btn-today").addEventListener("click", () => {
+    const t = new Date();
+    state.viewYear = t.getFullYear();
+    state.viewMonth = t.getMonth() + 1;
+    renderMonthLabel();
+    loadCalendar();
+  });
 
   function shiftMonth(delta) {
     let m = state.viewMonth + delta;
     let y = state.viewYear;
     if (m < 1) { m = 12; y -= 1; }
     if (m > 12) { m = 1; y += 1; }
-    state.viewMonth = m;
-    state.viewYear = y;
+    state.viewMonth = m; state.viewYear = y;
     clearSelection();
     renderMonthLabel();
     loadCalendar();
   }
 
   function renderMonthLabel() {
-    document.getElementById("month-label").textContent =
-      `${MONTH_LABELS[state.viewMonth - 1]} ${state.viewYear}`;
+    document.getElementById("month-label").textContent = `${MONTH_FULL[state.viewMonth - 1]} ${state.viewYear}`;
   }
 
   async function loadCalendar() {
@@ -748,38 +562,28 @@
     body.innerHTML = `<div style="padding:24px;text-align:center;color:var(--text-faint);font-size:0.85rem;">Cargando…</div>`;
     try {
       const { data, error } = await supabase.rpc("rpc_calendario_mes", {
-        p_dni: state.profile.dni,
-        p_anio: state.viewYear,
-        p_mes: state.viewMonth,
+        p_dni: state.profile.dni, p_anio: state.viewYear, p_mes: state.viewMonth,
       });
       if (error) throw error;
       state.calendarByDate = {};
       (data || []).forEach((row) => {
-        const key = row.fecha; // 'YYYY-MM-DD'
-        if (!state.calendarByDate[key]) state.calendarByDate[key] = {};
-        state.calendarByDate[key][row.turno] = { viaja: row.viaja, origen: row.origen };
+        if (!state.calendarByDate[row.fecha]) state.calendarByDate[row.fecha] = {};
+        state.calendarByDate[row.fecha][row.turno] = { viaja: row.viaja, origen: row.origen };
       });
       renderCalendar();
     } catch (e) {
-      console.error(e);
       body.innerHTML = `<div style="padding:24px;text-align:center;color:var(--red);font-size:0.85rem;">No se pudo cargar el calendario.</div>`;
     }
   }
 
-  // =========================================================================
-  // CALENDARIO — render
-  // =========================================================================
   function buildWeeks(year, month) {
-    // Lunes-first. Devuelve array de semanas, cada una con 7 celdas {date|null}.
     const first = new Date(year, month - 1, 1);
-    const startOffset = (first.getDay() + 6) % 7; // 0=Lunes
+    const startOffset = (first.getDay() + 6) % 7;
     const daysInMonth = new Date(year, month, 0).getDate();
-
     const cells = [];
     for (let i = 0; i < startOffset; i++) cells.push(null);
     for (let d = 1; d <= daysInMonth; d++) cells.push(d);
     while (cells.length % 7 !== 0) cells.push(null);
-
     const weeks = [];
     for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7));
     return weeks;
@@ -801,30 +605,33 @@
       weekNumCell.addEventListener("click", () => toggleWeekSelection(week));
       row.appendChild(weekNumCell);
 
-      week.forEach((day, weekdayIdx) => {
+      week.forEach((day) => {
         const cell = document.createElement("div");
-        if (day === null) {
-          cell.className = "day-cell empty";
-          row.appendChild(cell);
-          return;
-        }
+        if (day === null) { cell.className = "day-cell empty"; row.appendChild(cell); return; }
+        
         const iso = toISODate(state.viewYear, state.viewMonth, day);
-        const info = (state.calendarByDate[iso] || {})[state.turno];
-        const viaja = info ? info.viaja : false;
+        const dateObj = new Date(iso + "T00:00:00");
+        const weekday = dateObj.getDay();
+        const isWeekend = (weekday === 0 || weekday === 6);
 
-        cell.className = "day-cell " + (viaja ? "viaja" : "noviaja");
-        if (iso === today) cell.classList.add("today");
-        if (state.selected.has(iso)) cell.classList.add("selected");
+        const infoManana = state.calendarByDate[iso]?.manana;
+        const infoTarde = state.calendarByDate[iso]?.tarde;
+        const viajaM = infoManana?.viaja;
+        const viajaT = infoTarde?.viaja;
+
+        let classes = "day-cell ";
+        if (isWeekend) classes += "disabled ";
+        if (viajaM && viajaT) classes += "viaja-ambos ";
+        else if (viajaM) classes += "viaja-manana ";
+        else if (viajaT) classes += "viaja-tarde ";
+        else classes += "noviaja ";
+        
+        if (iso === today) classes += "today ";
+        if (state.selected.has(iso)) classes += "selected ";
+
+        cell.className = classes;
         cell.dataset.date = iso;
-        cell.dataset.weekday = weekdayIdx;
-
-        const num = document.createElement("span");
-        num.textContent = day;
-        const dot = document.createElement("span");
-        dot.className = "dot";
-        cell.appendChild(num);
-        cell.appendChild(dot);
-
+        cell.textContent = day;
         cell.addEventListener("click", () => toggleDateSelection(iso));
         row.appendChild(cell);
       });
@@ -834,15 +641,14 @@
   }
 
   document.querySelectorAll(".cal-head-cell.clickable").forEach((el) => {
-    el.addEventListener("click", () => toggleWeekdaySelection(Number(el.dataset.weekday)));
+    el.addEventListener("click", () => {
+      if (!el.classList.contains("disabled")) toggleWeekdaySelection(Number(el.dataset.weekday));
+    });
   });
 
-  // =========================================================================
-  // SELECCIÓN
-  // =========================================================================
+  // LÓGICA DE SELECCIÓN
   function toggleDateSelection(iso) {
-    if (state.selected.has(iso)) state.selected.delete(iso);
-    else state.selected.add(iso);
+    if (state.selected.has(iso)) state.selected.delete(iso); else state.selected.add(iso);
     renderCalendar();
     renderActionPanel();
   }
@@ -851,16 +657,14 @@
     const weeks = buildWeeks(state.viewYear, state.viewMonth);
     const dates = [];
     weeks.forEach((week) => {
-      const day = week[weekdayIdx];
+      const day = week[weekdayIdx === 0 ? 6 : weekdayIdx - 1]; // Ajuste índice dom=0
       if (day !== null) dates.push(toISODate(state.viewYear, state.viewMonth, day));
     });
     applyBulkToggle(dates);
   }
 
   function toggleWeekSelection(week) {
-    const dates = week
-      .filter((d) => d !== null)
-      .map((d) => toISODate(state.viewYear, state.viewMonth, d));
+    const dates = week.filter((d) => d !== null).map((d) => toISODate(state.viewYear, state.viewMonth, d));
     applyBulkToggle(dates);
   }
 
@@ -868,8 +672,7 @@
     if (dates.length === 0) return;
     const allSelected = dates.every((d) => state.selected.has(d));
     dates.forEach((d) => {
-      if (allSelected) state.selected.delete(d);
-      else state.selected.add(d);
+      if (allSelected) state.selected.delete(d); else state.selected.add(d);
     });
     renderCalendar();
     renderActionPanel();
@@ -880,78 +683,203 @@
     renderActionPanel();
   }
   document.getElementById("action-clear").addEventListener("click", (ev) => {
-    ev.preventDefault();
-    clearSelection();
-    renderCalendar();
+    ev.preventDefault(); clearSelection(); renderCalendar();
   });
+
+  // CEREBRO DE RECORRENCIA
+  function detectSelectionMode() {
+    if (state.selected.size === 0) return 'none';
+    if (state.selected.size === 1) return 'single';
+    const dates = Array.from(state.selected).map(d => new Date(d + "T00:00:00"));
+    const weekdays = new Set(dates.map(d => d.getDay()));
+    if (weekdays.size === 1) return 'weekday'; // Misma columna
+    
+    const getWeekOfMonth = (d) => Math.ceil(d.getDate() / 7);
+    const weekNums = new Set(dates.map(d => getWeekOfMonth(d)));
+    if (weekNums.size === 1) return 'weeknum'; // Misma fila/semana
+    return 'multiple';
+  }
 
   function renderActionPanel() {
     const panel = document.getElementById("action-panel");
     const n = state.selected.size;
     panel.classList.toggle("open", n > 0);
-    document.getElementById("action-count").textContent =
-      n === 1 ? "1 día seleccionado" : `${n} días seleccionados`;
+    document.getElementById("action-count").textContent = n === 1 ? "1 día seleccionado" : `${n} días seleccionados`;
+
+    const mode = detectSelectionMode();
+    const container = document.getElementById("recurrence-container");
+    container.innerHTML = "";
+
+    if (n === 0) return;
+
+    let html = '<div class="rec-options" style="font-size:0.85rem;color:var(--text-dim);">';
+    html += '<div style="margin-bottom:8px;font-weight:600;color:var(--text);">Opciones de repetición:</div>';
+    
+    if (mode === 'single') {
+      const date = new Date(Array.from(state.selected)[0] + "T00:00:00");
+      const weekdayName = WEEKDAY_LABELS[date.getDay()];
+      const dayNum = date.getDate();
+      html += `
+        <label class="rec-option"><input type="radio" name="rec-type" value="weekday" checked> Repetir todos los ${weekdayName}</label>
+        <label class="rec-option"><input type="radio" name="rec-type" value="monthday"> Repetir el ${dayNum} de cada mes</label>
+      `;
+    } else if (mode === 'weekday') {
+      const date = new Date(Array.from(state.selected)[0] + "T00:00:00");
+      const weekdayName = WEEKDAY_LABELS[date.getDay()];
+      html += `
+        <label class="rec-option"><input type="radio" name="rec-type" value="weekday" checked> Repetir todos los ${weekdayName}</label>
+        <label class="rec-option"><input type="radio" name="rec-type" value="weekday_except"> Repetir ${weekdayName} excepto...</label>
+        <div id="except-selector" class="month-exclude hidden">
+          ${MONTH_LABELS.map((m, i) => `<button type="button" data-month="${i}">${m}</button>`).join('')}
+        </div>
+      `;
+    } else if (mode === 'weeknum') {
+      const date = new Date(Array.from(state.selected)[0] + "T00:00:00");
+      const weekOfMonth = Math.ceil(date.getDate() / 7);
+      const ordinals = ["1ra", "2da", "3ra", "4ta", "5ta"];
+      html += `
+        <label class="rec-option"><input type="radio" name="rec-type" value="weeknum" checked> Repetir todas las ${ordinals[weekOfMonth-1]} semanas de cada mes</label>
+      `;
+    } else {
+      html += `<p style="font-size:0.8rem;color:var(--text-faint);">Selección múltiple irregular. Se aplicará solo a los días elegidos.</p>`;
+    }
+
+    html += `
+      <div style="margin-top:12px;">
+        <small>Alcance de la repetición:</small>
+        <select id="rec-range" class="range-select">
+          <option value="4w">Próximas 4 semanas</option>
+          <option value="3m">Próximos 3 meses</option>
+          <option value="6m">Próximos 6 meses</option>
+          <option value="1y">Resto del año actual</option>
+        </select>
+      </div>
+    `;
+    html += '</div>';
+    container.innerHTML = html;
+
+    // Listener para el "excepto"
+    const exceptRadio = document.querySelector('input[name="rec-type"][value="weekday_except"]');
+    if (exceptRadio) {
+      exceptRadio.addEventListener('change', () => {
+        document.getElementById('except-selector').classList.toggle('hidden', !exceptRadio.checked);
+      });
+      document.querySelectorAll('.month-exclude button').forEach(btn => {
+        btn.addEventListener('click', () => btn.classList.toggle('active'));
+      });
+    }
   }
 
-  // Switch "repetir siempre"
-  const switchEl = document.getElementById("switch-repetir");
-  switchEl.addEventListener("click", () => {
-    state.repetir = !state.repetir;
-    switchEl.classList.toggle("on", state.repetir);
+  // MODAL Y GUARDADO
+  document.getElementById("btn-guardar").addEventListener("click", () => {
+    if (state.selected.size === 0) return;
+    state.isNoviaja = false;
+    document.getElementById("switch-noviaja").classList.remove("on");
+    document.getElementById("modal-confirm").classList.remove("hidden");
   });
 
-  // Confirmar Viajo / No viajo
-  document.getElementById("btn-viajo").addEventListener("click", () => confirmSelection(true));
-  document.getElementById("btn-noviajo").addEventListener("click", () => confirmSelection(false));
+  document.getElementById("modal-cancel").addEventListener("click", () => {
+    document.getElementById("modal-confirm").classList.add("hidden");
+  });
 
-  async function confirmSelection(viaja) {
-    const dates = Array.from(state.selected).sort();
-    if (dates.length === 0) return;
+  document.getElementById("switch-noviaja").addEventListener("click", (e) => {
+    state.isNoviaja = !state.isNoviaja;
+    e.currentTarget.classList.toggle("on", state.isNoviaja);
+  });
 
-    const btns = [document.getElementById("btn-viajo"), document.getElementById("btn-noviajo")];
+  document.querySelectorAll(".modal-actions button").forEach(btn => {
+    btn.addEventListener("click", () => processSave(btn.dataset.turno));
+  });
+
+  // MOTOR DE CÁLCULO DE FECHAS OPTIMIZADO
+  function calculateFinalDates() {
+    let baseDates = Array.from(state.selected);
+    if (document.querySelector('input[name="rec-type"]') === null) return baseDates; // Sin recurrencia
+
+    const range = document.getElementById("rec-range").value;
+    const recType = document.querySelector('input[name="rec-type"]:checked').value;
+
+    let endDate = new Date(); endDate.setHours(23, 59, 59, 999);
+    if (range === "4w") endDate.setDate(endDate.getDate() + 28);
+    else if (range === "3m") endDate.setMonth(endDate.getMonth() + 3);
+    else if (range === "6m") endDate.setMonth(endDate.getMonth() + 6);
+    else if (range === "1y") endDate.setFullYear(endDate.getFullYear() + 1);
+
+    const result = new Set(baseDates); // Incluye las fechas base
+    const startDate = new Date(); startDate.setHours(0, 0, 0, 0);
+
+    const refDate = new Date(baseDates[0] + "T00:00:00");
+    const refWeekday = refDate.getDay();
+    const refDayOfMonth = refDate.getDate();
+    const refWeekOfMonth = Math.ceil(refDayOfMonth / 7);
+
+    const excludedMonths = Array.from(document.querySelectorAll('.month-exclude button.active')).map(b => parseInt(b.dataset.month));
+
+    // Iteración de un solo loop para no sobrecargar el navegador
+    let current = new Date(startDate);
+    while (current <= endDate) {
+      const cDay = current.getDay();
+      if (cDay !== 0 && cDay !== 6) { // Ignorar fines de semana
+        const cIso = toISODate(current.getFullYear(), current.getMonth() + 1, current.getDate());
+        
+        if (recType === "weekday") {
+          if (current.getDay() === refWeekday) result.add(cIso);
+        } else if (recType === "weekday_except") {
+          if (current.getDay() === refWeekday && !excludedMonths.includes(current.getMonth())) result.add(cIso);
+        } else if (recType === "monthday") {
+          if (current.getDate() === refDayOfMonth) result.add(cIso);
+        } else if (recType === "weeknum") {
+          // Comprueba si el día pertenece a la misma semana del mes y coincide con los días base seleccionados
+          if (Math.ceil(current.getDate() / 7) === refWeekOfMonth) {
+            // Como puede ser una selección de varios días en esa semana, verificamos si ese weekday estaba en la selección original
+            const wasSelected = baseDates.some(d => new Date(d + "T00:00:00").getDay() === current.getDay());
+            if (wasSelected) result.add(cIso);
+          }
+        }
+      }
+      current.setDate(current.getDate() + 1);
+    }
+
+    return Array.from(result).sort();
+  }
+
+  async function processSave(turno) {
+    const finalDates = calculateFinalDates();
+    if (finalDates.length === 0) {
+      toast("Seleccioná al menos un día.", "err");
+      return;
+    }
+
+    const viajaValue = !state.isNoviaja;
+    const btns = document.querySelectorAll(".modal-actions button");
     btns.forEach((b) => (b.disabled = true));
 
     try {
-      if (state.repetir) {
-        // rpc_set_asistencia también actualiza la plantilla semanal cuando p_repetir = true.
-        for (const fecha of dates) {
-          const { error } = await supabase.rpc("rpc_set_asistencia", {
-            p_dni: state.profile.dni,
-            p_fecha: fecha,
-            p_turno: state.turno,
-            p_viaja: viaja,
-            p_repetir: true,
-          });
-          if (error) throw error;
-        }
+      if (turno === "ambos") {
+        await supabase.rpc("rpc_set_asistencia_masivo", { p_dni: state.profile.dni, p_fechas: finalDates, p_turno: "manana", p_viaja: viajaValue });
+        await supabase.rpc("rpc_set_asistencia_masivo", { p_dni: state.profile.dni, p_fechas: finalDates, p_turno: "tarde", p_viaja: viajaValue });
       } else {
-        const { error } = await supabase.rpc("rpc_set_asistencia_masivo", {
-          p_dni: state.profile.dni,
-          p_fechas: dates,
-          p_turno: state.turno,
-          p_viaja: viaja,
-        });
-        if (error) throw error;
+        await supabase.rpc("rpc_set_asistencia_masivo", { p_dni: state.profile.dni, p_fechas: finalDates, p_turno: turno, p_viaja: viajaValue });
       }
-      toast("Guardado", "ok");
+      toast(`Se actualizaron ${finalDates.length} fechas.`, "ok");
+      document.getElementById("modal-confirm").classList.add("hidden");
       clearSelection();
       await loadCalendar();
     } catch (e) {
       console.error(e);
-      toast("No se pudo guardar. Reintentá.", "err");
+      toast("No se pudo guardar.", "err");
     } finally {
       btns.forEach((b) => (b.disabled = false));
     }
   }
 
-  // =========================================================================
   // MAPA EN VIVO
-  // =========================================================================
   function initMapIfNeeded() {
     if (state.map) return;
     state.map = L.map("map", { zoomControl: false, attributionControl: false }).setView([-34.9011, -56.1645], 12);
     L.control.zoom({ position: "bottomright" }).addTo(state.map);
-    L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+    // Tile Layer Humanitarian (calles claras y mejor contraste)
+    L.tileLayer("https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png", {
       subdomains: "abcd",
       maxZoom: 19,
     }).addTo(state.map);
@@ -959,8 +887,7 @@
 
   function showMapUnavailable(text) {
     document.getElementById("map-info").classList.add("hidden");
-    document.getElementById("map-unavailable-text").textContent =
-      text || "No hay una unidad en vivo para mostrarte en este turno.";
+    document.getElementById("map-unavailable-text").textContent = text || "No hay una unidad en vivo para mostrarte en este turno.";
     document.getElementById("map-unavailable-box").classList.remove("hidden");
   }
 
@@ -980,9 +907,14 @@
     hideMapUnavailable();
 
     document.getElementById("map-chofer").textContent = unidad.chofer || pos.driver || "Chofer";
-    document.getElementById("map-unidad").textContent =
-      `Interno ${unidad.interno || "—"} · ${unidad.patente || pos.domain || ""}`;
-    document.getElementById("map-speed").innerHTML = `${Math.round(pos.speed || 0)}<small>km/h</small>`;
+    document.getElementById("map-unidad").textContent = `Interno ${unidad.interno || "—"} · ${unidad.patente || pos.domain || ""}`;
+    
+    // Hora y Calle
+    if (pos.ts) {
+      const dt = new Date(pos.ts);
+      document.getElementById("map-ts").textContent = dt.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+    }
+    document.getElementById("map-street").textContent = pos.position || "Calle desconocida";
 
     const latlng = [pos.lat, pos.lon];
     if (!state.mapMarker) {
@@ -991,6 +923,7 @@
       state.map.setView(latlng, 14);
     } else {
       state.mapMarker.setLatLng(latlng);
+      state.map.panTo(latlng, { animate: true });
     }
   }
 
@@ -1026,9 +959,7 @@
     }
   }
 
-  // =========================================================================
   // ARRANQUE
-  // =========================================================================
   const existing = loadProfile();
   if (existing && existing.dni) {
     enterApp(existing);
