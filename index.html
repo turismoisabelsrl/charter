@@ -17,8 +17,8 @@
     --navy-2: #0c1a2e;
     --navy-3: #10233c;
     --sky: #3a8fd1;
-    --morning: #38bdf8; /* Celeste Claro */
-    --afternoon: #0284c7; /* Celeste Oscuro */
+    --morning: #38bdf8;
+    --afternoon: #0284c7;
     --sky-dim: #6fb0e0;
     --red: #e04444;
     --text: #e8eef7;
@@ -47,7 +47,6 @@
     justify-content: center;
   }
 
-  /* Adaptabilidad Desktop */
   body::before {
     content: '';
     position: fixed;
@@ -60,7 +59,7 @@
 
   .app-wrapper {
     width: 100%;
-    max-width: 450px; /* Limitar ancho en desktop */
+    max-width: 450px;
     background: var(--navy);
     min-height: 100dvh;
     box-shadow: 0 0 40px rgba(0,0,0,0.5);
@@ -123,11 +122,8 @@
   .btn:active { transform: scale(0.98); }
   .btn:disabled { opacity: 0.55; pointer-events: none; }
   .btn-primary { background: var(--sky); color: #071020; }
-  .btn-morning { background: var(--morning); color: #071020; }
-  .btn-afternoon { background: var(--afternoon); color: #fff; }
-  .btn-both { background: linear-gradient(135deg, var(--morning) 50%, var(--afternoon) 50%); color: #fff; }
-  .btn-red { background: transparent; color: var(--red); border: 1px solid rgba(224, 68, 68, 0.5); }
   .btn-ghost { background: transparent; color: var(--text-dim); border: 1px solid var(--glass-border); }
+  
   .btn-sm { padding: 6px 12px; font-size: 0.8rem; width: auto; border-radius: 8px; border: 1px solid var(--glass-border); color: var(--text-dim); }
 
   .login-error { margin-top: 14px; font-size: 0.85rem; color: var(--red); min-height: 1.2em; }
@@ -151,7 +147,7 @@
   .tab.active { background: var(--sky); color: #071020; border-color: var(--sky); }
 
   main { flex: 1; overflow: hidden; position: relative; }
-  .tab-panel { height: 100%; overflow-y: auto; padding: 0 18px calc(24px + var(--safe-b)); position: relative; }
+  .tab-panel { height: 100%; overflow-y: auto; padding: 0 18px calc(280px + var(--safe-b)); position: relative; }
 
   /* ---------------- CALENDARIO ---------------- */
   .month-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; gap: 10px; }
@@ -161,7 +157,7 @@
     border: 1px solid var(--glass-border); color: var(--text-dim); display: flex; align-items: center; justify-content: center;
   }
 
-  .cal-grid { padding: 14px 10px 16px; }
+  .cal-grid { padding: 14px 10px 16px; touch-action: pan-y; /* Permite scroll vertical pero captura horizontal */ }
   .cal-row { display: grid; grid-template-columns: 30px repeat(7, 1fr); gap: 4px; }
   .cal-row.head { margin-bottom: 6px; }
   .cal-head-cell {
@@ -202,7 +198,7 @@
 
   .hint-card { margin-top: 16px; padding: 14px 16px; font-size: 0.8rem; color: var(--text-dim); line-height: 1.5; }
 
-  /* ---------------- FLOATING ACTION PANEL ---------------- */
+  /* ---------------- FLOATING ACTION PANEL UNIFICADO ---------------- */
   #action-panel {
     position: fixed; left: 14px; right: 14px; bottom: calc(14px + var(--safe-b));
     padding: 16px; z-index: 40; transform: translateY(140%); transition: transform 0.22s ease;
@@ -212,18 +208,26 @@
   #action-panel .count { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
   #action-panel .count a { color: var(--sky-dim); font-size: 0.8rem; }
   
-  .rec-options { margin-top: 12px; border-top: 1px solid var(--glass-border); padding-top: 12px; }
+  /* Botones de selección unificados */
+  .toggle-group { display: flex; gap: 6px; margin-bottom: 10px; }
+  .toggle-btn {
+    flex: 1; padding: 10px; border-radius: 8px; background: var(--glass-bg);
+    border: 1px solid var(--glass-border); color: var(--text-dim); font-size: 0.8rem; font-weight: 600;
+    display: flex; align-items: center; justify-content: center; gap: 4px;
+  }
+  .toggle-btn.active { background: var(--sky); color: #fff; border-color: var(--sky); }
+  .toggle-btn.active.red { background: var(--red); border-color: var(--red); }
+  .toggle-btn.active.morning { background: var(--morning); color: #071020; border-color: var(--morning); }
+  .toggle-btn.active.afternoon { background: var(--afternoon); color: #fff; border-color: var(--afternoon); }
+  .toggle-btn.active.both { background: linear-gradient(135deg, var(--morning) 50%, var(--afternoon) 50%); color: #fff; border: 0; }
+
+  .rec-options { margin-top: 8px; border-top: 1px solid var(--glass-border); padding-top: 10px; }
   .rec-option { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 0.85rem; cursor: pointer; color: var(--text-dim); }
   .rec-option input { accent-color: var(--sky); }
   .month-exclude { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
   .month-exclude button { background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text-faint); font-size: 0.7rem; padding: 4px 8px; border-radius: 6px; }
   .month-exclude button.active { background: var(--red); color: #fff; border-color: var(--red); }
   .range-select { width: 100%; margin-top: 8px; padding: 8px; background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text); border-radius: var(--radius-sm); }
-
-  /* ---------------- MODAL CONFIRM ---------------- */
-  .modal { position: fixed; inset: 0; background: rgba(7,16,32,0.8); z-index: 50; display: flex; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(6px); }
-  .modal-content { width: 100%; max-width: 340px; padding: 24px; text-align: center; }
-  .modal-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
 
   /* ---------------- MAPA ---------------- */
   #tab-mapa.tab-panel { padding: 0; }
@@ -299,7 +303,6 @@
       <span class="name" id="topbar-name">—</span>
     </div>
     <button id="btn-logout" class="icon-btn" title="Cerrar sesión" aria-label="Cerrar sesión">
-      <!-- Icono de Puerta con Flecha (Heroicons) -->
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
       </svg>
@@ -325,7 +328,7 @@
         </button>
       </div>
 
-      <div class="cal-grid glass">
+      <div class="cal-grid glass" id="calendar-swipe-area">
         <div class="cal-row head">
           <div class="cal-head-cell">Sem</div>
           <div class="cal-head-cell clickable" data-weekday="1">L</div>
@@ -346,7 +349,7 @@
       </div>
 
       <div class="hint-card glass">
-        Tocá un día para marcarlo. Tocá una letra para seleccionar todos los días de esa columna, o el número de semana para la fila completa. Abajo elige si querés repetir la selección.
+        Tocá un día para marcarlo. Desliza el dedo hacia los lados para cambiar de mes. Abajo elige tu turno y si vas a viajar.
       </div>
     </section>
 
@@ -377,39 +380,30 @@
 </section>
 
 <!-- =====================================================================
-     PANEL FLOTANTE DE ACCIÓN (OCULTO EN MAPA)
+     PANEL FLOTANTE DE ACCIÓN UNIFICADO
 ===================================================================== -->
 <div id="action-panel" class="glass">
   <div class="count">
     <span id="action-count">0 días seleccionados</span>
-    <a href="#" id="action-clear">Cancelar</a>
+    <a href="#" id="action-clear">Limpiar</a>
+  </div>
+
+  <!-- Fila 1: Estado -->
+  <div class="toggle-group">
+    <button class="toggle-btn active" data-estado="viaja">Viaja</button>
+    <button class="toggle-btn red" data-estado="noviaja">No Viaja</button>
+  </div>
+
+  <!-- Fila 2: Turno -->
+  <div class="toggle-group">
+    <button class="toggle-btn active morning" data-turno="manana">Mañana</button>
+    <button class="toggle-btn afternoon" data-turno="tarde">Tarde</button>
+    <button class="toggle-btn both" data-turno="ambos">Ambos</button>
   </div>
 
   <div id="recurrence-container"></div>
 
   <button class="btn btn-primary" id="btn-guardar" style="margin-top:12px;">Guardar Cambios</button>
-</div>
-
-<!-- =====================================================================
-     MODAL CONFIRMACIÓN
-===================================================================== -->
-<div id="modal-confirm" class="modal hidden">
-  <div class="modal-content glass">
-    <h3>Confirmar Viaje</h3>
-    <p id="modal-text" style="color:var(--text-dim);font-size:0.85rem;margin-top:8px;">¿En qué turno vas a aplicar esto?</p>
-    
-    <div class="switch-row" style="margin-top:15px; border-top:1px solid var(--glass-border); padding-top:15px;">
-      <span>Marcar como "NO viaja"</span>
-      <div class="switch" id="switch-noviaja"><div class="knob"></div></div>
-    </div>
-
-    <div class="modal-actions">
-      <button class="btn btn-morning" data-turno="manana">Mañana</button>
-      <button class="btn btn-afternoon" data-turno="tarde">Tarde</button>
-      <button class="btn btn-both" data-turno="ambos">Ambos Turnos</button>
-    </div>
-    <button class="btn btn-ghost" id="modal-cancel" style="margin-top:10px;">Cerrar</button>
-  </div>
 </div>
 
 <div id="toast"></div>
@@ -438,7 +432,8 @@
     viewMonth: new Date().getMonth() + 1,
     calendarByDate: {},
     selected: new Set(),
-    isNoviaja: false,
+    selectedEstado: "viaja", // viaja | noviaja
+    selectedTurno: "manana", // manana | tarde | ambos
     activeTab: "calendario",
     map: null,
     mapMarker: null,
@@ -514,7 +509,7 @@
     loadCalendar();
   }
 
-  // TABS Y CONTROL DEL PANEL FLOTANTE
+  // TABS Y CONTROL DEL MAPA
   document.querySelectorAll(".tab").forEach((btn) => {
     btn.addEventListener("click", () => switchTab(btn.dataset.tab));
   });
@@ -527,18 +522,22 @@
 
     const actionPanel = document.getElementById("action-panel");
     if (tab === "mapa") {
-      actionPanel.style.display = "none"; // Ocultar panel en el mapa
+      actionPanel.style.display = "none"; // Ocultar panel para que no rompa el mapa
       initMapIfNeeded();
-      setTimeout(() => state.map && state.map.invalidateSize(), 100);
+      // Forzar recálculo de tamaño del mapa para que no quede en gris
+      setTimeout(() => {
+        if (state.map) {
+          state.map.invalidateSize();
+        }
+      }, 100);
       startMapPolling();
     } else {
-      // Restaurar visibilidad del panel si hay selección
       actionPanel.style.display = "block"; 
       stopMapPolling();
     }
   }
 
-  // CALENDARIO NAV
+  // CALENDARIO NAV Y SWIPE
   document.getElementById("btn-prev-month").addEventListener("click", () => shiftMonth(-1));
   document.getElementById("btn-next-month").addEventListener("click", () => shiftMonth(1));
   document.getElementById("btn-today").addEventListener("click", () => {
@@ -548,6 +547,27 @@
     renderMonthLabel();
     loadCalendar();
   });
+
+  // Lógica de Swipe Táctil
+  let touchStartX = 0;
+  let touchStartY = 0;
+  const swipeArea = document.getElementById("calendar-swipe-area");
+
+  swipeArea.addEventListener("touchstart", (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+    touchStartY = e.changedTouches[0].screenY;
+  }, { passive: true });
+
+  swipeArea.addEventListener("touchend", (e) => {
+    const endX = e.changedTouches[0].screenX;
+    const endY = e.changedTouches[0].screenY;
+    const diffX = endX - touchStartX;
+    const diffY = endY - touchStartY;
+    // Si el movimiento horizontal fue mayor que el vertical y supera los 50px
+    if (Math.abs(diffX) > 50 && Math.abs(diffX) > Math.abs(diffY)) {
+      shiftMonth(diffX > 0 ? -1 : 1);
+    }
+  }, { passive: true });
 
   function shiftMonth(delta) {
     let m = state.viewMonth + delta;
@@ -664,7 +684,6 @@
     const weeks = buildWeeks(state.viewYear, state.viewMonth);
     const dates = [];
     weeks.forEach((week) => {
-      // Ajustar porque nuestro array empieza en Lunes (índice 0) pero JS getDay() es Domingo=0
       const arrayIndex = weekdayIdx === 0 ? 6 : weekdayIdx - 1;
       const day = week[arrayIndex];
       if (day !== null) dates.push(toISODate(state.viewYear, state.viewMonth, day));
@@ -695,17 +714,34 @@
     ev.preventDefault(); clearSelection(); renderCalendar();
   });
 
-  // CEREBRO DE RECORRENCIA MEJORADO
+  // TOGGLES UNIFICADOS EN PANEL
+  document.querySelectorAll('.toggle-btn[data-estado]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.toggle-btn[data-estado]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      state.selectedEstado = btn.dataset.estado;
+    });
+  });
+
+  document.querySelectorAll('.toggle-btn[data-turno]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.toggle-btn[data-turno]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      state.selectedTurno = btn.dataset.turno;
+    });
+  });
+
+  // CEREBRO DE RECORRENCIA
   function detectSelectionMode() {
     if (state.selected.size === 0) return 'none';
     if (state.selected.size === 1) return 'single';
     const dates = Array.from(state.selected).map(d => new Date(d + "T00:00:00"));
     const weekdays = new Set(dates.map(d => d.getDay()));
-    if (weekdays.size === 1) return 'weekday'; // Misma columna
+    if (weekdays.size === 1) return 'weekday';
     
     const getWeekOfMonth = (d) => Math.ceil(d.getDate() / 7);
     const weekNums = new Set(dates.map(d => getWeekOfMonth(d)));
-    if (weekNums.size === 1) return 'weeknum'; // Misma fila/semana
+    if (weekNums.size === 1) return 'weeknum';
     return 'multiple';
   }
 
@@ -723,8 +759,6 @@
 
     let html = '<div class="rec-options" style="font-size:0.85rem;color:var(--text-dim);">';
     html += '<div style="margin-bottom:8px;font-weight:600;color:var(--text);">Opciones de repetición:</div>';
-    
-    // Opción principal: NO REPETIR (Siempre disponible)
     html += `<label class="rec-option"><input type="radio" name="rec-type" value="none" checked> No repetir (Solo días seleccionados)</label>`;
 
     if (mode === 'single') {
@@ -769,7 +803,6 @@
     html += '</div>';
     container.innerHTML = html;
 
-    // Listener para el "excepto"
     const exceptRadio = document.querySelector('input[name="rec-type"][value="weekday_except"]');
     if (exceptRadio) {
       exceptRadio.addEventListener('change', () => {
@@ -780,40 +813,19 @@
       });
     }
 
-    // Deshabilitar el selector de alcance si es "No repetir"
     const noneRadio = document.querySelector('input[name="rec-type"][value="none"]');
     const rangeBlock = document.getElementById('range-block');
     noneRadio.addEventListener('change', () => {
       rangeBlock.style.opacity = noneRadio.checked ? "0.5" : "1";
       document.getElementById('rec-range').disabled = noneRadio.checked;
     });
-    // Trigger inicial
     rangeBlock.style.opacity = "0.5";
     document.getElementById('rec-range').disabled = true;
   }
 
-  // MODAL Y GUARDADO
-  document.getElementById("btn-guardar").addEventListener("click", () => {
-    if (state.selected.size === 0) return;
-    state.isNoviaja = false;
-    document.getElementById("switch-noviaja").classList.remove("on");
-    document.getElementById("modal-confirm").classList.remove("hidden");
-  });
+  // GUARDADO DIRECTO
+  document.getElementById("btn-guardar").addEventListener("click", () => processSave());
 
-  document.getElementById("modal-cancel").addEventListener("click", () => {
-    document.getElementById("modal-confirm").classList.add("hidden");
-  });
-
-  document.getElementById("switch-noviaja").addEventListener("click", (e) => {
-    state.isNoviaja = !state.isNoviaja;
-    e.currentTarget.classList.toggle("on", state.isNoviaja);
-  });
-
-  document.querySelectorAll(".modal-actions button").forEach(btn => {
-    btn.addEventListener("click", () => processSave(btn.dataset.turno));
-  });
-
-  // MOTOR DE CÁLCULO DE FECHAS OPTIMIZADO
   function calculateFinalDates() {
     let baseDates = Array.from(state.selected);
     const recTypeRadio = document.querySelector('input[name="rec-type"]:checked');
@@ -841,7 +853,7 @@
     let current = new Date(startDate);
     while (current <= endDate) {
       const cDay = current.getDay();
-      if (cDay !== 0 && cDay !== 6) { // Ignorar fines de semana
+      if (cDay !== 0 && cDay !== 6) { 
         const cIso = toISODate(current.getFullYear(), current.getMonth() + 1, current.getDate());
         
         if (recType === "weekday") {
@@ -863,16 +875,17 @@
     return Array.from(result).sort();
   }
 
-  async function processSave(turno) {
+  async function processSave() {
     const finalDates = calculateFinalDates();
     if (finalDates.length === 0) {
       toast("Seleccioná al menos un día.", "err");
       return;
     }
 
-    const viajaValue = !state.isNoviaja;
-    const btns = document.querySelectorAll(".modal-actions button");
-    btns.forEach((b) => (b.disabled = true));
+    const viajaValue = state.selectedEstado === "viaja";
+    const turno = state.selectedTurno;
+    const btnGuardar = document.getElementById("btn-guardar");
+    btnGuardar.disabled = true; btnGuardar.textContent = "Guardando...";
 
     try {
       if (turno === "ambos") {
@@ -882,14 +895,13 @@
         await supabase.rpc("rpc_set_asistencia_masivo", { p_dni: state.profile.dni, p_fechas: finalDates, p_turno: turno, p_viaja: viajaValue });
       }
       toast(`Se actualizaron ${finalDates.length} fechas.`, "ok");
-      document.getElementById("modal-confirm").classList.add("hidden");
       clearSelection();
       await loadCalendar();
     } catch (e) {
       console.error(e);
       toast("No se pudo guardar.", "err");
     } finally {
-      btns.forEach((b) => (b.disabled = false));
+      btnGuardar.disabled = false; btnGuardar.textContent = "Guardar Cambios";
     }
   }
 
@@ -898,7 +910,6 @@
     if (state.map) return;
     state.map = L.map("map", { zoomControl: false, attributionControl: false }).setView([-34.9011, -56.1645], 12);
     L.control.zoom({ position: "bottomright" }).addTo(state.map);
-    // Tile Layer Humanitarian (calles claras y mejor contraste)
     L.tileLayer("https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png", {
       subdomains: "abcd",
       maxZoom: 19,
@@ -929,7 +940,6 @@
     document.getElementById("map-chofer").textContent = unidad.chofer || pos.driver || "Chofer";
     document.getElementById("map-unidad").textContent = `Interno ${unidad.interno || "—"} · ${unidad.patente || pos.domain || ""}`;
     
-    // Hora y Calle
     if (pos.ts) {
       const dt = new Date(pos.ts);
       document.getElementById("map-ts").textContent = dt.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
