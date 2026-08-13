@@ -13,19 +13,19 @@
 
 <style>
   :root {
-    --navy: #071020;
-    --navy-2: #0c1a2e;
-    --navy-3: #10233c;
-    --sky: #3a8fd1;
-    --morning: #38bdf8;
-    --afternoon: #0284c7;
-    --sky-dim: #6fb0e0;
-    --red: #e04444;
-    --text: #e8eef7;
-    --text-dim: #9fb0c3;
-    --text-faint: #5c7189;
-    --glass-bg: rgba(255, 255, 255, 0.055);
-    --glass-bg-strong: rgba(255, 255, 255, 0.09);
+    --navy: #0f172a;
+    --navy-2: #1e293b;
+    --navy-3: #334155;
+    --sky: #38bdf8; /* Celeste principal */
+    --morning: #38bdf8; /* Celeste claro para mañana */
+    --afternoon: #0284c7; /* Celeste oscuro para tarde */
+    --sky-dim: #7dd3fc;
+    --red: #ef4444;
+    --text: #f8fafc;
+    --text-dim: #cbd5e1;
+    --text-faint: #64748b;
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    --glass-bg-strong: rgba(255, 255, 255, 0.1);
     --glass-border: rgba(255, 255, 255, 0.12);
     --radius: 16px;
     --radius-sm: 10px;
@@ -38,35 +38,11 @@
   html, body {
     margin: 0;
     height: 100%;
-    background: radial-gradient(circle at 20% -10%, #0d2140 0%, var(--navy) 55%);
+    background: var(--navy);
     color: var(--text);
     font-family: "Inter", system-ui, sans-serif;
     -webkit-tap-highlight-color: transparent;
     overscroll-behavior-y: contain;
-    display: flex;
-    justify-content: center;
-  }
-
-  body::before {
-    content: '';
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: url('https://images.unsplash.com/photo-1502602898657-3e91760c9834?q=80&w=2070&auto=format&fit=crop') no-repeat center center fixed;
-    background-size: cover;
-    filter: blur(8px);
-    z-index: -1;
-  }
-
-  .app-wrapper {
-    width: 100%;
-    max-width: 450px;
-    background: var(--navy);
-    min-height: 100dvh;
-    box-shadow: 0 0 40px rgba(0,0,0,0.5);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    position: relative;
   }
 
   h1, h2, h3, .display {
@@ -99,7 +75,7 @@
   }
 
   /* ---------------- LOGIN ---------------- */
-  #screen-login { display: flex; align-items: center; justify-content: center; padding: 24px; }
+  #screen-login { display: flex; align-items: center; justify-content: center; padding: 24px; background: radial-gradient(circle at 20% -10%, #1e293b 0%, var(--navy) 55%); }
   .login-card { width: 100%; max-width: 380px; padding: 32px 28px; text-align: center; }
   .login-card .brand { font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--sky-dim); margin-bottom: 6px; }
   .login-card h1 { font-size: 1.6rem; color: var(--text); margin-bottom: 4px; }
@@ -112,7 +88,7 @@
     border: 1px solid var(--glass-border); background: rgba(255, 255, 255, 0.04);
     color: var(--text); font-size: 1.05rem; letter-spacing: 0.02em;
   }
-  .field input:focus { outline: none; border-color: var(--sky); box-shadow: 0 0 0 3px rgba(58, 143, 209, 0.25); }
+  .field input:focus { outline: none; border-color: var(--sky); box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25); }
 
   .btn {
     display: inline-flex; align-items: center; justify-content: center; gap: 8px;
@@ -121,9 +97,8 @@
   }
   .btn:active { transform: scale(0.98); }
   .btn:disabled { opacity: 0.55; pointer-events: none; }
-  .btn-primary { background: var(--sky); color: #071020; }
+  .btn-primary { background: var(--sky); color: var(--navy); }
   .btn-ghost { background: transparent; color: var(--text-dim); border: 1px solid var(--glass-border); }
-  
   .btn-sm { padding: 6px 12px; font-size: 0.8rem; width: auto; border-radius: 8px; border: 1px solid var(--glass-border); color: var(--text-dim); }
 
   .login-error { margin-top: 14px; font-size: 0.85rem; color: var(--red); min-height: 1.2em; }
@@ -144,10 +119,10 @@
     flex: 1; padding: 10px 0; text-align: center; border-radius: 999px; font-size: 0.88rem;
     background: transparent; color: var(--text-dim); border: 1px solid var(--glass-border);
   }
-  .tab.active { background: var(--sky); color: #071020; border-color: var(--sky); }
+  .tab.active { background: var(--sky); color: var(--navy); border-color: var(--sky); }
 
   main { flex: 1; overflow: hidden; position: relative; }
-  .tab-panel { height: 100%; overflow-y: auto; padding: 0 18px calc(280px + var(--safe-b)); position: relative; }
+  .tab-panel { height: 100%; overflow-y: auto; padding: 0 18px calc(260px + var(--safe-b)); position: relative; }
 
   /* ---------------- CALENDARIO ---------------- */
   .month-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; gap: 10px; }
@@ -157,7 +132,7 @@
     border: 1px solid var(--glass-border); color: var(--text-dim); display: flex; align-items: center; justify-content: center;
   }
 
-  .cal-grid { padding: 14px 10px 16px; touch-action: pan-y; /* Permite scroll vertical pero captura horizontal */ }
+  .cal-grid { padding: 14px 10px 16px; touch-action: pan-y; }
   .cal-row { display: grid; grid-template-columns: 30px repeat(7, 1fr); gap: 4px; }
   .cal-row.head { margin-bottom: 6px; }
   .cal-head-cell {
@@ -189,7 +164,7 @@
   
   .day-cell.today { border-color: var(--sky); }
   .day-cell.selected {
-    outline: 2px solid var(--sky); outline-offset: -2px; background: rgba(58, 143, 209, 0.22) !important; color: #fff;
+    outline: 2px solid var(--sky); outline-offset: -2px; background: rgba(56, 189, 248, 0.22) !important; color: #fff;
   }
 
   .cal-legend { display: flex; gap: 12px; justify-content: center; font-size: 0.72rem; color: var(--text-faint); margin-top: 4px; flex-wrap: wrap; }
@@ -198,36 +173,26 @@
 
   .hint-card { margin-top: 16px; padding: 14px 16px; font-size: 0.8rem; color: var(--text-dim); line-height: 1.5; }
 
-  /* ---------------- FLOATING ACTION PANEL UNIFICADO ---------------- */
+  /* ---------------- FLOATING ACTION PANEL ---------------- */
   #action-panel {
     position: fixed; left: 14px; right: 14px; bottom: calc(14px + var(--safe-b));
     padding: 16px; z-index: 40; transform: translateY(140%); transition: transform 0.22s ease;
-    max-width: 422px; margin: 0 auto;
   }
   #action-panel.open { transform: translateY(0); }
   #action-panel .count { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
   #action-panel .count a { color: var(--sky-dim); font-size: 0.8rem; }
   
-  /* Botones de selección unificados */
   .toggle-group { display: flex; gap: 6px; margin-bottom: 10px; }
   .toggle-btn {
-    flex: 1; padding: 10px; border-radius: 8px; background: var(--glass-bg);
-    border: 1px solid var(--glass-border); color: var(--text-dim); font-size: 0.8rem; font-weight: 600;
+    flex: 1; padding: 12px; border-radius: 8px; background: var(--glass-bg);
+    border: 1px solid var(--glass-border); color: var(--text-dim); font-size: 0.85rem; font-weight: 600;
     display: flex; align-items: center; justify-content: center; gap: 4px;
   }
-  .toggle-btn.active { background: var(--sky); color: #fff; border-color: var(--sky); }
-  .toggle-btn.active.red { background: var(--red); border-color: var(--red); }
-  .toggle-btn.active.morning { background: var(--morning); color: #071020; border-color: var(--morning); }
+  .toggle-btn.active.red { background: var(--red); color: #fff; border-color: var(--red); }
+  .toggle-btn.active.green { background: var(--morning); color: var(--navy); border-color: var(--morning); }
+  .toggle-btn.active.morning { background: var(--morning); color: var(--navy); border-color: var(--morning); }
   .toggle-btn.active.afternoon { background: var(--afternoon); color: #fff; border-color: var(--afternoon); }
   .toggle-btn.active.both { background: linear-gradient(135deg, var(--morning) 50%, var(--afternoon) 50%); color: #fff; border: 0; }
-
-  .rec-options { margin-top: 8px; border-top: 1px solid var(--glass-border); padding-top: 10px; }
-  .rec-option { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 0.85rem; cursor: pointer; color: var(--text-dim); }
-  .rec-option input { accent-color: var(--sky); }
-  .month-exclude { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
-  .month-exclude button { background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text-faint); font-size: 0.7rem; padding: 4px 8px; border-radius: 6px; }
-  .month-exclude button.active { background: var(--red); color: #fff; border-color: var(--red); }
-  .range-select { width: 100%; margin-top: 8px; padding: 8px; background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text); border-radius: var(--radius-sm); }
 
   /* ---------------- MAPA ---------------- */
   #tab-mapa.tab-panel { padding: 0; }
@@ -243,7 +208,7 @@
 
   .map-unavailable {
     position: absolute; inset: 0; z-index: 600; display: flex; align-items: center; justify-content: center;
-    padding: 24px; background: rgba(7, 16, 32, 0.92); text-align: center;
+    padding: 24px; background: rgba(15, 23, 42, 0.92); text-align: center;
   }
   .map-unavailable .box { max-width: 300px; }
   .map-unavailable h3 { font-size: 1.05rem; margin-bottom: 8px; }
@@ -251,7 +216,7 @@
   .map-unavailable .pulse { width: 10px; height: 10px; border-radius: 50%; background: var(--sky-dim); margin: 0 auto 14px; animation: pulse 1.6s ease-in-out infinite; }
   @keyframes pulse { 0%, 100% { opacity: 0.4; transform: scale(0.9); } 50% { opacity: 1; transform: scale(1.15); } }
 
-  .marker-pulse { width: 16px; height: 16px; border-radius: 50%; background: var(--sky); border: 3px solid rgba(58, 143, 209, 0.35); box-shadow: 0 0 0 4px rgba(58, 143, 209, 0.18); }
+  .marker-pulse { width: 16px; height: 16px; border-radius: 50%; background: var(--sky); border: 3px solid rgba(56, 189, 248, 0.35); box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.18); }
 
   /* ---------------- TOAST ---------------- */
   #toast {
@@ -261,7 +226,7 @@
     background: var(--navy-3); border: 1px solid var(--glass-border); white-space: nowrap;
   }
   #toast.show { opacity: 1; transform: translate(-50%, 0); }
-  #toast.err { border-color: rgba(224, 68, 68, 0.5); color: #ffb3b3; }
+  #toast.err { border-color: rgba(239, 68, 68, 0.5); color: #fecaca; }
   #toast.ok { border-color: rgba(56, 189, 248, 0.5); color: #bae6fd; }
 
   .leaflet-container { background: var(--navy) !important; font-family: "Inter", sans-serif; }
@@ -270,8 +235,6 @@
 </style>
 </head>
 <body>
-
-<div class="app-wrapper">
 
 <!-- =====================================================================
      PANTALLA: LOGIN POR DNI
@@ -339,7 +302,7 @@
           <div class="cal-head-cell clickable disabled" data-weekday="6">S</div>
           <div class="cal-head-cell clickable disabled" data-weekday="0">D</div>
         </div>
-        <div id="cal-body"><!-- filas generadas por JS --></div>
+        <div id="cal-body"></div>
       </div>
 
       <div class="cal-legend">
@@ -349,7 +312,7 @@
       </div>
 
       <div class="hint-card glass">
-        Tocá un día para marcarlo. Desliza el dedo hacia los lados para cambiar de mes. Abajo elige tu turno y si vas a viajar.
+        Tocá un día para marcarlo. Desliza el dedo hacia los lados para cambiar de mes. Seleccioná la semana completa tocando el número de la izquierda (solo días hábiles).
       </div>
     </section>
 
@@ -380,7 +343,7 @@
 </section>
 
 <!-- =====================================================================
-     PANEL FLOTANTE DE ACCIÓN UNIFICADO
+     PANEL FLOTANTE DE ACCIÓN DIRECTA
 ===================================================================== -->
 <div id="action-panel" class="glass">
   <div class="count">
@@ -388,22 +351,16 @@
     <a href="#" id="action-clear">Limpiar</a>
   </div>
 
-  <!-- Fila 1: Estado -->
   <div class="toggle-group">
-    <button class="toggle-btn active" data-estado="viaja">Viaja</button>
+    <button class="toggle-btn active green" data-estado="viaja">Viaja</button>
     <button class="toggle-btn red" data-estado="noviaja">No Viaja</button>
   </div>
 
-  <!-- Fila 2: Turno -->
-  <div class="toggle-group">
-    <button class="toggle-btn active morning" data-turno="manana">Mañana</button>
-    <button class="toggle-btn afternoon" data-turno="tarde">Tarde</button>
-    <button class="toggle-btn both" data-turno="ambos">Ambos</button>
+  <div class="toggle-group" id="turno-group">
+    <!-- Botones de turno inyectados por JS -->
   </div>
 
-  <div id="recurrence-container"></div>
-
-  <button class="btn btn-primary" id="btn-guardar" style="margin-top:12px;">Guardar Cambios</button>
+  <button class="btn btn-primary" id="btn-guardar" style="margin-top:6px;">Guardar Cambios</button>
 </div>
 
 <div id="toast"></div>
@@ -422,8 +379,6 @@
 
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  const WEEKDAY_LABELS = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
-  const MONTH_LABELS = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
   const MONTH_FULL = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
 
   const state = {
@@ -432,8 +387,9 @@
     viewMonth: new Date().getMonth() + 1,
     calendarByDate: {},
     selected: new Set(),
-    selectedEstado: "viaja", // viaja | noviaja
-    selectedTurno: "manana", // manana | tarde | ambos
+    selectedEstado: "viaja",
+    selectedTurno: "manana",
+    abonoTipo: "ambos", // Default
     activeTab: "calendario",
     map: null,
     mapMarker: null,
@@ -503,6 +459,17 @@
   function enterApp(profile) {
     state.profile = profile;
     document.getElementById("topbar-name").textContent = profile.nombre || "Pasajero";
+    
+    // Determinar tipo de abono
+    if (profile.abono_tipo) {
+      const tipo = profile.abono_tipo.toLowerCase();
+      if (tipo.includes('manana')) state.abonoTipo = "manana";
+      else if (tipo.includes('tarde')) state.abonoTipo = "tarde";
+      else state.abonoTipo = "ambos";
+    }
+    
+    renderTurnoButtons();
+    
     document.getElementById("screen-login").classList.add("hidden");
     document.getElementById("screen-app").classList.remove("hidden");
     renderMonthLabel();
@@ -522,13 +489,10 @@
 
     const actionPanel = document.getElementById("action-panel");
     if (tab === "mapa") {
-      actionPanel.style.display = "none"; // Ocultar panel para que no rompa el mapa
+      actionPanel.style.display = "none";
       initMapIfNeeded();
-      // Forzar recálculo de tamaño del mapa para que no quede en gris
       setTimeout(() => {
-        if (state.map) {
-          state.map.invalidateSize();
-        }
+        if (state.map) state.map.invalidateSize();
       }, 100);
       startMapPolling();
     } else {
@@ -548,7 +512,6 @@
     loadCalendar();
   });
 
-  // Lógica de Swipe Táctil
   let touchStartX = 0;
   let touchStartY = 0;
   const swipeArea = document.getElementById("calendar-swipe-area");
@@ -559,11 +522,8 @@
   }, { passive: true });
 
   swipeArea.addEventListener("touchend", (e) => {
-    const endX = e.changedTouches[0].screenX;
-    const endY = e.changedTouches[0].screenY;
-    const diffX = endX - touchStartX;
-    const diffY = endY - touchStartY;
-    // Si el movimiento horizontal fue mayor que el vertical y supera los 50px
+    const diffX = e.changedTouches[0].screenX - touchStartX;
+    const diffY = e.changedTouches[0].screenY - touchStartY;
     if (Math.abs(diffX) > 50 && Math.abs(diffX) > Math.abs(diffY)) {
       shiftMonth(diffX > 0 ? -1 : 1);
     }
@@ -659,7 +619,9 @@
         cell.className = classes;
         cell.dataset.date = iso;
         cell.textContent = day;
-        cell.addEventListener("click", () => toggleDateSelection(iso));
+        cell.addEventListener("click", () => {
+          if (!isWeekend) toggleDateSelection(iso);
+        });
         row.appendChild(cell);
       });
 
@@ -673,7 +635,7 @@
     });
   });
 
-  // LÓGICA DE SELECCIÓN
+  // LÓGICA DE SELECCIÓN (FILTRANDO FINES DE SEMANA)
   function toggleDateSelection(iso) {
     if (state.selected.has(iso)) state.selected.delete(iso); else state.selected.add(iso);
     renderCalendar();
@@ -686,13 +648,28 @@
     weeks.forEach((week) => {
       const arrayIndex = weekdayIdx === 0 ? 6 : weekdayIdx - 1;
       const day = week[arrayIndex];
-      if (day !== null) dates.push(toISODate(state.viewYear, state.viewMonth, day));
+      if (day !== null) {
+        const iso = toISODate(state.viewYear, state.viewMonth, day);
+        const dateObj = new Date(iso + "T00:00:00");
+        if (dateObj.getDay() !== 0 && dateObj.getDay() !== 6) { // Solo hábiles
+          dates.push(iso);
+        }
+      }
     });
     applyBulkToggle(dates);
   }
 
   function toggleWeekSelection(week) {
-    const dates = week.filter((d) => d !== null).map((d) => toISODate(state.viewYear, state.viewMonth, d));
+    const dates = [];
+    week.forEach((day) => {
+      if (day !== null) {
+        const iso = toISODate(state.viewYear, state.viewMonth, day);
+        const dateObj = new Date(iso + "T00:00:00");
+        if (dateObj.getDay() !== 0 && dateObj.getDay() !== 6) { // Solo hábiles
+          dates.push(iso);
+        }
+      }
+    });
     applyBulkToggle(dates);
   }
 
@@ -714,169 +691,65 @@
     ev.preventDefault(); clearSelection(); renderCalendar();
   });
 
-  // TOGGLES UNIFICADOS EN PANEL
+  // RENDERIZADO DE BOTONES DE TURNO SEGÚN ABONO
+  function renderTurnoButtons() {
+    const group = document.getElementById('turno-group');
+    let html = '';
+    
+    if (state.abonoTipo === 'manana') {
+      html = `<button class="toggle-btn active morning" data-turno="manana">Mañana</button>`;
+      state.selectedTurno = "manana";
+    } else if (state.abonoTipo === 'tarde') {
+      html = `<button class="toggle-btn active afternoon" data-turno="tarde">Tarde</button>`;
+      state.selectedTurno = "tarde";
+    } else {
+      html = `
+        <button class="toggle-btn active morning" data-turno="manana">Mañana</button>
+        <button class="toggle-btn afternoon" data-turno="tarde">Tarde</button>
+        <button class="toggle-btn both" data-turno="ambos">Ambos</button>
+      `;
+      state.selectedTurno = "manana";
+    }
+    group.innerHTML = html;
+
+    document.querySelectorAll('.toggle-btn[data-turno]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.toggle-btn[data-turno]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.selectedTurno = btn.dataset.turno;
+      });
+    });
+  }
+
+  // TOGGLES DE ESTADO (VIAJA / NO VIAJA)
   document.querySelectorAll('.toggle-btn[data-estado]').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.toggle-btn[data-estado]').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       state.selectedEstado = btn.dataset.estado;
+
+      const turnoGroup = document.getElementById('turno-group');
+      if (state.selectedEstado === 'noviaja') {
+        turnoGroup.style.display = 'none'; // Ocultar botones de turno si es "No Viaja"
+      } else {
+        turnoGroup.style.display = 'flex';
+      }
     });
   });
 
-  document.querySelectorAll('.toggle-btn[data-turno]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.toggle-btn[data-turno]').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      state.selectedTurno = btn.dataset.turno;
-    });
-  });
-
-  // CEREBRO DE RECORRENCIA
-  function detectSelectionMode() {
-    if (state.selected.size === 0) return 'none';
-    if (state.selected.size === 1) return 'single';
-    const dates = Array.from(state.selected).map(d => new Date(d + "T00:00:00"));
-    const weekdays = new Set(dates.map(d => d.getDay()));
-    if (weekdays.size === 1) return 'weekday';
-    
-    const getWeekOfMonth = (d) => Math.ceil(d.getDate() / 7);
-    const weekNums = new Set(dates.map(d => getWeekOfMonth(d)));
-    if (weekNums.size === 1) return 'weeknum';
-    return 'multiple';
-  }
-
+  // PANEL DE ACCIÓN
   function renderActionPanel() {
     const panel = document.getElementById("action-panel");
     const n = state.selected.size;
     panel.classList.toggle("open", n > 0);
     document.getElementById("action-count").textContent = n === 1 ? "1 día seleccionado" : `${n} días seleccionados`;
-
-    const mode = detectSelectionMode();
-    const container = document.getElementById("recurrence-container");
-    container.innerHTML = "";
-
-    if (n === 0) return;
-
-    let html = '<div class="rec-options" style="font-size:0.85rem;color:var(--text-dim);">';
-    html += '<div style="margin-bottom:8px;font-weight:600;color:var(--text);">Opciones de repetición:</div>';
-    html += `<label class="rec-option"><input type="radio" name="rec-type" value="none" checked> No repetir (Solo días seleccionados)</label>`;
-
-    if (mode === 'single') {
-      const date = new Date(Array.from(state.selected)[0] + "T00:00:00");
-      const weekdayName = WEEKDAY_LABELS[date.getDay()];
-      const dayNum = date.getDate();
-      html += `
-        <label class="rec-option"><input type="radio" name="rec-type" value="weekday"> Repetir todos los ${weekdayName}</label>
-        <label class="rec-option"><input type="radio" name="rec-type" value="monthday"> Repetir el ${dayNum} de cada mes</label>
-      `;
-    } else if (mode === 'weekday') {
-      const date = new Date(Array.from(state.selected)[0] + "T00:00:00");
-      const weekdayName = WEEKDAY_LABELS[date.getDay()];
-      html += `
-        <label class="rec-option"><input type="radio" name="rec-type" value="weekday"> Repetir todos los ${weekdayName}</label>
-        <label class="rec-option"><input type="radio" name="rec-type" value="weekday_except"> Repetir ${weekdayName} excepto meses específicos...</label>
-        <div id="except-selector" class="month-exclude hidden">
-          ${MONTH_LABELS.map((m, i) => `<button type="button" data-month="${i}">${m}</button>`).join('')}
-        </div>
-      `;
-    } else if (mode === 'weeknum') {
-      const date = new Date(Array.from(state.selected)[0] + "T00:00:00");
-      const weekOfMonth = Math.ceil(date.getDate() / 7);
-      const ordinals = ["1ra", "2da", "3ra", "4ta", "5ta"];
-      html += `
-        <label class="rec-option"><input type="radio" name="rec-type" value="weeknum"> Repetir todas las ${ordinals[weekOfMonth-1]} semanas de cada mes</label>
-      `;
-    }
-
-    html += `
-      <div style="margin-top:12px;" id="range-block">
-        <small>Alcance de la repetición:</small>
-        <select id="rec-range" class="range-select">
-          <option value="1">Solo esta vez</option>
-          <option value="4w">Próximas 4 semanas</option>
-          <option value="3m">Próximos 3 meses</option>
-          <option value="6m">Próximos 6 meses</option>
-          <option value="1y">Resto del año actual</option>
-        </select>
-      </div>
-    `;
-    html += '</div>';
-    container.innerHTML = html;
-
-    const exceptRadio = document.querySelector('input[name="rec-type"][value="weekday_except"]');
-    if (exceptRadio) {
-      exceptRadio.addEventListener('change', () => {
-        document.getElementById('except-selector').classList.toggle('hidden', !exceptRadio.checked);
-      });
-      document.querySelectorAll('.month-exclude button').forEach(btn => {
-        btn.addEventListener('click', () => btn.classList.toggle('active'));
-      });
-    }
-
-    const noneRadio = document.querySelector('input[name="rec-type"][value="none"]');
-    const rangeBlock = document.getElementById('range-block');
-    noneRadio.addEventListener('change', () => {
-      rangeBlock.style.opacity = noneRadio.checked ? "0.5" : "1";
-      document.getElementById('rec-range').disabled = noneRadio.checked;
-    });
-    rangeBlock.style.opacity = "0.5";
-    document.getElementById('rec-range').disabled = true;
   }
 
   // GUARDADO DIRECTO
   document.getElementById("btn-guardar").addEventListener("click", () => processSave());
 
-  function calculateFinalDates() {
-    let baseDates = Array.from(state.selected);
-    const recTypeRadio = document.querySelector('input[name="rec-type"]:checked');
-    if (!recTypeRadio || recTypeRadio.value === "none") return baseDates; 
-
-    const range = document.getElementById("rec-range").value;
-    const recType = recTypeRadio.value;
-
-    let endDate = new Date(); endDate.setHours(23, 59, 59, 999);
-    if (range === "4w") endDate.setDate(endDate.getDate() + 28);
-    else if (range === "3m") endDate.setMonth(endDate.getMonth() + 3);
-    else if (range === "6m") endDate.setMonth(endDate.getMonth() + 6);
-    else if (range === "1y") endDate.setFullYear(endDate.getFullYear() + 1);
-
-    const result = new Set(baseDates);
-    const startDate = new Date(); startDate.setHours(0, 0, 0, 0);
-
-    const refDate = new Date(baseDates[0] + "T00:00:00");
-    const refWeekday = refDate.getDay();
-    const refDayOfMonth = refDate.getDate();
-    const refWeekOfMonth = Math.ceil(refDayOfMonth / 7);
-
-    const excludedMonths = Array.from(document.querySelectorAll('.month-exclude button.active')).map(b => parseInt(b.dataset.month));
-
-    let current = new Date(startDate);
-    while (current <= endDate) {
-      const cDay = current.getDay();
-      if (cDay !== 0 && cDay !== 6) { 
-        const cIso = toISODate(current.getFullYear(), current.getMonth() + 1, current.getDate());
-        
-        if (recType === "weekday") {
-          if (current.getDay() === refWeekday) result.add(cIso);
-        } else if (recType === "weekday_except") {
-          if (current.getDay() === refWeekday && !excludedMonths.includes(current.getMonth())) result.add(cIso);
-        } else if (recType === "monthday") {
-          if (current.getDate() === refDayOfMonth) result.add(cIso);
-        } else if (recType === "weeknum") {
-          if (Math.ceil(current.getDate() / 7) === refWeekOfMonth) {
-            const wasSelected = baseDates.some(d => new Date(d + "T00:00:00").getDay() === current.getDay());
-            if (wasSelected) result.add(cIso);
-          }
-        }
-      }
-      current.setDate(current.getDate() + 1);
-    }
-
-    return Array.from(result).sort();
-  }
-
   async function processSave() {
-    const finalDates = calculateFinalDates();
+    const finalDates = Array.from(state.selected);
     if (finalDates.length === 0) {
       toast("Seleccioná al menos un día.", "err");
       return;
