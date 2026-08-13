@@ -1,0 +1,1447 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#071020" />
+<title>Charter TI · Admin</title>
+<link rel="manifest" href="/manifest.json" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
+
+<style>
+  /* ---------------------------------------------------------------------
+     CHARTER TI — Design tokens (idénticos a index.html, no modificar)
+  --------------------------------------------------------------------- */
+  :root {
+    --navy: #071020;
+    --navy-2: #0c1a2e;
+    --navy-3: #10233c;
+    --sky: #3a8fd1;
+    --sky-dim: #6fb0e0;
+    --green: #2cb87a;
+    --red: #e04444;
+    --amber: #d1a53a;
+    --text: #e8eef7;
+    --text-dim: #9fb0c3;
+    --text-faint: #5c7189;
+    --glass-bg: rgba(255, 255, 255, 0.055);
+    --glass-bg-strong: rgba(255, 255, 255, 0.09);
+    --glass-border: rgba(255, 255, 255, 0.12);
+    --radius: 16px;
+    --radius-sm: 10px;
+    --safe-b: env(safe-area-inset-bottom, 0px);
+    --safe-t: env(safe-area-inset-top, 0px);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: radial-gradient(circle at 20% -10%, #0d2140 0%, var(--navy) 55%);
+    color: var(--text);
+    font-family: "Inter", system-ui, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+    overscroll-behavior-y: contain;
+  }
+
+  h1, h2, h3, .display {
+    font-family: "Syne", "Inter", sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+
+  button {
+    font-family: "Syne", "Inter", sans-serif;
+    font-weight: 600;
+    border: 0;
+    cursor: pointer;
+    color: inherit;
+  }
+
+  input, select, textarea {
+    font-family: "Inter", sans-serif;
+  }
+
+  .screen { min-height: 100dvh; }
+  .hidden { display: none !important; }
+
+  .glass {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border-radius: var(--radius);
+  }
+
+  /* ---------------- LOGIN ---------------- */
+  #screen-login {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .login-card {
+    width: 100%;
+    max-width: 380px;
+    padding: 32px 28px;
+    text-align: center;
+  }
+  .login-card .brand {
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--sky-dim);
+    margin-bottom: 6px;
+  }
+  .login-card h1 { font-size: 1.5rem; color: var(--text); margin-bottom: 4px; }
+  .login-card p { color: var(--text-dim); font-size: 0.9rem; line-height: 1.5; margin: 8px 0 22px; }
+
+  .field { text-align: left; margin-bottom: 16px; }
+  .field label {
+    display: block;
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+  }
+  .field input, .field select {
+    width: 100%;
+    padding: 13px 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--glass-border);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text);
+    font-size: 1rem;
+    letter-spacing: 0.01em;
+  }
+  .field input:focus, .field select:focus {
+    outline: none;
+    border-color: var(--sky);
+    box-shadow: 0 0 0 3px rgba(58, 143, 209, 0.25);
+  }
+  .field small.field-hint { display:block; margin-top:6px; font-size:0.72rem; color:var(--text-faint); }
+  input[type=date]::-webkit-calendar-picker-indicator,
+  input[type=time]::-webkit-calendar-picker-indicator { filter: invert(0.8); cursor: pointer; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 14px 18px;
+    border-radius: var(--radius-sm);
+    font-size: 0.98rem;
+    transition: transform 0.12s ease, opacity 0.12s ease, filter 0.12s ease;
+  }
+  .btn:active { transform: scale(0.98); }
+  .btn:disabled { opacity: 0.55; pointer-events: none; }
+  .btn-primary { background: var(--sky); color: #071020; }
+  .btn-primary:hover { filter: brightness(1.08); }
+  .btn-green { background: var(--green); color: #06251a; }
+  .btn-red { background: transparent; color: var(--red); border: 1px solid rgba(224, 68, 68, 0.5); }
+  .btn-ghost { background: transparent; color: var(--text-dim); border: 1px solid var(--glass-border); }
+  .btn-inline { width: auto; padding: 9px 16px; font-size: 0.85rem; }
+  .btn-sm { width: auto; padding: 7px 12px; font-size: 0.78rem; border-radius: 8px; }
+
+  .login-error {
+    margin-top: 14px;
+    font-size: 0.85rem;
+    color: var(--red);
+    min-height: 1.2em;
+  }
+
+  /* ---------------- APP SHELL ---------------- */
+  #screen-app {
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+  }
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: calc(14px + var(--safe-t)) 18px 12px;
+    flex-shrink: 0;
+  }
+  .topbar .who { display: flex; flex-direction: column; }
+  .topbar .who .hello { font-size: 0.72rem; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.1em; }
+  .topbar .who .name { font-size: 1.02rem; font-family: "Syne", sans-serif; font-weight: 700; word-break: break-all; }
+  .icon-btn {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    color: var(--text-dim);
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+
+  .tabs {
+    display: flex;
+    gap: 6px;
+    padding: 0 14px 14px;
+    flex-shrink: 0;
+    overflow-x: auto;
+  }
+  .tab {
+    flex: 1;
+    padding: 10px 4px;
+    text-align: center;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    background: transparent;
+    color: var(--text-dim);
+    border: 1px solid var(--glass-border);
+    white-space: nowrap;
+  }
+  .tab.active {
+    background: var(--sky);
+    color: #071020;
+    border-color: var(--sky);
+  }
+
+  main { flex: 1; overflow: hidden; position: relative; }
+  .tab-panel { height: 100%; overflow-y: auto; padding: 4px 18px calc(28px + var(--safe-b)); }
+
+  .section-title { font-size: 1.15rem; margin-bottom: 14px; }
+  .section-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .section-header .section-title { margin-bottom: 0; }
+
+  .form-card { padding: 18px 18px 20px; margin-bottom: 18px; }
+  .form-msg { margin-top: 12px; font-size: 0.83rem; min-height: 1.2em; }
+  .form-msg.ok { color: var(--green); }
+  .form-msg.err { color: var(--red); }
+
+  .turno-switch { display: flex; gap: 8px; }
+  .turno-switch button {
+    flex: 1;
+    padding: 9px 0;
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    color: var(--text-dim);
+  }
+  .turno-switch button.active {
+    background: rgba(58, 143, 209, 0.18);
+    border-color: var(--sky);
+    color: var(--sky-dim);
+  }
+
+  .switch-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+  }
+  .switch {
+    position: relative;
+    width: 42px; height: 24px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid var(--glass-border);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .switch .knob {
+    position: absolute;
+    top: 2px; left: 2px;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--text-dim);
+    transition: transform 0.15s ease, background 0.15s ease;
+  }
+  .switch.on { background: rgba(58, 143, 209, 0.35); border-color: var(--sky); }
+  .switch.on .knob { transform: translateX(18px); background: var(--sky); }
+
+  .status-card { padding: 16px 18px; margin-bottom: 18px; }
+  .status-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-faint); margin-bottom: 8px; }
+  .status-card .btn { margin-top: 14px; }
+
+  .search-input {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--glass-border);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text);
+    font-size: 0.95rem;
+    margin-bottom: 14px;
+  }
+  .search-input:focus { outline: none; border-color: var(--sky); }
+
+  .list { display: flex; flex-direction: column; gap: 10px; }
+  .list-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 13px 15px;
+    border-radius: var(--radius-sm);
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+  }
+  .list-row .info { min-width: 0; }
+  .list-row .name { font-family: "Syne", sans-serif; font-weight: 700; font-size: 0.95rem; }
+  .list-row .meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; align-items: center; }
+  .list-row .meta .plain { font-size: 0.78rem; color: var(--text-dim); }
+  .row-actions { display: flex; gap: 8px; flex-shrink: 0; }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+  .chip-green { background: rgba(44, 184, 122, 0.16); color: #7fe0b6; }
+  .chip-dim { background: rgba(255, 255, 255, 0.08); color: var(--text-dim); }
+  .chip-sky { background: rgba(58, 143, 209, 0.18); color: var(--sky-dim); }
+
+  .empty-state {
+    padding: 28px 16px;
+    text-align: center;
+    color: var(--text-faint);
+    font-size: 0.85rem;
+  }
+
+  /* ---------------- MODAL ---------------- */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 900;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 0;
+    background: rgba(7, 16, 32, 0.75);
+    backdrop-filter: blur(6px);
+  }
+  .modal-card {
+    width: 100%;
+    max-width: 440px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 22px 22px calc(22px + var(--safe-b));
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+  @media (min-width: 560px) {
+    .modal-overlay { align-items: center; padding: 24px; }
+    .modal-card { border-radius: var(--radius); max-height: 85vh; }
+  }
+  .modal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 18px;
+  }
+  .modal-header h3 { font-size: 1.05rem; }
+  .modal-close {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: var(--glass-bg-strong);
+    border: 1px solid var(--glass-border);
+    color: var(--text-dim);
+    font-size: 0.85rem;
+  }
+
+  /* ---------------- MANIFIESTO ---------------- */
+  .manifiesto-card { padding: 16px 16px 6px; margin-bottom: 16px; }
+  .manifiesto-header {
+    font-family: "Syne", sans-serif;
+    font-weight: 700;
+    color: var(--sky-dim);
+    font-size: 0.95rem;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--glass-border);
+  }
+  .manifiesto-header .sub { display:block; font-family:"Inter",sans-serif; font-weight:400; color: var(--text-faint); font-size: 0.76rem; margin-top: 3px; }
+  .manifiesto-item {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    font-size: 0.9rem;
+  }
+  .manifiesto-item:last-child { border-bottom: 0; }
+  .manifiesto-item .idx { color: var(--text-faint); font-size: 0.8rem; width: 20px; flex-shrink: 0; }
+  .manifiesto-item .who { flex: 1; min-width: 0; }
+  .manifiesto-item .punto { color: var(--text-dim); font-size: 0.8rem; }
+  .manifiesto-actions { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; margin-bottom: 20px; }
+
+  /* ---------------- HEATMAP (calendario admin) ---------------- */
+  .month-nav {
+    display: flex; align-items: center; justify-content: space-between;
+    margin: 14px 0;
+  }
+  .month-nav .label { font-size: 1.02rem; text-transform: capitalize; }
+  .month-nav button {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text-dim);
+  }
+  .cal-grid { padding: 14px 10px 16px; }
+  .cal-row { display: grid; grid-template-columns: 26px repeat(7, 1fr); gap: 4px; }
+  .cal-row.head { margin-bottom: 6px; }
+  .cal-head-cell { text-align: center; font-size: 0.7rem; color: var(--text-faint); padding: 6px 0; }
+  .week-num { display: flex; align-items: center; justify-content: center; font-size: 0.62rem; color: var(--text-faint); }
+  .heat-cell {
+    aspect-ratio: 1 / 1;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    border-radius: 9px;
+    font-size: 0.72rem;
+    border: 1px solid transparent;
+    color: var(--text);
+    cursor: default;
+  }
+  .heat-cell.clickable { cursor: pointer; }
+  .heat-cell.empty { visibility: hidden; }
+  .heat-cell.today { border-color: var(--sky); }
+  .heat-cell .n { font-family: "Syne", sans-serif; font-weight: 700; font-size: 0.85rem; }
+  .heat-cell .d { font-size: 0.6rem; color: var(--text-faint); margin-top: 1px; }
+  .cal-legend { display: flex; align-items: center; gap: 8px; justify-content: center; margin-top: 10px; font-size: 0.72rem; color: var(--text-faint); }
+  .cal-legend .scale { display: flex; gap: 2px; }
+  .cal-legend .scale i { width: 14px; height: 10px; border-radius: 2px; display: inline-block; }
+
+  /* ---------------- TOAST ---------------- */
+  #toast {
+    position: fixed;
+    left: 50%; bottom: calc(24px + var(--safe-b));
+    transform: translate(-50%, 12px);
+    padding: 11px 18px;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    z-index: 999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    background: var(--navy-3);
+    border: 1px solid var(--glass-border);
+    max-width: 88vw;
+  }
+  #toast.show { opacity: 1; transform: translate(-50%, 0); }
+  #toast.err { border-color: rgba(224, 68, 68, 0.5); color: #ffb3b3; }
+  #toast.ok { border-color: rgba(44, 184, 122, 0.5); color: #a8f0cf; }
+</style>
+</head>
+<body>
+
+<!-- =====================================================================
+     PANTALLA: LOGIN ADMIN (email + contraseña)
+===================================================================== -->
+<section id="screen-login" class="screen">
+  <div class="login-card glass">
+    <div class="brand">Charter TI · Admin</div>
+    <h1>Panel de administración</h1>
+    <p>Ingresá con tu cuenta de administrador para gestionar despacho, pasajeros y manifiestos.</p>
+    <form id="form-login" autocomplete="on">
+      <div class="field">
+        <label for="input-email">Email</label>
+        <input id="input-email" name="email" type="email" autocomplete="username" required />
+      </div>
+      <div class="field">
+        <label for="input-password">Contraseña</label>
+        <input id="input-password" name="password" type="password" autocomplete="current-password" required />
+      </div>
+      <button type="submit" id="btn-login" class="btn btn-primary">Ingresar</button>
+      <div id="login-error" class="login-error"></div>
+    </form>
+  </div>
+</section>
+
+<!-- =====================================================================
+     PANTALLA: APP ADMIN
+===================================================================== -->
+<section id="screen-app" class="screen hidden">
+
+  <header class="topbar">
+    <div class="who">
+      <span class="hello">Admin</span>
+      <span class="name" id="topbar-name">—</span>
+    </div>
+    <button id="btn-logout" class="icon-btn" title="Cerrar sesión" aria-label="Cerrar sesión">⏻</button>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab active" data-tab="despacho">Despacho</button>
+    <button class="tab" data-tab="pasajeros">Pasajeros</button>
+    <button class="tab" data-tab="manifiesto">Manifiesto</button>
+    <button class="tab" data-tab="calendario">Calendario</button>
+  </nav>
+
+  <main>
+    <!-- ============================================================
+         MÓDULO 1 — DESPACHO DIARIO
+    ============================================================ -->
+    <section id="tab-despacho" class="tab-panel">
+      <h2 class="section-title">Despacho diario</h2>
+
+      <form id="form-despacho" class="glass form-card">
+        <div class="field">
+          <label for="despacho-fecha">Fecha</label>
+          <input type="date" id="despacho-fecha" required />
+        </div>
+        <div class="field">
+          <label>Turno</label>
+          <div class="turno-switch" id="despacho-turno-switch">
+            <button type="button" data-turno="manana" class="active">Mañana</button>
+            <button type="button" data-turno="tarde">Tarde</button>
+          </div>
+        </div>
+        <div class="field">
+          <label for="despacho-unidad">Unidad</label>
+          <select id="despacho-unidad" required></select>
+        </div>
+        <div class="field" style="margin-bottom:0;">
+          <label for="despacho-chofer">Chofer</label>
+          <input id="despacho-chofer" type="text" placeholder="Nombre del chofer" required />
+        </div>
+        <button type="submit" id="btn-guardar-despacho" class="btn btn-primary" style="margin-top:18px;">Guardar y activar GPS</button>
+        <div id="despacho-msg" class="form-msg"></div>
+      </form>
+
+      <div class="glass status-card">
+        <div class="status-label">Estado para la fecha y turno elegidos</div>
+        <div id="despacho-status-body">Cargando…</div>
+        <button id="btn-finalizar-despacho" class="btn btn-red hidden">Finalizar turno (apagar GPS)</button>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         MÓDULO 2 — GESTIÓN DE PASAJEROS
+    ============================================================ -->
+    <section id="tab-pasajeros" class="tab-panel hidden">
+      <div class="section-header">
+        <h2 class="section-title">Pasajeros</h2>
+        <button id="btn-nuevo-pasajero" class="btn btn-primary btn-inline" type="button">+ Nuevo</button>
+      </div>
+      <input id="pasajeros-buscar" type="search" class="search-input" placeholder="Buscar por nombre o DNI…" />
+      <div id="pasajeros-list" class="list">
+        <div class="empty-state">Cargando…</div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         MÓDULO 3 — MANIFIESTO DE CARGA
+    ============================================================ -->
+    <section id="tab-manifiesto" class="tab-panel hidden">
+      <h2 class="section-title">Manifiesto de carga</h2>
+
+      <div class="glass form-card">
+        <div class="field">
+          <label for="manifiesto-fecha">Fecha</label>
+          <input type="date" id="manifiesto-fecha" />
+        </div>
+        <div class="field" style="margin-bottom:0;">
+          <label>Turno</label>
+          <div class="turno-switch" id="manifiesto-turno-switch">
+            <button type="button" data-turno="manana" class="active">Mañana</button>
+            <button type="button" data-turno="tarde">Tarde</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="glass manifiesto-card">
+        <div class="manifiesto-header" id="manifiesto-unidad-info">—</div>
+        <div id="manifiesto-list"></div>
+        <div id="manifiesto-empty" class="empty-state hidden">No hay pasajeros confirmados para esta fecha y turno.</div>
+      </div>
+
+      <div class="manifiesto-actions">
+        <button id="btn-enviar-hoja" class="btn btn-green" type="button">Enviar Hoja de Ruta</button>
+        <button id="btn-copiar-hoja" class="btn btn-ghost" type="button">Copiar texto</button>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         MÓDULO 4 — CALENDARIO DE OCUPACIÓN (HEATMAP)
+    ============================================================ -->
+    <section id="tab-calendario" class="tab-panel hidden">
+      <h2 class="section-title">Ocupación mensual</h2>
+
+      <div class="turno-switch" id="heatmap-turno-switch">
+        <button type="button" data-turno="manana">Mañana</button>
+        <button type="button" data-turno="tarde">Tarde</button>
+        <button type="button" data-turno="ambos" class="active">Ambos</button>
+      </div>
+
+      <div class="month-nav">
+        <button id="heatmap-prev-month" aria-label="Mes anterior" type="button">‹</button>
+        <div class="label display" id="heatmap-month-label">—</div>
+        <button id="heatmap-next-month" aria-label="Mes siguiente" type="button">›</button>
+      </div>
+
+      <div class="cal-grid glass">
+        <div class="cal-row head">
+          <div class="cal-head-cell">Sem</div>
+          <div class="cal-head-cell">L</div>
+          <div class="cal-head-cell">M</div>
+          <div class="cal-head-cell">X</div>
+          <div class="cal-head-cell">J</div>
+          <div class="cal-head-cell">V</div>
+          <div class="cal-head-cell">S</div>
+          <div class="cal-head-cell">D</div>
+        </div>
+        <div id="heatmap-body"><!-- filas generadas por JS --></div>
+      </div>
+
+      <div class="cal-legend">
+        <span>Menos</span>
+        <span class="scale" id="heatmap-scale"></span>
+        <span>Más</span>
+      </div>
+    </section>
+  </main>
+</section>
+
+<!-- =====================================================================
+     MODAL — ALTA / EDICIÓN DE PASAJERO
+===================================================================== -->
+<div id="modal-pasajero" class="modal-overlay hidden">
+  <div class="modal-card glass">
+    <div class="modal-header">
+      <h3 id="modal-pasajero-title">Nuevo pasajero</h3>
+      <button class="modal-close" id="modal-pasajero-close" type="button" aria-label="Cerrar">✕</button>
+    </div>
+    <form id="form-pasajero">
+      <input type="hidden" id="pasajero-dni-original" />
+      <div class="field">
+        <label for="pasajero-dni">DNI</label>
+        <input id="pasajero-dni" inputmode="numeric" pattern="[0-9]{6,9}" placeholder="Ej: 12345678" required />
+      </div>
+      <div class="field">
+        <label for="pasajero-nombre">Nombre</label>
+        <input id="pasajero-nombre" type="text" required />
+      </div>
+      <div class="field">
+        <label for="pasajero-telefono">Teléfono</label>
+        <input id="pasajero-telefono" type="tel" placeholder="Opcional" />
+      </div>
+      <div class="field">
+        <label for="pasajero-punto">Punto de subida</label>
+        <input id="pasajero-punto" type="text" list="puntos-subida-list" placeholder="Ej: Plaza" />
+        <datalist id="puntos-subida-list"></datalist>
+      </div>
+      <div class="field">
+        <label for="pasajero-horario">Horario de subida</label>
+        <input id="pasajero-horario" type="time" />
+        <small class="field-hint">Opcional — se usa para ordenar el manifiesto.</small>
+      </div>
+      <div class="field switch-row">
+        <span>Es abonado (acceso a la app)</span>
+        <div class="switch" id="switch-es-abonado"><div class="knob"></div></div>
+      </div>
+      <div class="field" id="field-abono-tipo" style="margin-bottom:4px;">
+        <label for="pasajero-abono-tipo">Tipo de abono</label>
+        <select id="pasajero-abono-tipo">
+          <option value="M">Mañana</option>
+          <option value="T">Tarde</option>
+          <option value="D">Día completo</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary" style="margin-top:16px;">Guardar</button>
+      <button type="button" id="btn-eliminar-pasajero" class="btn btn-red hidden" style="margin-top:10px;">Eliminar pasajero</button>
+      <div id="pasajero-form-msg" class="form-msg"></div>
+    </form>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+
+<script>
+(function () {
+  "use strict";
+
+  // =========================================================================
+  // CONFIG
+  // =========================================================================
+  const SUPABASE_URL = "https://hmhbhjztlmklmhzzfbgz.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_HMwjMRn_QNztV3zhp0eAsw_OINb11YI";
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  // -------------------------------------------------------------------------
+  // ⚠️ ESQUEMA ASUMIDO — no tenía el SQL de despacho/pasajeros/asistencias/
+  // plantillas/unidades/admins a la vista, así que infiero los nombres de
+  // columnas a partir de lo que usa index.html (rpc_login_pasajero,
+  // rpc_calendario_mes, rpc_set_asistencia). Si tu esquema real difiere,
+  // ajustá los nombres acá abajo — el resto del archivo los referencia
+  // desde este único lugar.
+  // -------------------------------------------------------------------------
+  const T = {
+    admins: "admins",             // user_id (uuid) referenciando auth.users
+    unidades: "unidades",         // id, interno, patente
+    despacho: "despacho",         // fecha (date), turno (text), unidad_id (fk), chofer (text), activo (bool)
+    pasajeros: "pasajeros",       // dni (pk, text), nombre, telefono, es_abonado (bool), abono_tipo ('M'|'T'|'D'), punto_subida, horario_subida
+    asistencias: "asistencias",   // dni, fecha (date), turno (text), viaja (bool), origen (text)
+    plantillas: "plantillas",     // dni, dia_semana (0=Lun..6=Dom), turno (text), viaja (bool)
+  };
+  const RPC_IS_ADMIN = "fn_is_admin"; // se llama sin argumentos, valida contra auth.uid()
+  // Conflicto asumido para el upsert de despacho: una unidad activa por fecha+turno.
+  const DESPACHO_CONFLICT = "fecha,turno";
+  // Conflicto asumido para el upsert de pasajeros: dni como clave primaria.
+  const PASAJERO_CONFLICT = "dni";
+
+  const TURNO_LABELS = { manana: "Mañana", tarde: "Tarde" };
+  const MONTH_LABELS = [
+    "enero", "febrero", "marzo", "abril", "mayo", "junio",
+    "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre",
+  ];
+  const WEEKDAY_SHORT = ["L", "M", "X", "J", "V", "S", "D"];
+
+  // =========================================================================
+  // ESTADO
+  // =========================================================================
+  const state = {
+    session: null,
+    activeTab: "despacho",
+    unidades: [],                 // [{id, interno, patente}]
+    pasajeros: [],                // cache de pasajeros
+    pasajerosByDni: new Map(),
+    plantillasIdx: null,          // Map("dow|turno" -> Map(dni -> viaja))  (cache global, recargable)
+    heatmap: {
+      viewYear: new Date().getFullYear(),
+      viewMonth: new Date().getMonth() + 1,
+      turno: "ambos",
+    },
+    editingPasajeroDni: null,     // si no es null, el modal está en modo edición
+    lastHojaTexto: "",
+  };
+
+  // =========================================================================
+  // HELPERS DE FECHA
+  // =========================================================================
+  function pad2(n) { return String(n).padStart(2, "0"); }
+  function toISODate(y, m, d) { return `${y}-${pad2(m)}-${pad2(d)}`; }
+  function todayISO() {
+    const t = new Date();
+    return toISODate(t.getFullYear(), t.getMonth() + 1, t.getDate());
+  }
+  function parseISODateLocal(iso) {
+    const [y, m, d] = iso.split("-").map(Number);
+    return new Date(y, m - 1, d);
+  }
+  // 0 = Lunes ... 6 = Domingo (mismo criterio que el calendario de index.html)
+  function weekdayMon0(dateObj) { return (dateObj.getDay() + 6) % 7; }
+
+  // =========================================================================
+  // TOAST
+  // =========================================================================
+  let toastTimer = null;
+  function toast(msg, kind) {
+    const el = document.getElementById("toast");
+    el.textContent = msg;
+    el.className = "show" + (kind ? " " + kind : "");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { el.className = ""; }, 3000);
+  }
+
+  // =========================================================================
+  // AUTENTICACIÓN
+  // =========================================================================
+  const formLogin = document.getElementById("form-login");
+  const btnLogin = document.getElementById("btn-login");
+  const loginError = document.getElementById("login-error");
+
+  async function checkIsAdmin() {
+    try {
+      const { data, error } = await supabase.rpc(RPC_IS_ADMIN);
+      if (error) { console.error(error); return false; }
+      if (Array.isArray(data)) return data[0] === true;
+      return data === true;
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
+  }
+
+  formLogin.addEventListener("submit", async (ev) => {
+    ev.preventDefault();
+    const email = document.getElementById("input-email").value.trim();
+    const password = document.getElementById("input-password").value;
+    loginError.textContent = "";
+    btnLogin.disabled = true;
+    btnLogin.textContent = "Verificando...";
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      const isAdmin = await checkIsAdmin();
+      if (!isAdmin) {
+        await supabase.auth.signOut();
+        loginError.textContent = "Esta cuenta no tiene permisos de administrador.";
+        return;
+      }
+      enterApp(data.session);
+    } catch (e) {
+      console.error(e);
+      loginError.textContent = "No pudimos iniciar sesión. Revisá el email y la contraseña.";
+    } finally {
+      btnLogin.disabled = false;
+      btnLogin.textContent = "Ingresar";
+    }
+  });
+
+  document.getElementById("btn-logout").addEventListener("click", async () => {
+    await supabase.auth.signOut();
+    exitApp();
+  });
+
+  supabase.auth.onAuthStateChange((event) => {
+    if (event === "SIGNED_OUT") exitApp();
+  });
+
+  function enterApp(session) {
+    state.session = session;
+    document.getElementById("topbar-name").textContent = (session.user && session.user.email) || "Admin";
+    document.getElementById("screen-login").classList.add("hidden");
+    document.getElementById("screen-app").classList.remove("hidden");
+    initDefaults();
+    loadTabData("despacho");
+  }
+
+  function exitApp() {
+    state.session = null;
+    document.getElementById("screen-app").classList.add("hidden");
+    document.getElementById("screen-login").classList.remove("hidden");
+    document.getElementById("input-password").value = "";
+  }
+
+  function initDefaults() {
+    document.getElementById("despacho-fecha").value = todayISO();
+    document.getElementById("manifiesto-fecha").value = todayISO();
+  }
+
+  // Si ya había una sesión guardada por el navegador, retomarla.
+  supabase.auth.getSession().then(async ({ data }) => {
+    if (data && data.session) {
+      const isAdmin = await checkIsAdmin();
+      if (isAdmin) enterApp(data.session);
+      else await supabase.auth.signOut();
+    }
+  });
+
+  // =========================================================================
+  // TABS
+  // =========================================================================
+  document.querySelectorAll(".tab").forEach((btn) => {
+    btn.addEventListener("click", () => switchTab(btn.dataset.tab));
+  });
+
+  function switchTab(tab) {
+    state.activeTab = tab;
+    document.querySelectorAll(".tab").forEach((b) => b.classList.toggle("active", b.dataset.tab === tab));
+    ["despacho", "pasajeros", "manifiesto", "calendario"].forEach((t) => {
+      document.getElementById("tab-" + t).classList.toggle("hidden", t !== tab);
+    });
+    loadTabData(tab);
+  }
+
+  function loadTabData(tab) {
+    if (tab === "despacho") { loadUnidades().then(refreshDespachoStatus); }
+    else if (tab === "pasajeros") { loadPasajeros(); }
+    else if (tab === "manifiesto") { ensurePlantillas().then(() => { loadPasajeros(true); loadManifiesto(); }); }
+    else if (tab === "calendario") { ensurePlantillas().then(() => { loadPasajeros(true); renderHeatmapMonthLabel(); loadHeatmap(); }); }
+  }
+
+  // =========================================================================
+  // MÓDULO 1 — DESPACHO DIARIO
+  // =========================================================================
+  let despachoTurno = "manana";
+  document.querySelectorAll("#despacho-turno-switch button").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      despachoTurno = btn.dataset.turno;
+      document.querySelectorAll("#despacho-turno-switch button").forEach((b) => b.classList.toggle("active", b === btn));
+      refreshDespachoStatus();
+    });
+  });
+  document.getElementById("despacho-fecha").addEventListener("change", refreshDespachoStatus);
+
+  async function loadUnidades() {
+    if (state.unidades.length) return fillUnidadesSelect();
+    try {
+      const { data, error } = await supabase.from(T.unidades).select("id, interno, patente").order("interno");
+      if (error) throw error;
+      state.unidades = data || [];
+      fillUnidadesSelect();
+    } catch (e) {
+      console.error(e);
+      toast("No se pudieron cargar las unidades.", "err");
+    }
+  }
+
+  function fillUnidadesSelect() {
+    const sel = document.getElementById("despacho-unidad");
+    sel.innerHTML = state.unidades
+      .map((u) => `<option value="${u.id}">Interno ${u.interno}${u.patente ? " · " + u.patente : ""}</option>`)
+      .join("");
+  }
+
+  document.getElementById("form-despacho").addEventListener("submit", async (ev) => {
+    ev.preventDefault();
+    const fecha = document.getElementById("despacho-fecha").value;
+    const unidadId = document.getElementById("despacho-unidad").value;
+    const chofer = document.getElementById("despacho-chofer").value.trim();
+    const msg = document.getElementById("despacho-msg");
+    const btn = document.getElementById("btn-guardar-despacho");
+    msg.textContent = "";
+    msg.className = "form-msg";
+    if (!fecha || !unidadId || !chofer) {
+      msg.textContent = "Completá turno, unidad y chofer.";
+      msg.className = "form-msg err";
+      return;
+    }
+    btn.disabled = true;
+    btn.textContent = "Guardando...";
+    try {
+      const { error } = await supabase.from(T.despacho).upsert(
+        { fecha, turno: despachoTurno, unidad_id: unidadId, chofer, activo: true },
+        { onConflict: DESPACHO_CONFLICT }
+      );
+      if (error) throw error;
+      msg.textContent = "Despacho guardado. GPS activado para ese turno.";
+      msg.className = "form-msg ok";
+      toast("Despacho guardado", "ok");
+      refreshDespachoStatus();
+    } catch (e) {
+      console.error(e);
+      msg.textContent = "No se pudo guardar el despacho. Revisá la conexión.";
+      msg.className = "form-msg err";
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Guardar y activar GPS";
+    }
+  });
+
+  async function refreshDespachoStatus() {
+    const fecha = document.getElementById("despacho-fecha").value || todayISO();
+    const body = document.getElementById("despacho-status-body");
+    const btnFin = document.getElementById("btn-finalizar-despacho");
+    body.textContent = "Cargando…";
+    btnFin.classList.add("hidden");
+    try {
+      const { data, error } = await supabase
+        .from(T.despacho)
+        .select("unidad_id, chofer, activo, " + T.unidades + "(interno, patente)")
+        .eq("fecha", fecha)
+        .eq("turno", despachoTurno)
+        .maybeSingle();
+      if (error) throw error;
+      if (!data) {
+        body.innerHTML = `Sin despacho cargado para <b>${TURNO_LABELS[despachoTurno]}</b> el ${fecha}.`;
+        return;
+      }
+      const unidad = data[T.unidades] || {};
+      const estado = data.activo
+        ? `<span class="chip chip-green">GPS activo</span>`
+        : `<span class="chip chip-dim">Finalizado</span>`;
+      body.innerHTML =
+        `Interno ${unidad.interno || "—"}${unidad.patente ? " · " + unidad.patente : ""} — ${data.chofer || "—"} ${estado}`;
+      btnFin.classList.toggle("hidden", !data.activo);
+    } catch (e) {
+      console.error(e);
+      body.textContent = "No se pudo consultar el estado del despacho.";
+    }
+  }
+
+  document.getElementById("btn-finalizar-despacho").addEventListener("click", async () => {
+    const fecha = document.getElementById("despacho-fecha").value || todayISO();
+    try {
+      const { error } = await supabase
+        .from(T.despacho)
+        .update({ activo: false })
+        .eq("fecha", fecha)
+        .eq("turno", despachoTurno);
+      if (error) throw error;
+      toast("Turno finalizado", "ok");
+      refreshDespachoStatus();
+    } catch (e) {
+      console.error(e);
+      toast("No se pudo finalizar el turno.", "err");
+    }
+  });
+
+  // =========================================================================
+  // MÓDULO 2 — GESTIÓN DE PASAJEROS
+  // =========================================================================
+  async function loadPasajeros(silent) {
+    const listEl = document.getElementById("pasajeros-list");
+    if (!silent) listEl.innerHTML = `<div class="empty-state">Cargando…</div>`;
+    try {
+      const { data, error } = await supabase
+        .from(T.pasajeros)
+        .select("dni, nombre, telefono, es_abonado, abono_tipo, punto_subida, horario_subida")
+        .order("nombre");
+      if (error) throw error;
+      state.pasajeros = data || [];
+      state.pasajerosByDni = new Map(state.pasajeros.map((p) => [String(p.dni), p]));
+      fillPuntosDatalist();
+      if (!silent) renderPasajeros();
+    } catch (e) {
+      console.error(e);
+      if (!silent) listEl.innerHTML = `<div class="empty-state">No se pudieron cargar los pasajeros.</div>`;
+    }
+  }
+
+  function fillPuntosDatalist() {
+    const puntos = Array.from(new Set(state.pasajeros.map((p) => p.punto_subida).filter(Boolean)));
+    document.getElementById("puntos-subida-list").innerHTML = puntos.map((p) => `<option value="${p}"></option>`).join("");
+  }
+
+  document.getElementById("pasajeros-buscar").addEventListener("input", renderPasajeros);
+
+  function renderPasajeros() {
+    const q = document.getElementById("pasajeros-buscar").value.trim().toLowerCase();
+    const listEl = document.getElementById("pasajeros-list");
+    const filtered = state.pasajeros.filter((p) => {
+      if (!q) return true;
+      return (p.nombre || "").toLowerCase().includes(q) || String(p.dni || "").includes(q);
+    });
+    if (!filtered.length) {
+      listEl.innerHTML = `<div class="empty-state">No hay pasajeros que coincidan con la búsqueda.</div>`;
+      return;
+    }
+    listEl.innerHTML = filtered.map((p) => {
+      const abonadoChip = p.es_abonado
+        ? `<span class="chip chip-green">Abonado</span>`
+        : `<span class="chip chip-dim">Eventual</span>`;
+      const tipoChip = p.es_abonado && p.abono_tipo
+        ? `<span class="chip chip-sky">${abonoTipoLabel(p.abono_tipo)}</span>`
+        : "";
+      const punto = p.punto_subida ? `<span class="plain">${p.punto_subida}</span>` : "";
+      return `
+        <div class="list-row" data-dni="${p.dni}">
+          <div class="info">
+            <div class="name">${p.nombre || "(sin nombre)"}</div>
+            <div class="meta">
+              <span class="plain">DNI ${p.dni}</span>
+              ${abonadoChip}${tipoChip}${punto}
+            </div>
+          </div>
+          <div class="row-actions">
+            <button class="btn btn-ghost btn-sm" data-action="editar" data-dni="${p.dni}" type="button">Editar</button>
+          </div>
+        </div>`;
+    }).join("");
+
+    listEl.querySelectorAll('[data-action="editar"]').forEach((btn) => {
+      btn.addEventListener("click", () => openPasajeroModal(btn.dataset.dni));
+    });
+  }
+
+  function abonoTipoLabel(tipo) {
+    return tipo === "M" ? "Mañana" : tipo === "T" ? "Tarde" : tipo === "D" ? "Día completo" : tipo;
+  }
+
+  // --- Modal alta/edición ---
+  const modalPasajero = document.getElementById("modal-pasajero");
+  const switchAbonado = document.getElementById("switch-es-abonado");
+  const fieldAbonoTipo = document.getElementById("field-abono-tipo");
+
+  document.getElementById("btn-nuevo-pasajero").addEventListener("click", () => openPasajeroModal(null));
+  document.getElementById("modal-pasajero-close").addEventListener("click", closePasajeroModal);
+  modalPasajero.addEventListener("click", (ev) => { if (ev.target === modalPasajero) closePasajeroModal(); });
+
+  switchAbonado.addEventListener("click", () => {
+    const on = !switchAbonado.classList.contains("on");
+    switchAbonado.classList.toggle("on", on);
+    fieldAbonoTipo.classList.toggle("hidden", !on);
+  });
+
+  function openPasajeroModal(dni) {
+    state.editingPasajeroDni = dni;
+    document.getElementById("pasajero-form-msg").textContent = "";
+    document.getElementById("pasajero-form-msg").className = "form-msg";
+    const btnEliminar = document.getElementById("btn-eliminar-pasajero");
+
+    if (dni) {
+      const p = state.pasajerosByDni.get(String(dni)) || {};
+      document.getElementById("modal-pasajero-title").textContent = "Editar pasajero";
+      document.getElementById("pasajero-dni-original").value = dni;
+      document.getElementById("pasajero-dni").value = p.dni || "";
+      document.getElementById("pasajero-dni").disabled = true;
+      document.getElementById("pasajero-nombre").value = p.nombre || "";
+      document.getElementById("pasajero-telefono").value = p.telefono || "";
+      document.getElementById("pasajero-punto").value = p.punto_subida || "";
+      document.getElementById("pasajero-horario").value = p.horario_subida ? p.horario_subida.slice(0, 5) : "";
+      switchAbonado.classList.toggle("on", !!p.es_abonado);
+      fieldAbonoTipo.classList.toggle("hidden", !p.es_abonado);
+      document.getElementById("pasajero-abono-tipo").value = p.abono_tipo || "M";
+      btnEliminar.classList.remove("hidden");
+    } else {
+      document.getElementById("modal-pasajero-title").textContent = "Nuevo pasajero";
+      document.getElementById("pasajero-dni-original").value = "";
+      document.getElementById("form-pasajero").reset();
+      document.getElementById("pasajero-dni").disabled = false;
+      switchAbonado.classList.remove("on");
+      fieldAbonoTipo.classList.add("hidden");
+      btnEliminar.classList.add("hidden");
+    }
+    modalPasajero.classList.remove("hidden");
+  }
+
+  function closePasajeroModal() {
+    modalPasajero.classList.add("hidden");
+    document.getElementById("pasajero-dni").disabled = false;
+    state.editingPasajeroDni = null;
+  }
+
+  document.getElementById("form-pasajero").addEventListener("submit", async (ev) => {
+    ev.preventDefault();
+    const msg = document.getElementById("pasajero-form-msg");
+    const dni = document.getElementById("pasajero-dni").value.trim();
+    if (!/^[0-9]{6,9}$/.test(dni)) {
+      msg.textContent = "Ingresá un DNI válido (solo números).";
+      msg.className = "form-msg err";
+      return;
+    }
+    const record = {
+      dni,
+      nombre: document.getElementById("pasajero-nombre").value.trim(),
+      telefono: document.getElementById("pasajero-telefono").value.trim() || null,
+      punto_subida: document.getElementById("pasajero-punto").value.trim() || null,
+      horario_subida: document.getElementById("pasajero-horario").value || null,
+      es_abonado: switchAbonado.classList.contains("on"),
+    };
+    record.abono_tipo = record.es_abonado ? document.getElementById("pasajero-abono-tipo").value : null;
+
+    const submitBtn = ev.target.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    try {
+      const { error } = await supabase.from(T.pasajeros).upsert(record, { onConflict: PASAJERO_CONFLICT });
+      if (error) throw error;
+      toast("Pasajero guardado", "ok");
+      closePasajeroModal();
+      await loadPasajeros();
+    } catch (e) {
+      console.error(e);
+      msg.textContent = "No se pudo guardar. Verificá que el DNI no esté repetido.";
+      msg.className = "form-msg err";
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+
+  document.getElementById("btn-eliminar-pasajero").addEventListener("click", async () => {
+    const dni = document.getElementById("pasajero-dni-original").value;
+    if (!dni) return;
+    if (!confirm(`¿Eliminar al pasajero con DNI ${dni}? Esta acción no se puede deshacer.`)) return;
+    try {
+      const { error } = await supabase.from(T.pasajeros).delete().eq("dni", dni);
+      if (error) throw error;
+      toast("Pasajero eliminado", "ok");
+      closePasajeroModal();
+      await loadPasajeros();
+    } catch (e) {
+      console.error(e);
+      toast("No se pudo eliminar el pasajero.", "err");
+    }
+  });
+
+  // =========================================================================
+  // PLANTILLAS (cache global — tabla chica, se recarga por sesión de módulo)
+  // =========================================================================
+  async function ensurePlantillas() {
+    if (state.plantillasIdx) return state.plantillasIdx;
+    try {
+      const { data, error } = await supabase.from(T.plantillas).select("dni, dia_semana, turno, viaja");
+      if (error) throw error;
+      const idx = new Map();
+      (data || []).forEach((row) => {
+        const key = `${row.dia_semana}|${row.turno}`;
+        if (!idx.has(key)) idx.set(key, new Map());
+        idx.get(key).set(String(row.dni), !!row.viaja);
+      });
+      state.plantillasIdx = idx;
+      return idx;
+    } catch (e) {
+      console.error(e);
+      state.plantillasIdx = new Map();
+      toast("No se pudieron cargar las plantillas semanales.", "err");
+      return state.plantillasIdx;
+    }
+  }
+
+  // Combina plantilla (default semanal) con asistencias manuales (tienen prioridad)
+  // para un turno puntual, y devuelve Map(dni -> viaja:boolean).
+  function mergeViajanMap(dow, turno, asistenciasMap) {
+    const base = state.plantillasIdx.get(`${dow}|${turno}`) || new Map();
+    const merged = new Map(base);
+    (asistenciasMap || new Map()).forEach((v, k) => merged.set(k, v));
+    return merged;
+  }
+
+  // =========================================================================
+  // MÓDULO 3 — MANIFIESTO DE CARGA
+  // =========================================================================
+  let manifiestoTurno = "manana";
+  document.querySelectorAll("#manifiesto-turno-switch button").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      manifiestoTurno = btn.dataset.turno;
+      document.querySelectorAll("#manifiesto-turno-switch button").forEach((b) => b.classList.toggle("active", b === btn));
+      loadManifiesto();
+    });
+  });
+  document.getElementById("manifiesto-fecha").addEventListener("change", loadManifiesto);
+
+  async function loadManifiesto() {
+    const fecha = document.getElementById("manifiesto-fecha").value || todayISO();
+    const listEl = document.getElementById("manifiesto-list");
+    const emptyEl = document.getElementById("manifiesto-empty");
+    const headerEl = document.getElementById("manifiesto-unidad-info");
+    listEl.innerHTML = "";
+    emptyEl.classList.add("hidden");
+    headerEl.textContent = "Cargando…";
+
+    try {
+      await ensurePlantillas();
+      if (!state.pasajeros.length) await loadPasajeros(true);
+
+      const [despachoRes, asistRes] = await Promise.all([
+        supabase.from(T.despacho)
+          .select("chofer, activo, " + T.unidades + "(interno, patente)")
+          .eq("fecha", fecha).eq("turno", manifiestoTurno).maybeSingle(),
+        supabase.from(T.asistencias)
+          .select("dni, viaja")
+          .eq("fecha", fecha).eq("turno", manifiestoTurno),
+      ]);
+      if (despachoRes.error) throw despachoRes.error;
+      if (asistRes.error) throw asistRes.error;
+
+      const unidad = (despachoRes.data && despachoRes.data[T.unidades]) || null;
+      const chofer = despachoRes.data ? despachoRes.data.chofer : null;
+      if (unidad) {
+        headerEl.innerHTML = `Interno ${unidad.interno || "—"}${unidad.patente ? " · " + unidad.patente : ""} — ${chofer || "—"}` +
+          `<span class="sub">${fecha} · Turno ${TURNO_LABELS[manifiestoTurno]}</span>`;
+      } else {
+        headerEl.innerHTML = `Sin despacho asignado<span class="sub">${fecha} · Turno ${TURNO_LABELS[manifiestoTurno]}</span>`;
+      }
+
+      const asistMap = new Map((asistRes.data || []).map((r) => [String(r.dni), !!r.viaja]));
+      const dow = weekdayMon0(parseISODateLocal(fecha));
+      const viajanMap = mergeViajanMap(dow, manifiestoTurno, asistMap);
+
+      const pasajerosQueViajan = [];
+      viajanMap.forEach((viaja, dni) => {
+        if (!viaja) return;
+        const p = state.pasajerosByDni.get(dni);
+        if (p) pasajerosQueViajan.push(p);
+      });
+      pasajerosQueViajan.sort((a, b) => {
+        const ha = a.horario_subida || "99:99";
+        const hb = b.horario_subida || "99:99";
+        if (ha !== hb) return ha < hb ? -1 : 1;
+        return (a.nombre || "").localeCompare(b.nombre || "");
+      });
+
+      state.manifiestoActual = {
+        fecha, turno: manifiestoTurno,
+        interno: unidad ? unidad.interno : null,
+        pasajeros: pasajerosQueViajan,
+      };
+
+      if (!pasajerosQueViajan.length) {
+        emptyEl.classList.remove("hidden");
+        return;
+      }
+      listEl.innerHTML = pasajerosQueViajan.map((p, i) => `
+        <div class="manifiesto-item">
+          <span class="idx">${i + 1}.</span>
+          <span class="who">${p.nombre || "(sin nombre)"}</span>
+          <span class="punto">${p.punto_subida || "—"}</span>
+        </div>`).join("");
+    } catch (e) {
+      console.error(e);
+      headerEl.textContent = "No se pudo cargar el manifiesto.";
+    }
+  }
+
+  function buildHojaDeRutaTexto() {
+    const m = state.manifiestoActual;
+    if (!m || !m.pasajeros.length) return "";
+    const internoTxt = m.interno ? `Interno ${m.interno}` : "Sin unidad asignada";
+    const listado = m.pasajeros
+      .map((p, i) => `${i + 1}. ${p.nombre}${p.punto_subida ? " (" + p.punto_subida + ")" : ""}`)
+      .join(", ");
+    return `${internoTxt} - Turno ${TURNO_LABELS[m.turno]} (${m.fecha}): ${listado}`;
+  }
+
+  document.getElementById("btn-enviar-hoja").addEventListener("click", () => {
+    const texto = buildHojaDeRutaTexto();
+    if (!texto) { toast("No hay pasajeros para enviar.", "err"); return; }
+    state.lastHojaTexto = texto;
+    const url = "https://wa.me/?text=" + encodeURIComponent(texto);
+    window.open(url, "_blank", "noopener");
+  });
+
+  document.getElementById("btn-copiar-hoja").addEventListener("click", async () => {
+    const texto = buildHojaDeRutaTexto();
+    if (!texto) { toast("No hay pasajeros para copiar.", "err"); return; }
+    try {
+      await navigator.clipboard.writeText(texto);
+      toast("Texto copiado", "ok");
+    } catch (e) {
+      console.error(e);
+      toast("No se pudo copiar. Copiá manualmente.", "err");
+    }
+  });
+
+  // =========================================================================
+  // MÓDULO 4 — CALENDARIO DE OCUPACIÓN (HEATMAP)
+  // =========================================================================
+  document.querySelectorAll("#heatmap-turno-switch button").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      state.heatmap.turno = btn.dataset.turno;
+      document.querySelectorAll("#heatmap-turno-switch button").forEach((b) => b.classList.toggle("active", b === btn));
+      loadHeatmap();
+    });
+  });
+  document.getElementById("heatmap-prev-month").addEventListener("click", () => shiftHeatmapMonth(-1));
+  document.getElementById("heatmap-next-month").addEventListener("click", () => shiftHeatmapMonth(1));
+
+  function shiftHeatmapMonth(delta) {
+    let m = state.heatmap.viewMonth + delta;
+    let y = state.heatmap.viewYear;
+    if (m < 1) { m = 12; y -= 1; }
+    if (m > 12) { m = 1; y += 1; }
+    state.heatmap.viewMonth = m;
+    state.heatmap.viewYear = y;
+    renderHeatmapMonthLabel();
+    loadHeatmap();
+  }
+
+  function renderHeatmapMonthLabel() {
+    document.getElementById("heatmap-month-label").textContent =
+      `${MONTH_LABELS[state.heatmap.viewMonth - 1]} ${state.heatmap.viewYear}`;
+  }
+
+  function buildWeeks(year, month) {
+    const first = new Date(year, month - 1, 1);
+    const startOffset = (first.getDay() + 6) % 7;
+    const daysInMonth = new Date(year, month, 0).getDate();
+    const cells = [];
+    for (let i = 0; i < startOffset; i++) cells.push(null);
+    for (let d = 1; d <= daysInMonth; d++) cells.push(d);
+    while (cells.length % 7 !== 0) cells.push(null);
+    const weeks = [];
+    for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7));
+    return weeks;
+  }
+
+  async function loadHeatmap() {
+    const { viewYear, viewMonth } = state.heatmap;
+    const body = document.getElementById("heatmap-body");
+    body.innerHTML = `<div style="padding:24px;text-align:center;color:var(--text-faint);font-size:0.85rem;">Cargando…</div>`;
+    try {
+      await ensurePlantillas();
+      if (!state.pasajeros.length) await loadPasajeros(true);
+
+      const daysInMonth = new Date(viewYear, viewMonth, 0).getDate();
+      const inicio = toISODate(viewYear, viewMonth, 1);
+      const fin = toISODate(viewYear, viewMonth, daysInMonth);
+
+      const { data, error } = await supabase
+        .from(T.asistencias)
+        .select("dni, fecha, turno, viaja")
+        .gte("fecha", inicio)
+        .lte("fecha", fin);
+      if (error) throw error;
+
+      const asistPorFecha = new Map(); // "fecha|turno" -> Map(dni->viaja)
+      (data || []).forEach((row) => {
+        const key = `${row.fecha}|${row.turno}`;
+        if (!asistPorFecha.has(key)) asistPorFecha.set(key, new Map());
+        asistPorFecha.get(key).set(String(row.dni), !!row.viaja);
+      });
+
+      const turnos = state.heatmap.turno === "ambos" ? ["manana", "tarde"] : [state.heatmap.turno];
+      const counts = {}; // fecha -> {manana, tarde, total}
+      for (let d = 1; d <= daysInMonth; d++) {
+        const fecha = toISODate(viewYear, viewMonth, d);
+        const dow = weekdayMon0(parseISODateLocal(fecha));
+        const dayCounts = { manana: 0, tarde: 0 };
+        ["manana", "tarde"].forEach((t) => {
+          const asist = asistPorFecha.get(`${fecha}|${t}`);
+          const merged = mergeViajanMap(dow, t, asist);
+          let c = 0;
+          merged.forEach((v) => { if (v) c++; });
+          dayCounts[t] = c;
+        });
+        dayCounts.total = turnos.reduce((s, t) => s + dayCounts[t], 0);
+        counts[fecha] = dayCounts;
+      }
+
+      renderHeatmap(counts);
+    } catch (e) {
+      console.error(e);
+      body.innerHTML = `<div style="padding:24px;text-align:center;color:var(--red);font-size:0.85rem;">No se pudo cargar la ocupación.</div>`;
+    }
+  }
+
+  function renderHeatmap(counts) {
+    const { viewYear, viewMonth } = state.heatmap;
+    const body = document.getElementById("heatmap-body");
+    const weeks = buildWeeks(viewYear, viewMonth);
+    const today = todayISO();
+    const max = Math.max(1, ...Object.values(counts).map((c) => c.total));
+
+    body.innerHTML = "";
+    weeks.forEach((week, weekIdx) => {
+      const row = document.createElement("div");
+      row.className = "cal-row";
+      const weekNumCell = document.createElement("div");
+      weekNumCell.className = "week-num";
+      weekNumCell.textContent = weekIdx + 1;
+      row.appendChild(weekNumCell);
+
+      week.forEach((day) => {
+        const cell = document.createElement("div");
+        if (day === null) {
+          cell.className = "heat-cell empty";
+          row.appendChild(cell);
+          return;
+        }
+        const iso = toISODate(viewYear, viewMonth, day);
+        const c = counts[iso] || { manana: 0, tarde: 0, total: 0 };
+        const intensity = c.total / max; // 0..1
+        cell.className = "heat-cell clickable" + (iso === today ? " today" : "");
+        cell.style.background = c.total > 0
+          ? `rgba(58, 143, 209, ${(0.12 + intensity * 0.68).toFixed(2)})`
+          : "rgba(255,255,255,0.03)";
+        cell.innerHTML = `<span class="d">${day}</span><span class="n">${c.total}</span>`;
+        cell.addEventListener("click", () => {
+          toast(`${iso} — Mañana: ${c.manana} · Tarde: ${c.tarde}`);
+        });
+        row.appendChild(cell);
+      });
+      body.appendChild(row);
+    });
+
+    const scaleEl = document.getElementById("heatmap-scale");
+    scaleEl.innerHTML = [0, 0.25, 0.5, 0.75, 1].map((v) =>
+      `<i style="background:rgba(58,143,209,${(0.12 + v * 0.68).toFixed(2)})"></i>`
+    ).join("");
+  }
+
+  // =========================================================================
+  // SERVICE WORKER
+  // =========================================================================
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("/sw.js").catch((e) => console.warn("[SW] registro falló", e));
+    });
+  }
+})();
+</script>
+</body>
+</html>
