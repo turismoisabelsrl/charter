@@ -709,6 +709,7 @@
       `;
     }
     group.innerHTML = html;
+    group.style.display = 'flex'; // SIEMPRE VISIBLE
 
     document.querySelectorAll('.toggle-btn[data-turno]').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -727,22 +728,10 @@
     const estadoBtn = document.querySelector(`.toggle-btn[data-estado="${estado}"]`);
     if (estadoBtn) estadoBtn.classList.add('active');
 
-    const turnoGroup = document.getElementById('turno-group');
-    if (estado === 'noviaja') {
-      turnoGroup.style.display = 'none';
-    } else {
-      turnoGroup.style.display = 'flex';
-      
-      // Ajustar turno si el abono no lo permite
-      let finalTurno = turno;
-      if (state.abonoTipo === 'manana' && turno === 'tarde') finalTurno = 'manana';
-      if (state.abonoTipo === 'tarde' && turno === 'manana') finalTurno = 'tarde';
-      
-      state.selectedTurno = finalTurno;
-      document.querySelectorAll('.toggle-btn[data-turno]').forEach(b => b.classList.remove('active'));
-      const turnoBtn = document.querySelector(`.toggle-btn[data-turno="${finalTurno}"]`);
-      if (turnoBtn) turnoBtn.classList.add('active');
-    }
+    state.selectedTurno = turno;
+    document.querySelectorAll('.toggle-btn[data-turno]').forEach(b => b.classList.remove('active'));
+    const turnoBtn = document.querySelector(`.toggle-btn[data-turno="${turno}"]`);
+    if (turnoBtn) turnoBtn.classList.add('active');
   }
 
   // TOGGLES DE ESTADO (VIAJA / NO VIAJA)
@@ -751,17 +740,11 @@
       document.querySelectorAll('.toggle-btn[data-estado]').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       state.selectedEstado = btn.dataset.estado;
-
-      const turnoGroup = document.getElementById('turno-group');
-      if (state.selectedEstado === 'noviaja') {
-        turnoGroup.style.display = 'none'; 
-      } else {
-        turnoGroup.style.display = 'flex';
-      }
+      // NO esconder el grupo de turno. Que queden visibles todas las opciones.
     });
   });
 
-  // PANEL DE ACCIÓN INTELIGENTE (PARA UN DÍA O SELECCIÓN MÚLTIPLE)
+  // PANEL DE ACCIÓN SIMPLIFICADO Y DIRECTO
   function renderActionPanel() {
     const panel = document.getElementById("action-panel");
     const n = state.selected.size;
@@ -771,41 +754,8 @@
 
     if (isOpen && !state.wasPanelOpen) {
       renderTurnoButtons(); 
-      const selectedDates = Array.from(state.selected);
-      
-      let allManana = true, allTarde = true, allNoviaja = true;
-      selectedDates.forEach(iso => {
-        const info = state.calendarByDate[iso] || {};
-        const mViaja = info.manana?.viaja === true;
-        const tViaja = info.tarde?.viaja === true;
-        
-        if (!mViaja) allManana = false;
-        if (!tViaja) allTarde = false;
-        if (mViaja || tViaja) allNoviaja = false;
-      });
-      
-      let targetEstado = 'viaja';
-      let targetTurno = state.abonoTipo;
-      
-      if (allNoviaja) {
-        targetEstado = 'noviaja';
-        targetTurno = state.abonoTipo;
-      } else if (allManana && allTarde) {
-        targetEstado = 'viaja';
-        targetTurno = 'ambos';
-      } else if (allManana) {
-        targetEstado = 'viaja';
-        targetTurno = 'manana';
-      } else if (allTarde) {
-        targetEstado = 'viaja';
-        targetTurno = 'tarde';
-      } else {
-        // Mixto: Por defecto Viaja en su turno principal
-        targetEstado = 'viaja';
-        targetTurno = state.abonoTipo;
-      }
-      
-      setToggleStates(targetEstado, targetTurno);
+      // Por defecto: Viaja - Tu turno principal
+      setToggleStates('viaja', state.abonoTipo);
     }
     state.wasPanelOpen = isOpen;
 
