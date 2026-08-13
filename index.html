@@ -17,9 +17,9 @@
     --navy-2: #0c1a2e;
     --navy-3: #10233c;
     --sky: #3a8fd1;
-    --blue-sky: #55b3f5; /* Nuevo color para Tarde */
+    --morning: #38bdf8; /* Celeste Claro */
+    --afternoon: #0284c7; /* Celeste Oscuro */
     --sky-dim: #6fb0e0;
-    --green: #2cb87a;
     --red: #e04444;
     --text: #e8eef7;
     --text-dim: #9fb0c3;
@@ -67,6 +67,7 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    position: relative;
   }
 
   h1, h2, h3, .display {
@@ -82,6 +83,7 @@
     border: 0;
     cursor: pointer;
     color: inherit;
+    background: transparent;
   }
 
   input { font-family: "Inter", sans-serif; }
@@ -121,10 +123,12 @@
   .btn:active { transform: scale(0.98); }
   .btn:disabled { opacity: 0.55; pointer-events: none; }
   .btn-primary { background: var(--sky); color: #071020; }
-  .btn-green { background: var(--green); color: #06251a; }
-  .btn-blue { background: var(--blue-sky); color: #071020; }
+  .btn-morning { background: var(--morning); color: #071020; }
+  .btn-afternoon { background: var(--afternoon); color: #fff; }
+  .btn-both { background: linear-gradient(135deg, var(--morning) 50%, var(--afternoon) 50%); color: #fff; }
   .btn-red { background: transparent; color: var(--red); border: 1px solid rgba(224, 68, 68, 0.5); }
   .btn-ghost { background: transparent; color: var(--text-dim); border: 1px solid var(--glass-border); }
+  .btn-sm { padding: 6px 12px; font-size: 0.8rem; width: auto; border-radius: 8px; border: 1px solid var(--glass-border); color: var(--text-dim); }
 
   .login-error { margin-top: 14px; font-size: 0.85rem; color: var(--red); min-height: 1.2em; }
 
@@ -137,7 +141,7 @@
     width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
     background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text-dim);
   }
-  .icon-btn svg { width: 18px; height: 18px; fill: currentColor; }
+  .icon-btn svg { width: 18px; height: 18px; stroke: currentColor; }
 
   .tabs { display: flex; gap: 8px; padding: 0 18px 14px; flex-shrink: 0; }
   .tab {
@@ -150,18 +154,11 @@
   .tab-panel { height: 100%; overflow-y: auto; padding: 0 18px calc(24px + var(--safe-b)); position: relative; }
 
   /* ---------------- CALENDARIO ---------------- */
-  .month-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
-  .month-nav .label { font-size: 1.05rem; text-transform: capitalize; }
-  .month-nav button {
+  .month-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; gap: 10px; }
+  .month-nav .label { font-size: 1.05rem; text-transform: capitalize; flex: 1; text-align: center; }
+  .month-nav .nav-btn {
     width: 34px; height: 34px; border-radius: 50%; background: var(--glass-bg);
-    border: 1px solid var(--glass-border); color: var(--text-dim);
-  }
-
-  /* Botón Hoy Flotante */
-  .today-btn {
-    position: absolute; top: 12px; right: 18px; z-index: 10;
-    width: 36px; height: 36px; border-radius: 50%; background: var(--sky); color: #071020;
-    display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    border: 1px solid var(--glass-border); color: var(--text-dim); display: flex; align-items: center; justify-content: center;
   }
 
   .cal-grid { padding: 14px 10px 16px; }
@@ -171,7 +168,7 @@
     text-align: center; font-size: 0.72rem; color: var(--text-faint); padding: 6px 0; border-radius: 8px;
   }
   .cal-head-cell.clickable { cursor: pointer; }
-  .cal-head-cell.disabled { opacity: 0.4; pointer-events: none; }
+  .cal-head-cell.disabled { opacity: 0.3; pointer-events: none; }
   .cal-head-cell.clickable:active { background: var(--glass-bg-strong); }
   
   .week-num {
@@ -187,11 +184,11 @@
     transition: background 0.2s ease;
   }
   .day-cell.empty { visibility: hidden; cursor: default; }
-  .day-cell.disabled { opacity: 0.3; pointer-events: none; }
+  .day-cell.disabled { opacity: 0.2; pointer-events: none; }
   
-  .day-cell.viaja-ambos { background: linear-gradient(135deg, var(--green) 50%, var(--blue-sky) 50%); color: #fff; font-weight: 700; }
-  .day-cell.viaja-manana { background: rgba(44, 184, 122, 0.7); color: #fff; font-weight: 600; }
-  .day-cell.viaja-tarde { background: rgba(85, 179, 245, 0.7); color: #fff; font-weight: 600; }
+  .day-cell.viaja-ambos { background: linear-gradient(135deg, var(--morning) 50%, var(--afternoon) 50%); color: #fff; font-weight: 700; }
+  .day-cell.viaja-manana { background: rgba(56, 189, 248, 0.7); color: #fff; font-weight: 600; }
+  .day-cell.viaja-tarde { background: rgba(2, 132, 199, 0.8); color: #fff; font-weight: 600; }
   .day-cell.noviaja { background: rgba(255, 255, 255, 0.03); color: var(--text-faint); }
   
   .day-cell.today { border-color: var(--sky); }
@@ -216,7 +213,7 @@
   #action-panel .count a { color: var(--sky-dim); font-size: 0.8rem; }
   
   .rec-options { margin-top: 12px; border-top: 1px solid var(--glass-border); padding-top: 12px; }
-  .rec-option { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 0.85rem; cursor: pointer; }
+  .rec-option { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 0.85rem; cursor: pointer; color: var(--text-dim); }
   .rec-option input { accent-color: var(--sky); }
   .month-exclude { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
   .month-exclude button { background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text-faint); font-size: 0.7rem; padding: 4px 8px; border-radius: 6px; }
@@ -230,7 +227,7 @@
 
   /* ---------------- MAPA ---------------- */
   #tab-mapa.tab-panel { padding: 0; }
-  #map { width: 100%; height: 100%; background: var(--navy); }
+  #map { width: 100%; height: 100%; background: var(--navy); z-index: 1; }
   .map-overlay-top {
     position: absolute; top: 12px; left: 12px; right: 12px; z-index: 500; padding: 12px 14px;
   }
@@ -261,9 +258,11 @@
   }
   #toast.show { opacity: 1; transform: translate(-50%, 0); }
   #toast.err { border-color: rgba(224, 68, 68, 0.5); color: #ffb3b3; }
-  #toast.ok { border-color: rgba(44, 184, 122, 0.5); color: #a8f0cf; }
+  #toast.ok { border-color: rgba(56, 189, 248, 0.5); color: #bae6fd; }
 
   .leaflet-container { background: var(--navy) !important; font-family: "Inter", sans-serif; }
+  .leaflet-bar a { background: var(--glass-bg-strong); color: var(--text); border-color: var(--glass-border); }
+  .leaflet-bar a:hover { background: var(--glass-bg); }
 </style>
 </head>
 <body>
@@ -300,7 +299,10 @@
       <span class="name" id="topbar-name">—</span>
     </div>
     <button id="btn-logout" class="icon-btn" title="Cerrar sesión" aria-label="Cerrar sesión">
-      <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 4.25A2.25 2.25 0 015.25 2h4.5A2.25 2.25 0 0112 4.25v4.5A2.25 2.25 0 019.75 11h-4.5A2.25 2.25 0 013 8.75v-4.5zm8.25 7.5a.75.75 0 01.75.75v3.25a.75.75 0 01-1.5 0V12.5a.75.75 0 01.75-.75z" clip-rule="evenodd" /><path fill-rule="evenodd" d="M3 4.25A2.25 2.25 0 015.25 2h4.5A2.25 2.25 0 0112 4.25v4.5A2.25 2.25 0 019.75 11h-4.5A2.25 2.25 0 013 8.75v-4.5zm8.25 7.5a.75.75 0 01.75.75v3.25a.75.75 0 01-1.5 0V12.5a.75.75 0 01.75-.75z" clip-rule="evenodd" /></svg>
+      <!-- Icono de Puerta con Flecha (Heroicons) -->
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
+      </svg>
     </button>
   </header>
 
@@ -312,14 +314,15 @@
   <main>
     <!-- ---------------- TAB: CALENDARIO ---------------- -->
     <section id="tab-calendario" class="tab-panel">
-      <button class="today-btn" id="btn-today" title="Ir a hoy">
-        <svg viewBox="0 0 20 20" fill="currentColor" style="width:16px;height:16px"><path d="M5.25 12.75a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5H6a.75.75 0 01-.75-.75z" /><path fill-rule="evenodd" d="M1 5.25A2.25 2.25 0 013.25 3h13.5A2.25 2.25 0 0119 5.25v9.5A2.25 2.25 0 0116.75 17H3.25A2.25 2.25 0 011 14.75v-9.5zm1.5 5.25v4.25c0 .414.336.75.75.75h13.5a.75.75 0 00.75-.75V10.5H2.5zm0-1.5h15V5.25a.75.75 0 00-.75-.75H3.25a.75.75 0 00-.75.75V9z" clip-rule="evenodd" /></svg>
-      </button>
-
       <div class="month-nav">
-        <button id="btn-prev-month" aria-label="Mes anterior">‹</button>
+        <button id="btn-prev-month" class="nav-btn" aria-label="Mes anterior">
+          <svg style="width:16px;height:16px" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clip-rule="evenodd" /></svg>
+        </button>
         <div class="label display" id="month-label">—</div>
-        <button id="btn-next-month" aria-label="Mes siguiente">›</button>
+        <button id="btn-today" class="btn-sm">Hoy</button>
+        <button id="btn-next-month" class="nav-btn" aria-label="Mes siguiente">
+          <svg style="width:16px;height:16px" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" /></svg>
+        </button>
       </div>
 
       <div class="cal-grid glass">
@@ -337,13 +340,13 @@
       </div>
 
       <div class="cal-legend">
-        <span><i style="background:var(--green)"></i> Mañana</span>
-        <span><i style="background:var(--blue-sky)"></i> Tarde</span>
-        <span><i style="background:linear-gradient(135deg, var(--green) 50%, var(--blue-sky) 50%)"></i> Ambos</span>
+        <span><i style="background:var(--morning)"></i> Mañana</span>
+        <span><i style="background:var(--afternoon)"></i> Tarde</span>
+        <span><i style="background:linear-gradient(135deg, var(--morning) 50%, var(--afternoon) 50%)"></i> Ambos</span>
       </div>
 
       <div class="hint-card glass">
-        Tocá un día para marcarlo. Tocá una letra para seleccionar todos los días, o el número de semana para la fila completa. Selecciona las opciones de repetición abajo.
+        Tocá un día para marcarlo. Tocá una letra para seleccionar todos los días de esa columna, o el número de semana para la fila completa. Abajo elige si querés repetir la selección.
       </div>
     </section>
 
@@ -374,7 +377,7 @@
 </section>
 
 <!-- =====================================================================
-     PANEL FLOTANTE DE ACCIÓN
+     PANEL FLOTANTE DE ACCIÓN (OCULTO EN MAPA)
 ===================================================================== -->
 <div id="action-panel" class="glass">
   <div class="count">
@@ -401,9 +404,9 @@
     </div>
 
     <div class="modal-actions">
-      <button class="btn btn-green" data-turno="manana">Mañana</button>
-      <button class="btn btn-blue" data-turno="tarde">Tarde</button>
-      <button class="btn btn-primary" data-turno="ambos">Ambos</button>
+      <button class="btn btn-morning" data-turno="manana">Mañana</button>
+      <button class="btn btn-afternoon" data-turno="tarde">Tarde</button>
+      <button class="btn btn-both" data-turno="ambos">Ambos Turnos</button>
     </div>
     <button class="btn btn-ghost" id="modal-cancel" style="margin-top:10px;">Cerrar</button>
   </div>
@@ -425,7 +428,7 @@
 
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  const WEEKDAY_LABELS = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
+  const WEEKDAY_LABELS = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
   const MONTH_LABELS = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
   const MONTH_FULL = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
 
@@ -511,7 +514,7 @@
     loadCalendar();
   }
 
-  // TABS
+  // TABS Y CONTROL DEL PANEL FLOTANTE
   document.querySelectorAll(".tab").forEach((btn) => {
     btn.addEventListener("click", () => switchTab(btn.dataset.tab));
   });
@@ -522,11 +525,15 @@
     document.getElementById("tab-calendario").classList.toggle("hidden", tab !== "calendario");
     document.getElementById("tab-mapa").classList.toggle("hidden", tab !== "mapa");
 
+    const actionPanel = document.getElementById("action-panel");
     if (tab === "mapa") {
+      actionPanel.style.display = "none"; // Ocultar panel en el mapa
       initMapIfNeeded();
       setTimeout(() => state.map && state.map.invalidateSize(), 100);
       startMapPolling();
     } else {
+      // Restaurar visibilidad del panel si hay selección
+      actionPanel.style.display = "block"; 
       stopMapPolling();
     }
   }
@@ -657,7 +664,9 @@
     const weeks = buildWeeks(state.viewYear, state.viewMonth);
     const dates = [];
     weeks.forEach((week) => {
-      const day = week[weekdayIdx === 0 ? 6 : weekdayIdx - 1]; // Ajuste índice dom=0
+      // Ajustar porque nuestro array empieza en Lunes (índice 0) pero JS getDay() es Domingo=0
+      const arrayIndex = weekdayIdx === 0 ? 6 : weekdayIdx - 1;
+      const day = week[arrayIndex];
       if (day !== null) dates.push(toISODate(state.viewYear, state.viewMonth, day));
     });
     applyBulkToggle(dates);
@@ -686,7 +695,7 @@
     ev.preventDefault(); clearSelection(); renderCalendar();
   });
 
-  // CEREBRO DE RECORRENCIA
+  // CEREBRO DE RECORRENCIA MEJORADO
   function detectSelectionMode() {
     if (state.selected.size === 0) return 'none';
     if (state.selected.size === 1) return 'single';
@@ -715,20 +724,23 @@
     let html = '<div class="rec-options" style="font-size:0.85rem;color:var(--text-dim);">';
     html += '<div style="margin-bottom:8px;font-weight:600;color:var(--text);">Opciones de repetición:</div>';
     
+    // Opción principal: NO REPETIR (Siempre disponible)
+    html += `<label class="rec-option"><input type="radio" name="rec-type" value="none" checked> No repetir (Solo días seleccionados)</label>`;
+
     if (mode === 'single') {
       const date = new Date(Array.from(state.selected)[0] + "T00:00:00");
       const weekdayName = WEEKDAY_LABELS[date.getDay()];
       const dayNum = date.getDate();
       html += `
-        <label class="rec-option"><input type="radio" name="rec-type" value="weekday" checked> Repetir todos los ${weekdayName}</label>
+        <label class="rec-option"><input type="radio" name="rec-type" value="weekday"> Repetir todos los ${weekdayName}</label>
         <label class="rec-option"><input type="radio" name="rec-type" value="monthday"> Repetir el ${dayNum} de cada mes</label>
       `;
     } else if (mode === 'weekday') {
       const date = new Date(Array.from(state.selected)[0] + "T00:00:00");
       const weekdayName = WEEKDAY_LABELS[date.getDay()];
       html += `
-        <label class="rec-option"><input type="radio" name="rec-type" value="weekday" checked> Repetir todos los ${weekdayName}</label>
-        <label class="rec-option"><input type="radio" name="rec-type" value="weekday_except"> Repetir ${weekdayName} excepto...</label>
+        <label class="rec-option"><input type="radio" name="rec-type" value="weekday"> Repetir todos los ${weekdayName}</label>
+        <label class="rec-option"><input type="radio" name="rec-type" value="weekday_except"> Repetir ${weekdayName} excepto meses específicos...</label>
         <div id="except-selector" class="month-exclude hidden">
           ${MONTH_LABELS.map((m, i) => `<button type="button" data-month="${i}">${m}</button>`).join('')}
         </div>
@@ -738,16 +750,15 @@
       const weekOfMonth = Math.ceil(date.getDate() / 7);
       const ordinals = ["1ra", "2da", "3ra", "4ta", "5ta"];
       html += `
-        <label class="rec-option"><input type="radio" name="rec-type" value="weeknum" checked> Repetir todas las ${ordinals[weekOfMonth-1]} semanas de cada mes</label>
+        <label class="rec-option"><input type="radio" name="rec-type" value="weeknum"> Repetir todas las ${ordinals[weekOfMonth-1]} semanas de cada mes</label>
       `;
-    } else {
-      html += `<p style="font-size:0.8rem;color:var(--text-faint);">Selección múltiple irregular. Se aplicará solo a los días elegidos.</p>`;
     }
 
     html += `
-      <div style="margin-top:12px;">
+      <div style="margin-top:12px;" id="range-block">
         <small>Alcance de la repetición:</small>
         <select id="rec-range" class="range-select">
+          <option value="1">Solo esta vez</option>
           <option value="4w">Próximas 4 semanas</option>
           <option value="3m">Próximos 3 meses</option>
           <option value="6m">Próximos 6 meses</option>
@@ -768,6 +779,17 @@
         btn.addEventListener('click', () => btn.classList.toggle('active'));
       });
     }
+
+    // Deshabilitar el selector de alcance si es "No repetir"
+    const noneRadio = document.querySelector('input[name="rec-type"][value="none"]');
+    const rangeBlock = document.getElementById('range-block');
+    noneRadio.addEventListener('change', () => {
+      rangeBlock.style.opacity = noneRadio.checked ? "0.5" : "1";
+      document.getElementById('rec-range').disabled = noneRadio.checked;
+    });
+    // Trigger inicial
+    rangeBlock.style.opacity = "0.5";
+    document.getElementById('rec-range').disabled = true;
   }
 
   // MODAL Y GUARDADO
@@ -794,10 +816,11 @@
   // MOTOR DE CÁLCULO DE FECHAS OPTIMIZADO
   function calculateFinalDates() {
     let baseDates = Array.from(state.selected);
-    if (document.querySelector('input[name="rec-type"]') === null) return baseDates; // Sin recurrencia
+    const recTypeRadio = document.querySelector('input[name="rec-type"]:checked');
+    if (!recTypeRadio || recTypeRadio.value === "none") return baseDates; 
 
     const range = document.getElementById("rec-range").value;
-    const recType = document.querySelector('input[name="rec-type"]:checked').value;
+    const recType = recTypeRadio.value;
 
     let endDate = new Date(); endDate.setHours(23, 59, 59, 999);
     if (range === "4w") endDate.setDate(endDate.getDate() + 28);
@@ -805,7 +828,7 @@
     else if (range === "6m") endDate.setMonth(endDate.getMonth() + 6);
     else if (range === "1y") endDate.setFullYear(endDate.getFullYear() + 1);
 
-    const result = new Set(baseDates); // Incluye las fechas base
+    const result = new Set(baseDates);
     const startDate = new Date(); startDate.setHours(0, 0, 0, 0);
 
     const refDate = new Date(baseDates[0] + "T00:00:00");
@@ -815,7 +838,6 @@
 
     const excludedMonths = Array.from(document.querySelectorAll('.month-exclude button.active')).map(b => parseInt(b.dataset.month));
 
-    // Iteración de un solo loop para no sobrecargar el navegador
     let current = new Date(startDate);
     while (current <= endDate) {
       const cDay = current.getDay();
@@ -829,9 +851,7 @@
         } else if (recType === "monthday") {
           if (current.getDate() === refDayOfMonth) result.add(cIso);
         } else if (recType === "weeknum") {
-          // Comprueba si el día pertenece a la misma semana del mes y coincide con los días base seleccionados
           if (Math.ceil(current.getDate() / 7) === refWeekOfMonth) {
-            // Como puede ser una selección de varios días en esa semana, verificamos si ese weekday estaba en la selección original
             const wasSelected = baseDates.some(d => new Date(d + "T00:00:00").getDay() === current.getDay());
             if (wasSelected) result.add(cIso);
           }
