@@ -123,11 +123,10 @@
 
   main { flex: 1; overflow: hidden; position: relative; }
   
-  /* FIX MAPA: Usar flexbox en el tab-panel y quitar scroll */
   .tab-panel { height: 100%; position: relative; }
   #tab-calendario { overflow-y: auto; padding: 0 18px calc(260px + var(--safe-b)); }
   #tab-mapa { padding: 0; display: flex; flex-direction: column; }
-  #map { flex: 1; width: 100%; background: var(--navy); z-index: 1; }
+  #map { flex: 1; width: 100%; background: var(--navy); z-index: 1; min-height: 100%; }
 
   /* ---------------- CALENDARIO ---------------- */
   .month-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; gap: 10px; }
@@ -492,7 +491,6 @@
     if (tab === "mapa") {
       actionPanel.style.display = "none";
       initMapIfNeeded();
-      // Forzar recálculo de Leaflet en distintos ciclos para asegurar su dibujado
       setTimeout(() => { if (state.map) state.map.invalidateSize(); }, 10);
       setTimeout(() => { if (state.map) state.map.invalidateSize(); }, 100);
       setTimeout(() => { if (state.map) state.map.invalidateSize(); }, 500);
@@ -700,18 +698,15 @@
     let html = '';
     
     if (state.abonoTipo === 'manana') {
-      html = `<button class="toggle-btn active morning" data-turno="manana">Mañana</button>`;
-      state.selectedTurno = "manana";
+      html = `<button class="toggle-btn morning" data-turno="manana">Mañana</button>`;
     } else if (state.abonoTipo === 'tarde') {
-      html = `<button class="toggle-btn active afternoon" data-turno="tarde">Tarde</button>`;
-      state.selectedTurno = "tarde";
+      html = `<button class="toggle-btn afternoon" data-turno="tarde">Tarde</button>`;
     } else {
       html = `
         <button class="toggle-btn morning" data-turno="manana">Mañana</button>
         <button class="toggle-btn afternoon" data-turno="tarde">Tarde</button>
-        <button class="toggle-btn active both" data-turno="ambos">Ambos</button>
+        <button class="toggle-btn both" data-turno="ambos">Ambos</button>
       `;
-      state.selectedTurno = "ambos";
     }
     group.innerHTML = html;
 
@@ -722,6 +717,26 @@
         state.selectedTurno = btn.dataset.turno;
       });
     });
+  }
+
+  // SETEAR BOTONES DE ESTADO Y TURNO POR CÓDIGO
+  function setToggleStates(estado, turno) {
+    state.selectedEstado = estado;
+    
+    document.querySelectorAll('.toggle-btn[data-estado]').forEach(b => b.classList.remove('active'));
+    const estadoBtn = document.querySelector(`.toggle-btn[data-estado="${estado}"]`);
+    if (estadoBtn) estadoBtn.classList.add('active');
+
+    const turnoGroup = document.getElementById('turno-group');
+    if (estado === 'noviaja') {
+      turnoGroup.style.display = 'none';
+    } else {
+      turnoGroup.style.display = 'flex';
+      state.selectedTurno = turno;
+      document.querySelectorAll('.toggle-btn[data-turno]').forEach(b => b.classList.remove('active'));
+      const turnoBtn = document.querySelector(`.toggle-btn[data-turno="${turno}"]`);
+      if (turnoBtn) turnoBtn.classList.add('active');
+    }
   }
 
   // TOGGLES DE ESTADO (VIAJA / NO VIAJA)
@@ -740,7 +755,7 @@
     });
   });
 
-  // PANEL DE ACCIÓN CON RESET AUTOMÁTICO DE ESTADO
+  // PANEL DE ACCIÓN INTELIGENTE
   function renderActionPanel() {
     const panel = document.getElementById("action-panel");
     const n = state.selected.size;
@@ -749,11 +764,23 @@
     panel.classList.toggle("open", isOpen);
 
     if (isOpen && !state.wasPanelOpen) {
-      state.selectedEstado = "viaja";
-      document.querySelectorAll('.toggle-btn[data-estado]').forEach(b => b.classList.remove('active'));
-      document.querySelector('.toggle-btn[data-estado="viaja"]').classList.add('active');
-      document.getElementById('turno-group').style.display = 'flex';
-      renderTurnoButtons();
+      renderTurnoButtons(); // Genera los botones según el abono
+      
+      if (n === 1) {
+        // Si es un solo día, leemos el estado actual del calendario para autocompletar el formulario
+        const iso = Array.from(state.selected)[0];
+        const info = state.calendarByDate[iso] || {};
+        const viajaM = info.manana?.viaja === true;
+        const viajaT = info.tarde?.viaja === true;
+        
+        if (viajaM && viajaT) setToggleStates('viaja', 'ambos');
+        else if (viajaM) setToggleStates('viaja', 'manana');
+        else if (viajaT) setToggleStates('viaja', 'tarde');
+        else setToggleStates('noviaja', state.abonoTipo);
+      } else {
+        // Si son múltiples días, ponemos el default (Viaja - Tu abono)
+        setToggleStates('viaja', state.abonoTipo);
+      }
     }
     state.wasPanelOpen = isOpen;
 
@@ -798,8 +825,8 @@
     if (state.map) return;
     state.map = L.map("map", { zoomControl: false, attributionControl: false }).setView([-34.9011, -56.1645], 12);
     L.control.zoom({ position: "bottomright" }).addTo(state.map);
-    L.tileLayer("https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png", {
-      subdomains: "abcd",
+    // Cambio a OpenStreetMap estándar para máxima estabilidad y carga inmediata
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       maxZoom: 19,
     }).addTo(state.map);
   }
