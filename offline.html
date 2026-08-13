@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Charter TI · Sin conexión</title>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #071020;
+      color: #e8eef7;
+      font-family: Inter, system-ui, sans-serif;
+      text-align: center;
+      padding: 24px;
+    }
+    .card { max-width: 360px; }
+    h1 {
+      font-family: Syne, Inter, sans-serif;
+      color: #3a8fd1;
+      font-size: 1.4rem;
+      margin-bottom: 8px;
+    }
+    p { color: #9fb0c3; line-height: 1.5; }
+    button {
+      margin-top: 16px;
+      background: #3a8fd1;
+      color: #071020;
+      border: 0;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Sin conexión</h1>
+    <p>
+      No pudimos conectarnos al servidor. El mapa en vivo, el calendario y el
+      despacho necesitan conexión a internet para mostrar datos actualizados.
+    </p>
+    <button onclick="location.reload()">Reintentar</button>
+  </div>
+</body>
+</html>
