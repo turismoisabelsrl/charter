@@ -43,6 +43,7 @@
     font-family: "Inter", system-ui, sans-serif;
     -webkit-tap-highlight-color: transparent;
     overscroll-behavior-y: contain;
+    overflow: hidden;
   }
 
   h1, h2, h3, .display {
@@ -75,6 +76,7 @@
     border-radius: var(--radius);
   }
 
+  /* LOGIN */
   #screen-login {
     display: flex;
     align-items: center;
@@ -99,16 +101,8 @@
   .login-card h1 { font-size: 1.6rem; color: var(--text); margin-bottom: 4px; }
   .login-card p { color: var(--text-dim); font-size: 0.9rem; line-height: 1.5; margin: 8px 0 22px; }
 
-  .field {
-    text-align: left;
-    margin-bottom: 16px;
-  }
-  .field label {
-    display: block;
-    font-size: 0.78rem;
-    color: var(--text-dim);
-    margin-bottom: 6px;
-  }
+  .field { text-align: left; margin-bottom: 16px; }
+  .field label { display: block; font-size: 0.78rem; color: var(--text-dim); margin-bottom: 6px; }
   .field input {
     width: 100%;
     padding: 13px 14px;
@@ -140,16 +134,8 @@
   .btn:disabled { opacity: 0.55; pointer-events: none; }
   .btn-primary { background: var(--sky); color: #071020; }
   .btn-primary:hover { filter: brightness(1.08); }
-  .btn-green { background: var(--green); color: #06251a; }
-  .btn-red { background: transparent; color: var(--red); border: 1px solid rgba(224, 68, 68, 0.5); }
   .btn-ghost { background: transparent; color: var(--text-dim); border: 1px solid var(--glass-border); }
-
-  .login-error {
-    margin-top: 14px;
-    font-size: 0.85rem;
-    color: var(--red);
-    min-height: 1.2em;
-  }
+  .login-error { margin-top: 14px; font-size: 0.85rem; color: var(--red); min-height: 1.2em; }
 
   /* APP SHELL */
   #screen-app {
@@ -173,11 +159,7 @@
   .topbar .who .hello { font-size: 0.72rem; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.1em; }
   .topbar .who .name { font-size: 1.05rem; font-family: "Syne", sans-serif; font-weight: 700; }
   
-  .topbar-actions {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-  }
+  .topbar-actions { display: flex; gap: 8px; align-items: center; }
 
   .icon-btn {
     width: 38px; height: 38px;
@@ -189,14 +171,8 @@
     font-size: 1rem;
     transition: all 0.2s ease;
   }
-  .icon-btn:hover:not(:disabled) {
-    background: var(--glass-bg-strong);
-    color: var(--text);
-  }
-  .icon-btn:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-  }
+  .icon-btn:hover:not(:disabled) { background: var(--glass-bg-strong); color: var(--text); }
+  .icon-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
   .tabs {
     display: flex;
@@ -218,11 +194,7 @@
     border: 1px solid var(--glass-border);
     max-width: 200px;
   }
-  .tab.active {
-    background: var(--sky);
-    color: #071020;
-    border-color: var(--sky);
-  }
+  .tab.active { background: var(--sky); color: #071020; border-color: var(--sky); }
 
   main { 
     flex: 1; 
@@ -232,13 +204,14 @@
     margin: 0 auto;
     width: 100%;
   }
+
   .tab-panel { 
     height: 100%; 
     overflow-y: auto; 
     padding: 0 18px calc(24px + var(--safe-b));
   }
 
-  /* CALENDARIO */
+  /* CALENDARIO LAYOUT */
   .calendar-layout {
     display: grid;
     grid-template-columns: 1fr;
@@ -269,9 +242,7 @@
     color: var(--text-dim);
   }
 
-  .cal-grid {
-    padding: 14px 10px 16px;
-  }
+  .cal-grid { padding: 14px 10px 16px; }
   .cal-row { display: grid; grid-template-columns: 30px repeat(7, 1fr); gap: 4px; }
   .cal-row.head { margin-bottom: 6px; }
   .cal-head-cell {
@@ -310,10 +281,7 @@
     color: var(--text-dim);
     transition: all 0.15s ease;
   }
-  .day-cell:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: var(--glass-border);
-  }
+  .day-cell:hover { background: rgba(255, 255, 255, 0.08); border-color: var(--glass-border); }
   .day-cell.empty { visibility: hidden; cursor: default; }
   .day-cell .num { position: relative; z-index: 1; }
   .day-cell .dots { display: flex; gap: 3px; margin-top: 3px; position: relative; z-index: 1; }
@@ -331,25 +299,17 @@
     color: var(--text);
   }
   .day-cell.noviaja { background: rgba(255, 255, 255, 0.03); color: var(--text-faint); }
-
   .day-cell.weekend {
     background: rgba(255, 255, 255, 0.015);
     color: var(--text-faint);
     opacity: 0.4;
     cursor: default;
   }
-
   .day-cell.today { border-color: var(--sky); }
   .day-cell.selected {
     outline: 2px solid var(--sky);
     outline-offset: -2px;
     background: rgba(58, 143, 209, 0.22);
-  }
-  .day-cell.today.pulse-jump { animation: todayPulse 0.85s ease; }
-  @keyframes todayPulse {
-    0% { box-shadow: 0 0 0 0 rgba(58, 143, 209, 0.55); }
-    70% { box-shadow: 0 0 0 10px rgba(58, 143, 209, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(58, 143, 209, 0); }
   }
 
   .cal-legend {
@@ -364,38 +324,29 @@
   .cal-legend span { display: inline-flex; align-items: center; gap: 5px; }
   .cal-legend i { width: 9px; height: 9px; border-radius: 3px; display: inline-block; }
 
-  .hint-card {
-    margin-top: 16px;
-    padding: 14px 16px;
-    font-size: 0.8rem;
-    color: var(--text-dim);
-    line-height: 1.5;
-  }
-
-  /* PANEL LATERAL DESKTOP */
-  .desktop-sidebar {
-    display: none;
-  }
-
+  /* SIDEBAR DESKTOP */
+  .desktop-sidebar { display: none; }
   @media (min-width: 768px) {
-    .desktop-sidebar {
-      display: block;
-      position: sticky;
-      top: 0;
-    }
+    .desktop-sidebar { display: block; position: sticky; top: 0; }
   }
+  .sidebar-card { padding: 16px; margin-bottom: 16px; }
+  .sidebar-card h3 { font-size: 0.9rem; margin-bottom: 12px; }
+  .sidebar-card ul { margin: 0; padding-left: 16px; font-size: 0.78rem; color: var(--text-dim); line-height: 1.6; }
 
-  /* FLOATING ACTION PANEL */
+  /* BOTTOM SHEET (MÓVIL) */
   #action-panel {
     position: fixed;
-    left: 14px; right: 14px;
-    bottom: calc(14px + var(--safe-b));
-    padding: 16px;
-    z-index: 40;
-    transform: translateY(140%);
-    transition: transform 0.22s ease;
-    max-width: 450px;
-    margin: 0 auto;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    max-height: 45vh;
+    border-radius: 20px 20px 0 0;
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 50;
+    padding: 20px 16px calc(16px + var(--safe-b));
+    overflow-y: auto;
+    background: rgba(12, 26, 46, 0.98);
   }
   #action-panel.open { transform: translateY(0); }
   #action-panel .count {
@@ -407,7 +358,22 @@
     align-items: center;
   }
   #action-panel .count a { color: var(--sky-dim); font-size: 0.8rem; text-decoration: none; }
-  #action-panel { max-height: 78dvh; overflow-y: auto; }
+
+  /* DESKTOP: Panel lateral */
+  @media (min-width: 768px) {
+    #action-panel {
+      position: fixed;
+      left: auto;
+      right: 20px;
+      top: 80px;
+      bottom: auto;
+      width: 320px;
+      max-height: calc(100vh - 100px);
+      border-radius: var(--radius);
+      transform: translateX(120%);
+    }
+    #action-panel.open { transform: translateX(0); }
+  }
 
   .viaja-toggle { display: flex; gap: 8px; margin-bottom: 4px; }
   .seg-btn {
@@ -451,35 +417,25 @@
     background: rgba(255, 255, 255, 0.04);
     color: var(--text);
     font-size: 0.84rem;
+    flex: 1;
   }
-  .extent-row select { flex: 2; }
-  .extent-row input { flex: 1; min-width: 58px; }
 
-  /* BOTÓN HOY - REPOSICIONADO */
+  /* BOTÓN HOY - Flotante abajo derecha */
   .fab-today {
     position: fixed;
-    right: 20px;
-    bottom: 20px;
+    right: 16px;
+    bottom: 16px;
     width: 48px; height: 48px;
     border-radius: 50%;
     background: var(--sky);
     color: #071020;
     display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.4);
-    z-index: 35;
-    transition: transform 0.15s ease, opacity 0.15s ease;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    z-index: 30;
+    transition: all 0.2s ease;
   }
   .fab-today:active { transform: scale(0.92); }
   .fab-today.hidden { display: none; }
-
-  @media (min-width: 768px) {
-    .fab-today {
-      right: 30px;
-      bottom: 30px;
-      width: 52px;
-      height: 52px;
-    }
-  }
 
   /* MODAL */
   .modal-overlay {
@@ -500,15 +456,21 @@
   #map { 
     width: 100%; 
     height: 100%; 
-    background: var(--navy);
     min-height: 400px;
+    background: var(--navy);
+  }
+  .leaflet-container { 
+    background: var(--navy) !important; 
+    font-family: "Inter", sans-serif;
+    width: 100% !important;
+    height: 100% !important;
   }
   .map-overlay-top {
     position: absolute;
-    top: 12px; left: 12px; right: 12px;
+    top: 12px; left: 12px;
     z-index: 500;
     padding: 12px 14px;
-    max-width: 350px;
+    max-width: 320px;
   }
   .map-overlay-top .chofer { font-family: "Syne", sans-serif; font-weight: 700; font-size: 0.95rem; }
   .map-overlay-top .meta { font-size: 0.75rem; color: var(--text-dim); margin-top: 2px; }
@@ -518,9 +480,6 @@
     margin-top: 6px;
     padding-top: 6px;
     border-top: 1px solid var(--glass-border);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
   .map-overlay-top .updated { font-size: 0.68rem; color: var(--text-faint); margin-top: 4px; }
 
@@ -532,22 +491,12 @@
     align-items: center;
     justify-content: center;
     padding: 24px;
-    background: rgba(7, 16, 32, 0.92);
+    background: rgba(7, 16, 32, 0.95);
     text-align: center;
   }
   .map-unavailable .box { max-width: 300px; }
   .map-unavailable h3 { font-size: 1.05rem; margin-bottom: 8px; }
   .map-unavailable p { color: var(--text-dim); font-size: 0.85rem; line-height: 1.5; }
-  .map-unavailable .pulse {
-    width: 10px; height: 10px; border-radius: 50%;
-    background: var(--sky-dim);
-    margin: 0 auto 14px;
-    animation: pulse 1.6s ease-in-out infinite;
-  }
-  @keyframes pulse {
-    0%, 100% { opacity: 0.4; transform: scale(0.9); }
-    50% { opacity: 1; transform: scale(1.15); }
-  }
 
   .marker-pulse {
     width: 16px; height: 16px;
@@ -560,7 +509,7 @@
   /* TOAST */
   #toast {
     position: fixed;
-    left: 50%; bottom: calc(24px + var(--safe-b));
+    left: 50%; bottom: 80px;
     transform: translate(-50%, 12px);
     padding: 11px 18px;
     border-radius: 999px;
@@ -576,13 +525,6 @@
   #toast.show { opacity: 1; transform: translate(-50%, 0); }
   #toast.err { border-color: rgba(224, 68, 68, 0.5); color: #ffb3b3; }
   #toast.ok { border-color: rgba(44, 184, 122, 0.5); color: #a8f0cf; }
-
-  .leaflet-container { 
-    background: var(--navy) !important; 
-    font-family: "Inter", sans-serif;
-    width: 100% !important;
-    height: 100% !important;
-  }
 </style>
 </head>
 <body>
@@ -612,13 +554,13 @@
       <span class="name" id="topbar-name">—</span>
     </div>
     <div class="topbar-actions">
-      <button id="btn-undo" class="icon-btn" title="Deshacer" aria-label="Deshacer" disabled>
+      <button id="btn-undo" class="icon-btn" title="Deshacer (Ctrl+Z)" aria-label="Deshacer" disabled>
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="1 4 1 10 7 10"></polyline>
           <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
         </svg>
       </button>
-      <button id="btn-redo" class="icon-btn" title="Rehacer" aria-label="Rehacer" disabled>
+      <button id="btn-redo" class="icon-btn" title="Rehacer (Ctrl+Y)" aria-label="Rehacer" disabled>
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="23 4 23 10 17 10"></polyline>
           <path d="M20.49 15a9 9 0 1 1-2.13-9.36L23 10"></path>
@@ -663,25 +605,25 @@
             </div>
             <div id="cal-body"></div>
           </div>
+
+          <div class="cal-legend" style="margin-top:12px;">
+            <span><i style="background:var(--green)"></i> Mañana</span>
+            <span><i style="background:var(--sky-alt)"></i> Tarde</span>
+            <span><i style="background:linear-gradient(135deg,var(--green) 50%,var(--sky-alt) 50%)"></i> Ambos</span>
+            <span><i style="background:var(--text-faint)"></i> No viajo</span>
+          </div>
         </div>
 
         <div class="desktop-sidebar">
-          <div class="cal-legend glass" style="padding: 16px; margin-top: 0;">
-            <h3 style="font-size: 0.9rem; margin-bottom: 12px;">Leyenda</h3>
-            <div style="display: flex; flex-direction: column; gap: 10px;">
-              <span><i style="background:var(--green)"></i> Mañana</span>
-              <span><i style="background:var(--sky-alt)"></i> Tarde</span>
-              <span><i style="background:linear-gradient(135deg,var(--green) 50%,var(--sky-alt) 50%)"></i> Ambos</span>
-              <span><i style="background:var(--text-faint)"></i> No viajo</span>
-            </div>
-          </div>
-
-          <div class="hint-card glass">
-            <strong>Consejos:</strong><br>
-            • Tocá un día para marcarlo<br>
-            • Tocá una letra (L-V) para seleccionar la columna<br>
-            • Tocá el número de semana para la fila completa<br>
-            • Usá Ctrl+Z para deshacer, Ctrl+Y para rehacer
+          <div class="sidebar-card glass">
+            <h3>💡 Consejos</h3>
+            <ul>
+              <li>Tocá un día para marcarlo</li>
+              <li>Tocá una letra (L-V) para seleccionar la columna</li>
+              <li>Tocá el número de semana para la fila completa</li>
+              <li>Usá Ctrl+Z para deshacer</li>
+              <li>Usá Ctrl+Y para rehacer</li>
+            </ul>
           </div>
         </div>
       </div>
@@ -698,11 +640,8 @@
       </div>
       <div class="map-unavailable hidden" id="map-unavailable-box">
         <div class="box">
-          <div class="pulse"></div>
           <h3>Seguimiento no disponible</h3>
-          <p id="map-unavailable-text">
-            No hay una unidad en vivo para mostrarte en este turno.
-          </p>
+          <p id="map-unavailable-text">No hay una unidad en vivo para mostrarte en este turno.</p>
         </div>
       </div>
     </section>
@@ -719,8 +658,8 @@
   </button>
 </section>
 
-<!-- PANEL DE ACCIÓN -->
-<div id="action-panel" class="glass">
+<!-- BOTTOM SHEET / PANEL DE ACCIÓN -->
+<div id="action-panel">
   <div class="count">
     <span id="action-count">0 días seleccionados</span>
     <a href="#" id="action-clear">Cancelar</a>
@@ -785,43 +724,49 @@
     "enero", "febrero", "marzo", "abril", "mayo", "junio",
     "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre",
   ];
+  const FULL_WEEKDAY_LOWER = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"];
+  const ORDINAL_WEEK_FEM = ["primeras", "segundas", "terceras", "cuartas", "quintas"];
 
-  // Historial para deshacer/rehacer
+  // HISTORIAL PARA DESHACER/REHACER
   const history = {
     undoStack: [],
     redoStack: [],
     maxSize: 50,
     
-    push(state) {
-      this.undoStack.push(JSON.stringify(state));
-      if (this.undoStack.length > this.maxSize) {
-        this.undoStack.shift();
-      }
+    push(stateToSave) {
+      this.undoStack.push(Array.from(stateToSave));
+      if (this.undoStack.length > this.maxSize) this.undoStack.shift();
       this.redoStack = [];
       this.updateButtons();
     },
     
     undo() {
       if (this.undoStack.length === 0) return null;
-      const current = JSON.stringify(state.selected);
-      this.redoStack.push(current);
-      const prev = JSON.parse(this.undoStack.pop());
+      this.redoStack.push(Array.from(state.selected));
+      const prev = this.undoStack.pop();
       this.updateButtons();
-      return prev;
+      return new Set(prev);
     },
     
     redo() {
       if (this.redoStack.length === 0) return null;
-      const current = JSON.stringify(state.selected);
-      this.undoStack.push(current);
-      const next = JSON.parse(this.redoStack.pop());
+      this.undoStack.push(Array.from(state.selected));
+      const next = this.redoStack.pop();
       this.updateButtons();
-      return next;
+      return new Set(next);
     },
     
     updateButtons() {
-      document.getElementById("btn-undo").disabled = this.undoStack.length === 0;
-      document.getElementById("btn-redo").disabled = this.redoStack.length === 0;
+      const undoBtn = document.getElementById("btn-undo");
+      const redoBtn = document.getElementById("btn-redo");
+      if (undoBtn) undoBtn.disabled = this.undoStack.length === 0;
+      if (redoBtn) redoBtn.disabled = this.redoStack.length === 0;
+    },
+    
+    clear() {
+      this.undoStack = [];
+      this.redoStack = [];
+      this.updateButtons();
     }
   };
 
@@ -862,9 +807,6 @@
     r.setDate(Math.min(day, lastDay));
     return r;
   }
-
-  const FULL_WEEKDAY_LOWER = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"];
-  const ORDINAL_WEEK_FEM = ["primeras", "segundas", "terceras", "cuartas", "quintas"];
 
   let toastTimer = null;
   function toast(msg, kind) {
@@ -932,7 +874,8 @@
   document.getElementById("btn-undo").addEventListener("click", () => {
     const prev = history.undo();
     if (prev) {
-      state.selected = new Set(prev);
+      state.selected = prev;
+      state.recurrenceChoice = "none";
       renderCalendar();
       renderActionPanel();
     }
@@ -941,13 +884,13 @@
   document.getElementById("btn-redo").addEventListener("click", () => {
     const next = history.redo();
     if (next) {
-      state.selected = new Set(next);
+      state.selected = next;
+      state.recurrenceChoice = "none";
       renderCalendar();
       renderActionPanel();
     }
   });
 
-  // Atajos de teclado
   document.addEventListener("keydown", (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key === "z" && !e.shiftKey) {
       e.preventDefault();
@@ -1044,12 +987,10 @@
     const first = new Date(year, month - 1, 1);
     const startOffset = (first.getDay() + 6) % 7;
     const daysInMonth = new Date(year, month, 0).getDate();
-
     const cells = [];
     for (let i = 0; i < startOffset; i++) cells.push(null);
     for (let d = 1; d <= daysInMonth; d++) cells.push(d);
     while (cells.length % 7 !== 0) cells.push(null);
-
     const weeks = [];
     for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7));
     return weeks;
@@ -1066,9 +1007,7 @@
       const allDates = [];
       weeks.forEach(week => {
         const day = week[wd];
-        if (day !== null) {
-          allDates.push(toISODate(state.viewYear, state.viewMonth, day));
-        }
+        if (day !== null) allDates.push(toISODate(state.viewYear, state.viewMonth, day));
       });
       if (allDates.length > 0 && allDates.every(d => state.selected.has(d))) {
         weekdaysFullySelected.add(wd);
@@ -1088,8 +1027,7 @@
         .map((day, wd) => (day !== null && wd < 5 ? toISODate(state.viewYear, state.viewMonth, day) : null))
         .filter(Boolean);
       
-      const weekFullySelected = weekDates.length > 0 && 
-          weekDates.every(d => state.selected.has(d));
+      const weekFullySelected = weekDates.length > 0 && weekDates.every(d => state.selected.has(d));
 
       const weekNumCell = document.createElement("div");
       weekNumCell.className = "week-num" + (weekFullySelected ? " active" : "");
@@ -1121,7 +1059,6 @@
         if (iso === today) cell.classList.add("today");
         if (state.selected.has(iso)) cell.classList.add("selected");
         cell.dataset.date = iso;
-        cell.dataset.weekday = weekdayIdx;
 
         const num = document.createElement("span");
         num.className = "num";
@@ -1153,8 +1090,7 @@
   });
 
   function toggleDateSelection(iso) {
-    history.push(Array.from(state.selected));
-    
+    history.push(state.selected);
     if (state.selected.has(iso)) {
       state.selected.delete(iso);
     } else {
@@ -1167,46 +1103,35 @@
 
   function toggleWeekdaySelection(weekdayIdx) {
     if (weekdayIdx >= 5) return;
-    
-    history.push(Array.from(state.selected));
-    
+    history.push(state.selected);
     const weeks = buildWeeks(state.viewYear, state.viewMonth);
     const dates = [];
     weeks.forEach((week) => {
       const day = week[weekdayIdx];
-      if (day !== null) {
-        dates.push(toISODate(state.viewYear, state.viewMonth, day));
-      }
+      if (day !== null) dates.push(toISODate(state.viewYear, state.viewMonth, day));
     });
-    
     const allSelected = dates.every(d => state.selected.has(d));
-    
     if (allSelected) {
       dates.forEach(d => state.selected.delete(d));
     } else {
       dates.forEach(d => state.selected.add(d));
     }
-    
     state.recurrenceChoice = "none";
     renderCalendar();
     renderActionPanel();
   }
 
   function toggleWeekSelection(week, weekIdx) {
-    history.push(Array.from(state.selected));
-    
+    history.push(state.selected);
     const dates = week
       .map((day, wd) => (day !== null && wd < 5 ? toISODate(state.viewYear, state.viewMonth, day) : null))
       .filter(Boolean);
-    
     const allSelected = dates.every(d => state.selected.has(d));
-    
     if (allSelected) {
       dates.forEach(d => state.selected.delete(d));
     } else {
       dates.forEach(d => state.selected.add(d));
     }
-    
     state.recurrenceChoice = "none";
     renderCalendar();
     renderActionPanel();
@@ -1234,18 +1159,10 @@
     clearSelection();
     renderMonthLabel();
     if (changed) {
-      loadCalendar().then(pulseToday);
+      loadCalendar();
     } else {
       renderCalendar();
-      pulseToday();
     }
-  }
-
-  function pulseToday() {
-    const cell = document.querySelector(".day-cell.today");
-    if (!cell) return;
-    cell.classList.add("pulse-jump");
-    setTimeout(() => cell.classList.remove("pulse-jump"), 900);
   }
 
   document.querySelectorAll(".seg-btn").forEach((btn) => {
@@ -1273,21 +1190,17 @@
   function analyzeSelectionPattern() {
     const dates = Array.from(state.selected).sort();
     if (dates.length === 0) return null;
-    
     const weekdays = new Set();
     const weeksOfMonth = new Set();
-    
     dates.forEach(iso => {
       const d = parseISO(iso);
       weekdays.add(isoWeekdayMonFirst(d));
-      
       const firstDay = new Date(d.getFullYear(), d.getMonth(), 1);
       const firstMondayOffset = (firstDay.getDay() + 6) % 7;
       const dayOfMonth = d.getDate() + firstMondayOffset;
       const weekNum = Math.ceil(dayOfMonth / 7);
       weeksOfMonth.add(weekNum);
     });
-    
     return {
       weekdays: Array.from(weekdays).sort(),
       weeksOfMonth: Array.from(weeksOfMonth).sort(),
@@ -1300,19 +1213,16 @@
   function computeRecurrenceDates(recurrenceId, extentType, extentValue) {
     const baseDates = Array.from(state.selected).sort();
     if (recurrenceId === "none" || baseDates.length === 0) return baseDates;
-    
     const pattern = analyzeSelectionPattern();
     if (!pattern) return baseDates;
-    
     const fromDate = parseISO(pattern.firstDate);
     const until = endOfExtent(fromDate, extentType, extentValue);
     const out = new Set(baseDates);
     let count = out.size;
-    
+
     if (recurrenceId === "weekdays-weekly") {
       const selectedWeekdays = pattern.weekdays.filter(wd => wd < 5);
       if (selectedWeekdays.length === 0) return baseDates;
-      
       let d = new Date(fromDate);
       while (d <= until && count < MAX_RECURRENCE_DATES) {
         const currentWeekday = isoWeekdayMonFirst(d);
@@ -1324,10 +1234,7 @@
       }
     } else if (recurrenceId === "monthdays-monthly") {
       const selectedDays = new Set();
-      baseDates.forEach(iso => {
-        selectedDays.add(parseISO(iso).getDate());
-      });
-      
+      baseDates.forEach(iso => selectedDays.add(parseISO(iso).getDate()));
       let cursor = new Date(fromDate.getFullYear(), fromDate.getMonth(), 1);
       while (cursor <= until && count < MAX_RECURRENCE_DATES) {
         const lastDay = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 0).getDate();
@@ -1345,14 +1252,11 @@
     } else if (recurrenceId === "weeks-monthly") {
       const selectedWeeks = pattern.weeksOfMonth;
       const selectedWeekdays = pattern.weekdays;
-      
       let cursorY = fromDate.getFullYear();
       let cursorM = fromDate.getMonth();
-      
       while (count < MAX_RECURRENCE_DATES) {
         const monthStart = new Date(cursorY, cursorM, 1);
         if (monthStart > until) break;
-        
         selectedWeeks.forEach(weekNum => {
           const weekDates = nthWeekOfMonth(cursorY, cursorM + 1, weekNum);
           weekDates.forEach((d, wd) => {
@@ -1362,15 +1266,10 @@
             }
           });
         });
-        
         cursorM += 1;
-        if (cursorM > 11) {
-          cursorM = 0;
-          cursorY += 1;
-        }
+        if (cursorM > 11) { cursorM = 0; cursorY += 1; }
       }
     }
-    
     return Array.from(out).sort();
   }
 
@@ -1401,16 +1300,9 @@
     
     if (pattern) {
       if (pattern.weekdays.some(wd => wd < 5)) {
-        const weekdaysNames = pattern.weekdays
-          .filter(wd => wd < 5)
-          .sort()
-          .map(wd => FULL_WEEKDAY_LOWER[wd]);
-        
+        const weekdaysNames = pattern.weekdays.filter(wd => wd < 5).sort().map(wd => FULL_WEEKDAY_LOWER[wd]);
         if (weekdaysNames.length === 1) {
-          opts.push({ 
-            id: "weekdays-weekly", 
-            label: `Repetir todos los ${weekdaysNames[0]} cada semana` 
-          });
+          opts.push({ id: "weekdays-weekly", label: `Repetir todos los ${weekdaysNames[0]} cada semana` });
         } else if (weekdaysNames.length > 1) {
           const label = weekdaysNames.length === 2 
             ? `Repetir ${weekdaysNames[0]} y ${weekdaysNames[1]} cada semana`
@@ -1420,48 +1312,27 @@
       }
       
       const daysOfMonth = new Set();
-      state.selected.forEach(iso => {
-        daysOfMonth.add(parseISO(iso).getDate());
-      });
-      
+      state.selected.forEach(iso => daysOfMonth.add(parseISO(iso).getDate()));
       if (daysOfMonth.size > 0 && daysOfMonth.size <= 5) {
         const daysList = Array.from(daysOfMonth).sort((a, b) => a - b);
         if (daysList.length === 1) {
-          opts.push({ 
-            id: "monthdays-monthly", 
-            label: `Repetir el día ${daysList[0]} de cada mes` 
-          });
+          opts.push({ id: "monthdays-monthly", label: `Repetir el día ${daysList[0]} de cada mes` });
         } else if (daysList.length > 1) {
-          opts.push({ 
-            id: "monthdays-monthly", 
-            label: `Repetir los días ${daysList.join(", ")} de cada mes` 
-          });
+          opts.push({ id: "monthdays-monthly", label: `Repetir los días ${daysList.join(", ")} de cada mes` });
         }
       }
       
       if (pattern.weeksOfMonth.length > 0 && pattern.weekdays.size >= 3) {
-        const weeksNames = pattern.weeksOfMonth.map(w => {
-          const ord = ORDINAL_WEEK_FEM[w - 1] || `${w}ª`;
-          return ord;
-        });
-        
+        const weeksNames = pattern.weeksOfMonth.map(w => ORDINAL_WEEK_FEM[w - 1] || `${w}ª`);
         if (weeksNames.length === 1) {
-          opts.push({ 
-            id: "weeks-monthly", 
-            label: `Repetir la ${weeksNames[0]} semana de cada mes` 
-          });
+          opts.push({ id: "weeks-monthly", label: `Repetir la ${weeksNames[0]} semana de cada mes` });
         } else if (weeksNames.length > 1) {
-          opts.push({ 
-            id: "weeks-monthly", 
-            label: `Repetir las ${weeksNames.join(", ")} semanas de cada mes` 
-          });
+          opts.push({ id: "weeks-monthly", label: `Repetir las ${weeksNames.join(", ")} semanas de cada mes` });
         }
       }
     }
     
-    if (!opts.find((o) => o.id === state.recurrenceChoice)) {
-      state.recurrenceChoice = "none";
-    }
+    if (!opts.find((o) => o.id === state.recurrenceChoice)) state.recurrenceChoice = "none";
     
     optionsWrap.innerHTML = "";
     opts.forEach((o) => {
@@ -1473,24 +1344,18 @@
         state.recurrenceChoice = o.id;
         renderRecurrenceOptions();
         if (state.recurrenceChoice !== "none") {
-          const previewDates = computeRecurrenceDates(
-            state.recurrenceChoice, 
-            state.extentType, 
-            state.extentValue
-          );
+          const previewDates = computeRecurrenceDates(state.recurrenceChoice, state.extentType, state.extentValue);
           toast(`Se aplicará a ${previewDates.length} fechas`);
         }
       });
       optionsWrap.appendChild(btn);
     });
     
-    const showExtent = state.recurrenceChoice !== "none";
-    extentWrap.classList.toggle("hidden", !showExtent);
+    extentWrap.classList.toggle("hidden", state.recurrenceChoice === "none");
   }
 
   document.getElementById("extent-select").addEventListener("change", (e) => {
     state.extentType = e.target.value;
-    document.getElementById("extent-number").classList.toggle("hidden", state.extentType === "year");
     renderRecurrenceOptions();
   });
   
@@ -1501,13 +1366,7 @@
 
   document.getElementById("btn-guardar").addEventListener("click", () => {
     if (state.selected.size === 0) return;
-    
-    const dates = computeRecurrenceDates(
-      state.recurrenceChoice, 
-      state.extentType, 
-      state.extentValue
-    );
-    
+    const dates = computeRecurrenceDates(state.recurrenceChoice, state.extentType, state.extentValue);
     state.pendingDates = dates;
     openTurnoModal();
   });
@@ -1569,26 +1428,20 @@
   // MAPA
   function initMapIfNeeded() {
     if (state.map) {
-      // Si el mapa ya existe, invalidar el tamaño
-      setTimeout(() => {
-        state.map.invalidateSize();
-      }, 100);
+      setTimeout(() => state.map.invalidateSize(), 100);
       return;
     }
-    
     try {
-      state.map = L.map("map", { 
-        zoomControl: true, 
+      state.map = L.map("map", {
+        zoomControl: true,
         attributionControl: true,
         center: [-34.9011, -56.1645],
         zoom: 12
       });
-      
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
         maxZoom: 19,
       }).addTo(state.map);
-      
       console.log("Mapa inicializado correctamente");
     } catch (e) {
       console.error("Error al inicializar el mapa:", e);
@@ -1617,7 +1470,7 @@
   }
 
   function updateMapPosition(payload) {
-    const positions = payload.data;
+    const positions = payload.data || payload;
     const unidad = payload.unidad || {};
     const pos = Array.isArray(positions) ? positions[0] : positions;
     if (!pos || pos.lat == null || pos.lon == null) {
@@ -1625,7 +1478,6 @@
       return;
     }
     hideMapUnavailable();
-
     document.getElementById("map-chofer").textContent = unidad.chofer || pos.driver || "Chofer";
     document.getElementById("map-unidad").textContent =
       `Interno ${unidad.interno || "—"} · ${unidad.patente || pos.domain || ""}`;
@@ -1655,7 +1507,7 @@
       const json = await res.json();
       updateMapPosition(json);
     } catch (e) {
-      console.error(e);
+      console.error("Error en pollPosition:", e);
       showMapUnavailable("No pudimos conectar con el GPS. Reintentando…");
     }
   }
