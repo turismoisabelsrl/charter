@@ -21,8 +21,8 @@
     --navy-3: #10233c;
     --sky: #3a8fd1;
     --sky-dim: #6fb0e0;
-    --sky-alt: #55b3f5; /* Turno Tarde */
-    --green: #2cb87a; /* Turno Mañana */
+    --sky-alt: #55b3f5;
+    --green: #2cb87a;
     --red: #e04444;
     --text: #e8eef7;
     --text-dim: #9fb0c3;
@@ -267,6 +267,7 @@
   }
   .cal-head-cell.clickable { cursor: pointer; }
   .cal-head-cell.clickable:active { background: var(--glass-bg-strong); }
+  .cal-head-cell.clickable.active { background: rgba(58, 143, 209, 0.2); color: var(--sky-dim); }
   .cal-head-cell.weekend-head { opacity: 0.4; }
   .week-num {
     display: flex; align-items: center; justify-content: center;
@@ -276,6 +277,7 @@
     cursor: pointer;
   }
   .week-num:active { background: var(--glass-bg-strong); }
+  .week-num.active { background: rgba(58, 143, 209, 0.2); color: var(--sky-dim); }
 
   .day-cell {
     aspect-ratio: 1 / 1;
@@ -301,18 +303,14 @@
   .day-cell .dot.am-dot.on { background: var(--green); }
   .day-cell .dot.pm-dot.on { background: var(--sky-alt); }
 
-  /* Solo mañana */
   .day-cell.am:not(.pm) { background: rgba(44, 184, 122, 0.16); color: var(--text); }
-  /* Solo tarde */
   .day-cell.pm:not(.am) { background: rgba(85, 179, 245, 0.16); color: var(--text); }
-  /* Ambos turnos: celda dividida en diagonal */
   .day-cell.am.pm {
     background: linear-gradient(135deg, rgba(44, 184, 122, 0.32) 50%, rgba(85, 179, 245, 0.32) 50%);
     color: var(--text);
   }
   .day-cell.noviaja { background: rgba(255, 255, 255, 0.03); color: var(--text-faint); }
 
-  /* Fin de semana: visible pero deshabilitado */
   .day-cell.weekend {
     background: rgba(255, 255, 255, 0.015);
     color: var(--text-faint);
@@ -375,7 +373,6 @@
   #action-panel .count a { color: var(--sky-dim); font-size: 0.8rem; }
   #action-panel { max-height: 78dvh; overflow-y: auto; }
 
-  /* Toggle Viajo / No viajo */
   .viaja-toggle { display: flex; gap: 8px; margin-bottom: 4px; }
   .seg-btn {
     flex: 1;
@@ -389,7 +386,6 @@
   .seg-btn.active[data-viaja="1"] { background: rgba(44, 184, 122, 0.2); border-color: var(--green); color: #a8f0cf; }
   .seg-btn.active[data-viaja="0"] { background: rgba(224, 68, 68, 0.2); border-color: var(--red); color: #ffb3b3; }
 
-  /* Motor de recurrencia */
   .recurrence-box { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--glass-border); }
   .recurrence-title {
     font-size: 0.72rem; color: var(--text-faint);
@@ -442,7 +438,6 @@
   }
   .exclude-note { font-size: 0.68rem; color: var(--text-faint); margin-top: 6px; }
 
-  /* Botón flotante "Hoy" */
   .fab-today {
     position: fixed;
     right: 14px;
@@ -459,7 +454,6 @@
   .fab-today:active { transform: scale(0.92); }
   .fab-today.hidden { display: none; }
 
-  /* Modal de confirmación de turno */
   .modal-overlay {
     position: fixed; inset: 0;
     z-index: 800;
@@ -529,7 +523,6 @@
     box-shadow: 0 0 0 4px rgba(58, 143, 209, 0.18);
   }
 
-  /* ---------------- TOAST ---------------- */
   #toast {
     position: fixed;
     left: 50%; bottom: calc(24px + var(--safe-b));
@@ -554,9 +547,7 @@
 </head>
 <body>
 
-<!-- =====================================================================
-     PANTALLA: LOGIN POR DNI
-===================================================================== -->
+<!-- PANTALLA: LOGIN POR DNI -->
 <section id="screen-login" class="screen">
   <div class="login-card glass">
     <div class="brand">Charter TI</div>
@@ -573,9 +564,7 @@
   </div>
 </section>
 
-<!-- =====================================================================
-     PANTALLA: APP PRINCIPAL
-===================================================================== -->
+<!-- PANTALLA: APP PRINCIPAL -->
 <section id="screen-app" class="screen hidden">
 
   <header class="topbar">
@@ -598,7 +587,6 @@
   </nav>
 
   <main>
-    <!-- ---------------- TAB: CALENDARIO ---------------- -->
     <section id="tab-calendario" class="tab-panel">
       <div class="month-nav">
         <button id="btn-prev-month" aria-label="Mes anterior">‹</button>
@@ -617,7 +605,7 @@
           <div class="cal-head-cell weekend-head" title="Sábado (sin viajes)">S</div>
           <div class="cal-head-cell weekend-head" title="Domingo (sin viajes)">D</div>
         </div>
-        <div id="cal-body"><!-- filas generadas por JS --></div>
+        <div id="cal-body"></div>
       </div>
 
       <div class="cal-legend">
@@ -628,22 +616,20 @@
       </div>
 
       <div class="hint-card glass">
-        Tocá un día para marcarlo. Tocá una letra (L, M, M, J, V) para seleccionar esa columna del mes,
-        o el número de semana para seleccionar la fila completa. Sábados y domingos no aplican.
+        Tocá un día para marcarlo. Tocá las letras (L, M, M, J, V) para seleccionar días de la semana.
+        Tocá los números de semana para seleccionar semanas completas. Podés combinar múltiples selecciones.
+        Sábados y domingos no aplican.
       </div>
     </section>
 
-    <!-- ---------------- TAB: MAPA ---------------- -->
     <section id="tab-mapa" class="tab-panel hidden">
       <div id="map"></div>
-
       <div class="map-overlay-top glass hidden" id="map-info">
         <div class="chofer" id="map-chofer">—</div>
         <div class="meta" id="map-unidad">—</div>
         <div class="address" id="map-address">—</div>
         <div class="updated" id="map-updated">—</div>
       </div>
-
       <div class="map-unavailable hidden" id="map-unavailable-box">
         <div class="box">
           <div class="pulse"></div>
@@ -668,9 +654,7 @@
   </button>
 </section>
 
-<!-- =====================================================================
-     PANEL FLOTANTE DE ACCIÓN (selección de días + motor de recurrencia)
-===================================================================== -->
+<!-- PANEL FLOTANTE DE ACCIÓN -->
 <div id="action-panel" class="glass">
   <div class="count">
     <span id="action-count">0 días seleccionados</span>
@@ -684,8 +668,7 @@
 
   <div id="recurrence-box" class="recurrence-box hidden">
     <div class="recurrence-title">Repetición</div>
-    <div id="recurrence-options" class="recurrence-options"><!-- opciones generadas por JS --></div>
-
+    <div id="recurrence-options" class="recurrence-options"></div>
     <div id="recurrence-extent" class="recurrence-extent hidden">
       <label for="extent-select">Aplicar durante</label>
       <div class="extent-row">
@@ -697,16 +680,13 @@
         <input id="extent-number" type="number" min="1" max="52" value="4" />
       </div>
     </div>
-
-    <div id="recurrence-exclude" class="recurrence-exclude hidden"><!-- chips generados por JS --></div>
+    <div id="recurrence-exclude" class="recurrence-exclude hidden"></div>
   </div>
 
   <button id="btn-guardar" class="btn btn-primary" style="margin-top:14px;" disabled>Guardar</button>
 </div>
 
-<!-- =====================================================================
-     MODAL: confirmación de turno
-===================================================================== -->
+<!-- MODAL: confirmación de turno -->
 <div id="modal-turno" class="modal-overlay hidden">
   <div class="modal-card glass">
     <h3>¿Viaja en qué turno?</h3>
@@ -729,14 +709,10 @@
 (function () {
   "use strict";
 
-  // =========================================================================
-  // CONFIG — completar con los valores reales del proyecto antes de publicar.
-  // =========================================================================
   const SUPABASE_URL = "https://hmhbhjztlmklmhzzfbgz.supabase.co";
   const SUPABASE_ANON_KEY = "sb_publishable_HMwjMRn_QNztV3zhp0eAsw_OINb11YI";
-  // La Edge Function easytrack-gps (Paso 2) vive en /functions/v1/easytrack-gps
   const EASYTRACK_FN_URL = SUPABASE_URL + "/functions/v1/easytrack-gps";
-  const POLL_MS = 15000; // frecuencia del mapa en vivo, según Paso 3
+  const POLL_MS = 15000;
 
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -746,23 +722,24 @@
     "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre",
   ];
 
-  // =========================================================================
-  // ESTADO
-  // =========================================================================
   const state = {
-    profile: null,          // { dni, nombre, telefono, punto_subida, horario_subida, abono_tipo }
+    profile: null,
     viewYear: new Date().getFullYear(),
-    viewMonth: new Date().getMonth() + 1, // 1-12
-    calendarByDate: {},     // "YYYY-MM-DD" -> { manana:{viaja,origen}, tarde:{viaja,origen} }
-    selected: new Set(),    // "YYYY-MM-DD"
-    // Cómo se formó la selección actual — determina qué opciones de recurrencia ofrecer.
-    selectionMeta: { mode: "day", weekday: null, weekNumber: null, anchorDate: null },
-    viajaChoice: true,        // true=Viajo, false=No viajo (elegido en el panel)
-    recurrenceChoice: "none", // id de la opción de repetición elegida
-    extentType: "weeks",      // 'weeks' | 'months' | 'year'
+    viewMonth: new Date().getMonth() + 1,
+    calendarByDate: {},
+    selected: new Set(),
+    selectionMeta: { 
+      mode: "day", 
+      weekdays: new Set(), 
+      weeks: new Set(), 
+      anchorDate: null 
+    },
+    viajaChoice: true,
+    recurrenceChoice: "none",
+    extentType: "weeks",
     extentValue: 4,
-    excludeSet: new Set(),    // fechas ISO excluidas manualmente (modo "excepto")
-    pendingDates: [],         // fechas calculadas, a la espera de confirmación de turno en el modal
+    excludeSet: new Set(),
+    pendingDates: [],
     activeTab: "calendario",
     map: null,
     mapMarker: null,
@@ -780,10 +757,8 @@
     return new Date(y, m - 1, d);
   }
   function isoFromDate(d) { return toISODate(d.getFullYear(), d.getMonth() + 1, d.getDate()); }
-  // 0=Lunes … 6=Domingo (a diferencia de Date#getDay(), que arranca en Domingo=0)
   function isoWeekdayMonFirst(d) { return (d.getDay() + 6) % 7; }
   function addDays(d, n) { const r = new Date(d); r.setDate(r.getDate() + n); return r; }
-  // Suma meses conservando el día del mes cuando existe en el mes destino (si no, usa el último día).
   function addMonthsKeepDay(d, n) {
     const day = d.getDate();
     const r = new Date(d.getFullYear(), d.getMonth() + n, 1);
@@ -795,9 +770,6 @@
   const FULL_WEEKDAY_LOWER = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"];
   const ORDINAL_WEEK_FEM = ["primeras", "segundas", "terceras", "cuartas", "quintas"];
 
-  // =========================================================================
-  // TOAST
-  // =========================================================================
   let toastTimer = null;
   function toast(msg, kind) {
     const el = document.getElementById("toast");
@@ -807,9 +779,6 @@
     toastTimer = setTimeout(() => { el.className = ""; }, 2600);
   }
 
-  // =========================================================================
-  // PERSISTENCIA LOCAL
-  // =========================================================================
   const STORAGE_KEY = "charterti_pasajero_profile";
   function saveProfile(p) { localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); }
   function loadProfile() {
@@ -820,9 +789,7 @@
   }
   function clearProfile() { localStorage.removeItem(STORAGE_KEY); }
 
-  // =========================================================================
   // LOGIN
-  // =========================================================================
   const formLogin = document.getElementById("form-login");
   const btnLogin = document.getElementById("btn-login");
   const loginError = document.getElementById("login-error");
@@ -875,9 +842,7 @@
     updateTodayFabVisibility();
   }
 
-  // =========================================================================
   // TABS
-  // =========================================================================
   document.querySelectorAll(".tab").forEach((btn) => {
     btn.addEventListener("click", () => switchTab(btn.dataset.tab));
   });
@@ -897,16 +862,12 @@
     }
   }
 
-  // El FAB "Hoy" solo tiene sentido en la pestaña Calendario, y se esconde
-  // mientras el panel de acción está abierto para no superponerse.
   function updateTodayFabVisibility() {
     const show = state.activeTab === "calendario" && state.selected.size === 0;
     document.getElementById("btn-today").classList.toggle("hidden", !show);
   }
 
-  // =========================================================================
-  // CALENDARIO — carga de datos
-  // =========================================================================
+  // CALENDARIO
   document.getElementById("btn-prev-month").addEventListener("click", () => shiftMonth(-1));
   document.getElementById("btn-next-month").addEventListener("click", () => shiftMonth(1));
 
@@ -939,7 +900,7 @@
       if (error) throw error;
       state.calendarByDate = {};
       (data || []).forEach((row) => {
-        const key = row.fecha; // 'YYYY-MM-DD'
+        const key = row.fecha;
         if (!state.calendarByDate[key]) state.calendarByDate[key] = {};
         state.calendarByDate[key][row.turno] = { viaja: row.viaja, origen: row.origen };
       });
@@ -950,13 +911,9 @@
     }
   }
 
-  // =========================================================================
-  // CALENDARIO — render
-  // =========================================================================
   function buildWeeks(year, month) {
-    // Lunes-first. Devuelve array de semanas, cada una con 7 celdas {date|null}.
     const first = new Date(year, month - 1, 1);
-    const startOffset = (first.getDay() + 6) % 7; // 0=Lunes
+    const startOffset = (first.getDay() + 6) % 7;
     const daysInMonth = new Date(year, month, 0).getDate();
 
     const cells = [];
@@ -975,12 +932,21 @@
     const weeks = buildWeeks(state.viewYear, state.viewMonth);
     const today = todayISO();
 
+    // Actualizar estados visuales de headers
+    document.querySelectorAll(".cal-head-cell.clickable").forEach(el => {
+      const wd = Number(el.dataset.weekday);
+      el.classList.toggle("active", state.selectionMeta.weekdays?.has(wd));
+    });
+
     weeks.forEach((week, weekIdx) => {
       const row = document.createElement("div");
       row.className = "cal-row";
 
       const weekNumCell = document.createElement("div");
       weekNumCell.className = "week-num";
+      if (state.selectionMeta.weeks?.has(weekIdx + 1)) {
+        weekNumCell.classList.add("active");
+      }
       weekNumCell.textContent = weekIdx + 1;
       weekNumCell.addEventListener("click", () => toggleWeekSelection(week, weekIdx));
       row.appendChild(weekNumCell);
@@ -996,7 +962,7 @@
         const info = state.calendarByDate[iso] || {};
         const amViaja = !!(info.manana && info.manana.viaja);
         const pmViaja = !!(info.tarde && info.tarde.viaja);
-        const isWeekend = weekdayIdx >= 5; // 5=Sábado, 6=Domingo (semana Lunes-first)
+        const isWeekend = weekdayIdx >= 5;
 
         cell.className = "day-cell";
         if (isWeekend) {
@@ -1040,25 +1006,32 @@
     el.addEventListener("click", () => toggleWeekdaySelection(Number(el.dataset.weekday)));
   });
 
-  // =========================================================================
-  // SELECCIÓN — cada función deja registro en selectionMeta de CÓMO se armó
-  // la selección (día suelto / columna de día de semana / fila de semana),
-  // que es lo que después decide qué opciones de recurrencia se ofrecen.
-  // =========================================================================
+  // SELECCIÓN MEJORADA
   function toggleDateSelection(iso) {
-    // Si la selección venía de un patrón (columna o fila) y el usuario toca
-    // una celda individual, arrancamos una selección nueva para no mezclar patrones.
-    if (state.selectionMeta.mode === "weekday" || state.selectionMeta.mode === "week") {
+    // Si viene de selección por patrones, limpiar todo
+    if (state.selectionMeta.mode === "weekday-multi" || state.selectionMeta.mode === "week-multi") {
       state.selected.clear();
+      state.selectionMeta.weekdays.clear();
+      state.selectionMeta.weeks.clear();
     }
-    if (state.selected.has(iso)) state.selected.delete(iso);
-    else state.selected.add(iso);
-
-    if (state.selected.size === 1) {
-      state.selectionMeta = { mode: "day", weekday: null, weekNumber: null, anchorDate: Array.from(state.selected)[0] };
+    
+    if (state.selected.has(iso)) {
+      state.selected.delete(iso);
     } else {
-      state.selectionMeta = { mode: "multi", weekday: null, weekNumber: null, anchorDate: null };
+      state.selected.add(iso);
     }
+    
+    if (state.selected.size === 1) {
+      state.selectionMeta.mode = "day";
+      state.selectionMeta.anchorDate = Array.from(state.selected)[0];
+    } else if (state.selected.size > 1) {
+      state.selectionMeta.mode = "multi";
+      state.selectionMeta.anchorDate = null;
+    } else {
+      state.selectionMeta.mode = "day";
+      state.selectionMeta.anchorDate = null;
+    }
+    
     state.recurrenceChoice = "none";
     state.excludeSet.clear();
     renderCalendar();
@@ -1066,7 +1039,8 @@
   }
 
   function toggleWeekdaySelection(weekdayIdx) {
-    if (weekdayIdx >= 5) return; // Sábado/Domingo no seleccionables
+    if (weekdayIdx >= 5) return;
+    
     const weeks = buildWeeks(state.viewYear, state.viewMonth);
     const dates = [];
     weeks.forEach((week) => {
@@ -1074,15 +1048,36 @@
       if (day !== null) dates.push(toISODate(state.viewYear, state.viewMonth, day));
     });
     if (dates.length === 0) return;
-
-    const isSame = state.selectionMeta.mode === "weekday" && state.selectionMeta.weekday === weekdayIdx;
-    state.selected.clear();
-    if (!isSame) {
-      dates.forEach((d) => state.selected.add(d));
-      state.selectionMeta = { mode: "weekday", weekday: weekdayIdx, weekNumber: null, anchorDate: null };
-    } else {
-      state.selectionMeta = { mode: "day", weekday: null, weekNumber: null, anchorDate: null };
+    
+    // Inicializar sets si no existen
+    if (!state.selectionMeta.weekdays) state.selectionMeta.weekdays = new Set();
+    if (!state.selectionMeta.weeks) state.selectionMeta.weeks = new Set();
+    
+    // Si venía de selección de semanas, limpiar semanas
+    if (state.selectionMeta.mode === "week-multi") {
+      state.selectionMeta.weeks.clear();
+      state.selected.clear();
     }
+    
+    // Toggle del día de la semana
+    if (state.selectionMeta.weekdays.has(weekdayIdx)) {
+      state.selectionMeta.weekdays.delete(weekdayIdx);
+      dates.forEach(d => state.selected.delete(d));
+    } else {
+      state.selectionMeta.weekdays.add(weekdayIdx);
+      dates.forEach(d => state.selected.add(d));
+    }
+    
+    // Actualizar modo
+    if (state.selectionMeta.weekdays.size > 0) {
+      state.selectionMeta.mode = "weekday-multi";
+    } else if (state.selectionMeta.weeks.size > 0) {
+      state.selectionMeta.mode = "week-multi";
+    } else {
+      state.selectionMeta.mode = "day";
+      state.selectionMeta.anchorDate = null;
+    }
+    
     state.recurrenceChoice = "none";
     state.excludeSet.clear();
     renderCalendar();
@@ -1094,15 +1089,36 @@
       .map((day, wd) => (day !== null && wd < 5 ? toISODate(state.viewYear, state.viewMonth, day) : null))
       .filter(Boolean);
     if (dates.length === 0) return;
-
-    const isSame = state.selectionMeta.mode === "week" && state.selectionMeta.weekNumber === weekIdx + 1;
-    state.selected.clear();
-    if (!isSame) {
-      dates.forEach((d) => state.selected.add(d));
-      state.selectionMeta = { mode: "week", weekday: null, weekNumber: weekIdx + 1, anchorDate: null };
-    } else {
-      state.selectionMeta = { mode: "day", weekday: null, weekNumber: null, anchorDate: null };
+    
+    // Inicializar sets si no existen
+    if (!state.selectionMeta.weeks) state.selectionMeta.weeks = new Set();
+    if (!state.selectionMeta.weekdays) state.selectionMeta.weekdays = new Set();
+    
+    // Si venía de selección de días de semana, limpiar weekdays
+    if (state.selectionMeta.mode === "weekday-multi") {
+      state.selectionMeta.weekdays.clear();
+      state.selected.clear();
     }
+    
+    // Toggle de la semana
+    if (state.selectionMeta.weeks.has(weekIdx + 1)) {
+      state.selectionMeta.weeks.delete(weekIdx + 1);
+      dates.forEach(d => state.selected.delete(d));
+    } else {
+      state.selectionMeta.weeks.add(weekIdx + 1);
+      dates.forEach(d => state.selected.add(d));
+    }
+    
+    // Actualizar modo
+    if (state.selectionMeta.weeks.size > 0) {
+      state.selectionMeta.mode = "week-multi";
+    } else if (state.selectionMeta.weekdays.size > 0) {
+      state.selectionMeta.mode = "weekday-multi";
+    } else {
+      state.selectionMeta.mode = "day";
+      state.selectionMeta.anchorDate = null;
+    }
+    
     state.recurrenceChoice = "none";
     state.excludeSet.clear();
     renderCalendar();
@@ -1111,20 +1127,24 @@
 
   function clearSelection() {
     state.selected.clear();
-    state.selectionMeta = { mode: "day", weekday: null, weekNumber: null, anchorDate: null };
+    state.selectionMeta = { 
+      mode: "day", 
+      weekdays: new Set(), 
+      weeks: new Set(), 
+      anchorDate: null 
+    };
     state.recurrenceChoice = "none";
     state.excludeSet.clear();
     renderActionPanel();
   }
+
   document.getElementById("action-clear").addEventListener("click", (ev) => {
     ev.preventDefault();
     clearSelection();
     renderCalendar();
   });
 
-  // =========================================================================
   // BOTÓN "HOY"
-  // =========================================================================
   document.getElementById("btn-today").addEventListener("click", goToToday);
 
   function goToToday() {
@@ -1149,9 +1169,7 @@
     setTimeout(() => cell.classList.remove("pulse-jump"), 900);
   }
 
-  // =========================================================================
   // TOGGLE VIAJO / NO VIAJO
-  // =========================================================================
   document.querySelectorAll(".seg-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
       state.viajaChoice = btn.dataset.viaja === "1";
@@ -1159,16 +1177,14 @@
     });
   });
 
-  // =========================================================================
   // MOTOR DE RECURRENCIA
-  // =========================================================================
-  const MAX_RECURRENCE_DATES = 366; // tope defensivo — un año de fechas es más que suficiente
-  const MAX_EXCLUDE_CHIPS = 60;     // tope de chips renderizados para no sobrecargar el DOM
+  const MAX_RECURRENCE_DATES = 366;
+  const MAX_EXCLUDE_CHIPS = 60;
 
   function endOfExtent(fromDate, extentType, extentValue) {
     if (extentType === "year") return new Date(fromDate.getFullYear(), 11, 31);
     if (extentType === "months") return addMonthsKeepDay(fromDate, extentValue);
-    return addDays(fromDate, extentValue * 7); // 'weeks'
+    return addDays(fromDate, extentValue * 7);
   }
 
   function nthWeekOfMonth(year, month, n) {
@@ -1178,9 +1194,6 @@
     return week.map((day) => (day === null ? null : new Date(year, month - 1, day)));
   }
 
-  // Calcula el array final de fechas ISO (ordenado, sin duplicados) para una
-  // opción de recurrencia dada. Recorre con aritmética simple de Date, acotada
-  // por MAX_RECURRENCE_DATES, para no bloquear el hilo principal del navegador.
   function computeRecurrenceDates(recurrenceId, extentType, extentValue) {
     const baseDates = Array.from(state.selected).sort();
     if (recurrenceId === "none" || baseDates.length === 0) return baseDates;
@@ -1191,7 +1204,54 @@
     const out = new Set(baseDates);
     let count = out.size;
 
-    if (recurrenceId === "weekday-forever" || recurrenceId === "weekday-except") {
+    // Para selección de múltiples días de semana
+    if (recurrenceId === "multi-weekday-forever" && meta.mode === "weekday-multi") {
+      const selectedWeekdays = Array.from(meta.weekdays).sort();
+      let d = new Date(fromDate);
+      
+      while (d <= until && count < MAX_RECURRENCE_DATES) {
+        const currentWeekday = isoWeekdayMonFirst(d);
+        if (selectedWeekdays.includes(currentWeekday)) {
+          out.add(isoFromDate(d));
+          count++;
+        }
+        d = addDays(d, 1);
+      }
+    }
+    // Para selección de múltiples semanas
+    else if (recurrenceId === "multi-week-forever" && meta.mode === "week-multi") {
+      const selectedWeeks = Array.from(meta.weeks).sort();
+      const weekdaysInBase = new Set();
+      baseDates.forEach(iso => {
+        weekdaysInBase.add(isoWeekdayMonFirst(parseISO(iso)));
+      });
+      
+      let cursorY = fromDate.getFullYear();
+      let cursorM = fromDate.getMonth() + 1;
+      
+      while (count < MAX_RECURRENCE_DATES) {
+        const monthStart = new Date(cursorY, cursorM - 1, 1);
+        if (monthStart > until) break;
+        
+        selectedWeeks.forEach(weekNum => {
+          const weekDates = nthWeekOfMonth(cursorY, cursorM, weekNum);
+          weekDates.forEach((d, wd) => {
+            if (d && wd < 5 && weekdaysInBase.has(wd) && d <= until && count < MAX_RECURRENCE_DATES) {
+              out.add(isoFromDate(d));
+              count++;
+            }
+          });
+        });
+        
+        cursorM += 1;
+        if (cursorM > 12) {
+          cursorM = 1;
+          cursorY += 1;
+        }
+      }
+    }
+    // Lógica original para días individuales
+    else if (recurrenceId === "weekday-forever" || recurrenceId === "weekday-except") {
       const weekday = meta.mode === "day" ? isoWeekdayMonFirst(parseISO(meta.anchorDate)) : meta.weekday;
       let d = new Date(fromDate);
       while (isoWeekdayMonFirst(d) !== weekday) d = addDays(d, 1);
@@ -1201,9 +1261,6 @@
         count++;
       }
     } else if (recurrenceId === "monthday-forever") {
-      // Recalcula siempre a partir del día original (p.ej. 31), no del día ya
-      // recortado del mes anterior — si no, "31" degrada a "28" para siempre
-      // apenas pasa por un febrero.
       const targetDay = fromDate.getDate();
       let monthOffset = 0;
       while (count < MAX_RECURRENCE_DATES) {
@@ -1217,11 +1274,9 @@
         monthOffset++;
       }
     } else if (recurrenceId === "weeknum-forever") {
-      // Mismos días de semana (Lun-Vie) que estaban en la selección original de este mes,
-      // replicados en la N-ésima semana de cada mes siguiente dentro del rango elegido.
       const weekdaysInBase = new Set(baseDates.map((iso) => isoWeekdayMonFirst(parseISO(iso))));
       let cursorY = fromDate.getFullYear();
-      let cursorM = fromDate.getMonth() + 1 + 1; // próximo mes (1-12, puede pasarse a 13)
+      let cursorM = fromDate.getMonth() + 1 + 1;
       while (count < MAX_RECURRENCE_DATES) {
         if (cursorM > 12) { cursorM = 1; cursorY += 1; }
         const monthStart = new Date(cursorY, cursorM - 1, 1);
@@ -1271,15 +1326,22 @@
       const wd = FULL_WEEKDAY_LOWER[isoWeekdayMonFirst(d)];
       opts.push({ id: "weekday-forever", label: `Repetir todos los ${wd}` });
       opts.push({ id: "monthday-forever", label: `Repetir cada ${d.getDate()} de cada mes` });
-    } else if (meta.mode === "weekday") {
-      const wd = FULL_WEEKDAY_LOWER[meta.weekday];
-      opts.push({ id: "weekday-forever", label: `Repetir todos los ${wd}` });
-      opts.push({ id: "weekday-except", label: `Repetir ${wd} excepto…` });
-    } else if (meta.mode === "week") {
-      const ord = ORDINAL_WEEK_FEM[meta.weekNumber - 1] || `${meta.weekNumber}as`;
-      opts.push({ id: "weeknum-forever", label: `Repetir todas las ${ord} semanas de cada mes` });
+    } else if (meta.mode === "weekday-multi" && meta.weekdays && meta.weekdays.size > 0) {
+      const weekdaysList = Array.from(meta.weekdays).sort().map(wd => FULL_WEEKDAY_LOWER[wd]);
+      const label = weekdaysList.length > 1 
+        ? `Repetir ${weekdaysList.slice(0, -1).join(", ")} y ${weekdaysList[weekdaysList.length - 1]} cada semana`
+        : `Repetir todos los ${weekdaysList[0]}`;
+      opts.push({ id: "multi-weekday-forever", label });
+    } else if (meta.mode === "week-multi" && meta.weeks && meta.weeks.size > 0) {
+      const weeksList = Array.from(meta.weeks).sort().map(w => {
+        const ord = ORDINAL_WEEK_FEM[w - 1] || `${w}as`;
+        return ord;
+      });
+      const label = weeksList.length > 1
+        ? `Repetir las ${weeksList.slice(0, -1).join(", ")} y ${weeksList[weeksList.length - 1]} semanas de cada mes`
+        : `Repetir todas las ${weeksList[0]} semanas de cada mes`;
+      opts.push({ id: "multi-week-forever", label });
     }
-    // modo 'multi' -> solo la opción "none"
 
     if (!opts.find((o) => o.id === state.recurrenceChoice)) state.recurrenceChoice = "none";
 
@@ -1310,6 +1372,7 @@
     document.getElementById("extent-number").classList.toggle("hidden", state.extentType === "year");
     if (state.recurrenceChoice === "weekday-except") renderExcludeChips();
   });
+  
   document.getElementById("extent-number").addEventListener("input", (e) => {
     state.extentValue = Math.max(1, Math.min(52, Number(e.target.value) || 1));
     if (state.recurrenceChoice === "weekday-except") renderExcludeChips();
@@ -1344,9 +1407,7 @@
     }
   }
 
-  // =========================================================================
-  // GUARDAR — arma el array final de fechas y abre el modal de turno
-  // =========================================================================
+  // GUARDAR
   document.getElementById("btn-guardar").addEventListener("click", () => {
     if (state.selected.size === 0) return;
     let dates;
@@ -1360,18 +1421,18 @@
     openTurnoModal();
   });
 
-  // =========================================================================
-  // MODAL: confirmación de turno
-  // =========================================================================
+  // MODAL
   function openTurnoModal() {
     const n = state.pendingDates.length;
     document.getElementById("modal-turno-summary").textContent =
       `Se aplicará a ${n} fecha${n === 1 ? "" : "s"} · ${state.viajaChoice ? "Viajo" : "No viajo"}`;
     document.getElementById("modal-turno").classList.remove("hidden");
   }
+  
   function closeTurnoModal() {
     document.getElementById("modal-turno").classList.add("hidden");
   }
+  
   document.getElementById("modal-turno-cancel").addEventListener("click", closeTurnoModal);
   document.querySelectorAll("#modal-turno [data-turno]").forEach((btn) => {
     btn.addEventListener("click", () => persistSelection(btn.dataset.turno));
@@ -1382,8 +1443,6 @@
     document.querySelectorAll("#modal-turno button").forEach((b) => (b.disabled = isSaving));
   }
 
-  // Persiste llamando a rpc_set_asistencia_masivo en lotes (para no mandar
-  // arrays gigantes en una sola request) por cada turno elegido.
   async function persistSelection(turnoChoice) {
     const dates = state.pendingDates || [];
     if (dates.length === 0) return;
@@ -1417,22 +1476,17 @@
     }
   }
 
-  // =========================================================================
   // MAPA EN VIVO
-  // =========================================================================
   function initMapIfNeeded() {
     if (state.map) return;
     state.map = L.map("map", { zoomControl: false, attributionControl: false }).setView([-34.9011, -56.1645], 12);
     L.control.zoom({ position: "bottomright" }).addTo(state.map);
-    // Humanitarian OSM (HOT): mantiene claridad en nombres de calle y resalta puntos de interés.
     L.tileLayer("https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png", {
       subdomains: "abc",
       maxZoom: 20,
     }).addTo(state.map);
   }
 
-  // El manual de EasyTrack devuelve "YYYY-MM-DD HH:mm:ss-03" (hora local ART,
-  // sin minutos en el offset) — lo normalizamos para que Date lo parsee bien.
   function formatUpdatedTime(ts) {
     if (!ts) return "—";
     let iso = String(ts).trim().replace(" ", "T");
@@ -1512,9 +1566,7 @@
     }
   }
 
-  // =========================================================================
   // ARRANQUE
-  // =========================================================================
   const existing = loadProfile();
   if (existing && existing.dni) {
     enterApp(existing);
