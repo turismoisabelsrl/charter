@@ -173,6 +173,7 @@
   }
   .icon-btn:hover:not(:disabled) { background: var(--glass-bg-strong); color: var(--text); }
   .icon-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .icon-btn-sm { width: 30px; height: 30px; }
 
   .tabs {
     display: flex;
@@ -209,6 +210,37 @@
     height: 100%; 
     overflow-y: auto; 
     padding: 0 18px calc(24px + var(--safe-b));
+  }
+  #tab-calendario.tab-panel {
+    transition: padding-bottom 0.25s ease;
+  }
+
+  /* AVISO DE AYUDA (solo mobile; en desktop ya está la tarjeta de Consejos) */
+  .mobile-hint {
+    display: none;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    line-height: 1.4;
+  }
+  .mobile-hint-icon { flex-shrink: 0; font-size: 0.95rem; }
+  .mobile-hint-text { flex: 1; }
+  .mobile-hint-close {
+    flex-shrink: 0;
+    background: none;
+    border: 0;
+    color: var(--text-faint);
+    font-size: 0.85rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 2px 4px;
+    font-family: "Inter", sans-serif;
+  }
+  @media (max-width: 767px) {
+    .mobile-hint.show { display: flex; }
   }
 
   /* CALENDARIO LAYOUT */
@@ -358,6 +390,7 @@
     align-items: center;
   }
   #action-panel .count a { color: var(--sky-dim); font-size: 0.8rem; text-decoration: none; }
+  #action-panel .count-left { display: flex; align-items: center; gap: 6px; }
 
   /* DESKTOP: Panel lateral */
   @media (min-width: 768px) {
@@ -554,13 +587,13 @@
       <span class="name" id="topbar-name">—</span>
     </div>
     <div class="topbar-actions">
-      <button id="btn-undo" class="icon-btn" title="Deshacer (Ctrl+Z)" aria-label="Deshacer" disabled>
+      <button class="icon-btn js-btn-undo" title="Deshacer (Ctrl+Z)" aria-label="Deshacer" disabled>
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="1 4 1 10 7 10"></polyline>
           <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
         </svg>
       </button>
-      <button id="btn-redo" class="icon-btn" title="Rehacer (Ctrl+Y)" aria-label="Rehacer" disabled>
+      <button class="icon-btn js-btn-redo" title="Rehacer (Ctrl+Y)" aria-label="Rehacer" disabled>
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="23 4 23 10 17 10"></polyline>
           <path d="M20.49 15a9 9 0 1 1-2.13-9.36L23 10"></path>
@@ -590,6 +623,12 @@
             <button id="btn-prev-month" aria-label="Mes anterior">‹</button>
             <div class="label display" id="month-label">—</div>
             <button id="btn-next-month" aria-label="Mes siguiente">›</button>
+          </div>
+
+          <div id="mobile-hint" class="mobile-hint glass">
+            <span class="mobile-hint-icon">💡</span>
+            <span class="mobile-hint-text">Tocá un día para marcarlo. Tocá una letra (L-V) o el número de semana para seleccionar varios de una vez. Usá <strong>↩</strong>/<strong>↪</strong> para deshacer/rehacer.</span>
+            <button type="button" id="mobile-hint-close" class="mobile-hint-close" aria-label="Cerrar aviso">✕</button>
           </div>
 
           <div class="cal-grid glass">
@@ -661,7 +700,21 @@
 <!-- BOTTOM SHEET / PANEL DE ACCIÓN -->
 <div id="action-panel">
   <div class="count">
-    <span id="action-count">0 días seleccionados</span>
+    <div class="count-left">
+      <button type="button" class="icon-btn icon-btn-sm js-btn-undo" title="Deshacer" aria-label="Deshacer" disabled>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="1 4 1 10 7 10"></polyline>
+          <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+        </svg>
+      </button>
+      <button type="button" class="icon-btn icon-btn-sm js-btn-redo" title="Rehacer" aria-label="Rehacer" disabled>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="23 4 23 10 17 10"></polyline>
+          <path d="M20.49 15a9 9 0 1 1-2.13-9.36L23 10"></path>
+        </svg>
+      </button>
+      <span id="action-count">0 días seleccionados</span>
+    </div>
     <a href="#" id="action-clear">Cancelar</a>
   </div>
 
@@ -757,10 +810,8 @@
     },
     
     updateButtons() {
-      const undoBtn = document.getElementById("btn-undo");
-      const redoBtn = document.getElementById("btn-redo");
-      if (undoBtn) undoBtn.disabled = this.undoStack.length === 0;
-      if (redoBtn) redoBtn.disabled = this.redoStack.length === 0;
+      document.querySelectorAll(".js-btn-undo").forEach((b) => { b.disabled = this.undoStack.length === 0; });
+      document.querySelectorAll(".js-btn-redo").forEach((b) => { b.disabled = this.redoStack.length === 0; });
     },
     
     clear() {
@@ -871,7 +922,10 @@
   });
 
   // DESHACER/REHACER
-  document.getElementById("btn-undo").addEventListener("click", () => {
+  // Hay dos juegos de botones (barra superior + panel de acción, para que
+  // queden al alcance del pulgar mientras se está seleccionando en mobile).
+  // Ambos comparten clase y se sincronizan a través de history.updateButtons().
+  function handleUndoClick() {
     const prev = history.undo();
     if (prev) {
       state.selected = prev;
@@ -879,9 +933,9 @@
       renderCalendar();
       renderActionPanel();
     }
-  });
+  }
 
-  document.getElementById("btn-redo").addEventListener("click", () => {
+  function handleRedoClick() {
     const next = history.redo();
     if (next) {
       state.selected = next;
@@ -889,15 +943,18 @@
       renderCalendar();
       renderActionPanel();
     }
-  });
+  }
+
+  document.querySelectorAll(".js-btn-undo").forEach((b) => b.addEventListener("click", handleUndoClick));
+  document.querySelectorAll(".js-btn-redo").forEach((b) => b.addEventListener("click", handleRedoClick));
 
   document.addEventListener("keydown", (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key === "z" && !e.shiftKey) {
       e.preventDefault();
-      document.getElementById("btn-undo").click();
+      if (!document.querySelector(".js-btn-undo").disabled) handleUndoClick();
     } else if ((e.ctrlKey || e.metaKey) && (e.key === "y" || (e.key === "z" && e.shiftKey))) {
       e.preventDefault();
-      document.getElementById("btn-redo").click();
+      if (!document.querySelector(".js-btn-redo").disabled) handleRedoClick();
     }
   });
 
@@ -925,10 +982,8 @@
     updateTodayFabVisibility();
 
     if (tab === "mapa") {
-      setTimeout(() => {
-        initMapIfNeeded();
-        startMapPolling();
-      }, 100);
+      initMapIfNeeded();
+      startMapPolling();
     } else {
       stopMapPolling();
     }
@@ -1140,6 +1195,10 @@
   function clearSelection() {
     state.selected.clear();
     state.recurrenceChoice = "none";
+    // Sin esto, Deshacer podía "revivir" selecciones de un mes que ya no se
+    // está viendo (o de antes de guardar), sin ningún efecto visible: por
+    // eso parecía que el botón no hacía nada.
+    history.clear();
     renderActionPanel();
   }
 
@@ -1281,8 +1340,26 @@
       n === 1 ? "1 día seleccionado" : `${n} días seleccionados`;
     document.getElementById("btn-guardar").disabled = n === 0;
     updateTodayFabVisibility();
-    renderRecurrenceOptions();
+    renderRecurrenceOptions(); // puede cambiar la altura del panel (más/menos opciones)
+    updateCalendarSpacer();    // por eso esto va después: mide la altura ya final
   }
+
+  // En mobile el panel de acción es un bottom sheet fijo que puede tapar las
+  // últimas filas del calendario. Le agregamos un padding-bottom dinámico al
+  // tab para que esas filas siempre se puedan scrollear por encima del panel,
+  // en vez de quedar inalcanzables.
+  function updateCalendarSpacer() {
+    const calendarPanel = document.getElementById("tab-calendario");
+    const actionPanel = document.getElementById("action-panel");
+    const isMobileSheet = window.matchMedia("(max-width: 767px)").matches;
+    if (isMobileSheet && state.selected.size > 0) {
+      calendarPanel.style.paddingBottom = (actionPanel.offsetHeight + 32) + "px";
+    } else {
+      calendarPanel.style.paddingBottom = "";
+    }
+  }
+
+  window.addEventListener("resize", updateCalendarSpacer);
 
   function renderRecurrenceOptions() {
     const box = document.getElementById("recurrence-box");
@@ -1426,9 +1503,18 @@
   }
 
   // MAPA
+  let mapResizeObserver = null;
+
   function initMapIfNeeded() {
     if (state.map) {
-      setTimeout(() => state.map.invalidateSize(), 100);
+      state.map.invalidateSize();
+      return;
+    }
+    if (typeof L === "undefined") {
+      // Leaflet no llegó a cargar (CDN caído/bloqueado). Sin esto, el error
+      // quedaba silencioso y el mapa parecía "no cargar" sin explicación.
+      console.error("[Mapa] Leaflet no está disponible (falló la carga del script).");
+      showMapUnavailable("No se pudo cargar el mapa. Revisá tu conexión e intentá de nuevo.");
       return;
     }
     try {
@@ -1442,9 +1528,23 @@
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
         maxZoom: 19,
       }).addTo(state.map);
-      console.log("Mapa inicializado correctamente");
+
+      // El contenedor puede no tener su tamaño final apenas se le saca la
+      // clase "hidden" (problema clásico de Leaflet dentro de tabs: el mapa
+      // se inicializa con 0px y queda gris). En vez de confiar en un
+      // setTimeout fijo, observamos el contenedor y recalculamos el tamaño
+      // cada vez que cambia de verdad.
+      const container = document.getElementById("tab-mapa");
+      if ("ResizeObserver" in window) {
+        mapResizeObserver = new ResizeObserver(() => {
+          if (state.map) state.map.invalidateSize();
+        });
+        mapResizeObserver.observe(container);
+      }
+      requestAnimationFrame(() => requestAnimationFrame(() => state.map && state.map.invalidateSize()));
     } catch (e) {
       console.error("Error al inicializar el mapa:", e);
+      showMapUnavailable("No se pudo iniciar el mapa. Recargá la página e intentá de nuevo.");
     }
   }
 
@@ -1525,6 +1625,21 @@
       state.pollTimer = null;
     }
   }
+
+  // AVISO DE AYUDA (solo mobile, se puede cerrar y no vuelve a aparecer)
+  const HINT_KEY = "charterti_hint_dismissed_v1";
+  function initMobileHint() {
+    const hint = document.getElementById("mobile-hint");
+    if (!hint) return;
+    if (!localStorage.getItem(HINT_KEY)) {
+      hint.classList.add("show");
+    }
+    document.getElementById("mobile-hint-close").addEventListener("click", () => {
+      hint.classList.remove("show");
+      localStorage.setItem(HINT_KEY, "1");
+    });
+  }
+  initMobileHint();
 
   // ARRANQUE
   const existing = loadProfile();
