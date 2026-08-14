@@ -12,9 +12,6 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 
 <style>
-  /* ---------------------------------------------------------------------
-     CHARTER TI — Design tokens (respetar en admin.html también)
-  --------------------------------------------------------------------- */
   :root {
     --navy: #071020;
     --navy-2: #0c1a2e;
@@ -70,7 +67,6 @@
   .screen { min-height: 100dvh; }
   .hidden { display: none !important; }
 
-  /* ---------------- DESKTOP: contener el ancho tipo "app" ---------------- */
   @media (min-width: 560px) {
     body {
       display: flex;
@@ -111,7 +107,6 @@
     border-radius: var(--radius);
   }
 
-  /* ---------------- LOGIN ---------------- */
   #screen-login {
     display: flex;
     align-items: center;
@@ -186,7 +181,6 @@
     min-height: 1.2em;
   }
 
-  /* ---------------- APP SHELL ---------------- */
   #screen-app {
     display: flex;
     flex-direction: column;
@@ -237,7 +231,6 @@
   main { flex: 1; overflow: hidden; position: relative; }
   .tab-panel { height: 100%; overflow-y: auto; padding: 0 18px calc(24px + var(--safe-b)); }
 
-  /* ---------------- CALENDARIO ---------------- */
   .month-nav {
     display: flex;
     align-items: center;
@@ -351,7 +344,6 @@
     line-height: 1.5;
   }
 
-  /* ---------------- FLOATING ACTION PANEL ---------------- */
   #action-panel {
     position: fixed;
     left: 14px; right: 14px;
@@ -419,24 +411,14 @@
   .extent-row select { flex: 2; }
   .extent-row input { flex: 1; min-width: 58px; }
 
-  .recurrence-exclude { margin-top: 12px; }
-  .exclude-title { font-size: 0.74rem; color: var(--text-faint); margin-bottom: 6px; }
-  .exclude-chips { display: flex; flex-wrap: wrap; gap: 6px; max-height: 110px; overflow-y: auto; }
-  .exclude-chip {
-    padding: 5px 9px;
-    border-radius: 999px;
-    font-size: 0.7rem;
-    background: rgba(44, 184, 122, 0.14);
-    border: 1px solid rgba(44, 184, 122, 0.35);
-    color: var(--text);
+  .recurrence-summary {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    margin-top: 8px;
+    padding: 8px;
+    background: rgba(58, 143, 209, 0.1);
+    border-radius: 6px;
   }
-  .exclude-chip.excluded {
-    background: rgba(224, 68, 68, 0.14);
-    border-color: rgba(224, 68, 68, 0.4);
-    color: #ffb3b3;
-    text-decoration: line-through;
-  }
-  .exclude-note { font-size: 0.68rem; color: var(--text-faint); margin-top: 6px; }
 
   .fab-today {
     position: fixed;
@@ -467,7 +449,6 @@
   .modal-summary { color: var(--text-dim); font-size: 0.85rem; margin-bottom: 20px; line-height: 1.5; }
   .modal-turno-options { display: flex; flex-direction: column; gap: 10px; }
 
-  /* ---------------- MAPA ---------------- */
   #tab-mapa.tab-panel { padding: 0; position: relative; }
   #map { width: 100%; height: 100%; background: var(--navy); }
   .map-overlay-top {
@@ -547,7 +528,6 @@
 </head>
 <body>
 
-<!-- PANTALLA: LOGIN POR DNI -->
 <section id="screen-login" class="screen">
   <div class="login-card glass">
     <div class="brand">Charter TI</div>
@@ -564,9 +544,7 @@
   </div>
 </section>
 
-<!-- PANTALLA: APP PRINCIPAL -->
 <section id="screen-app" class="screen hidden">
-
   <header class="topbar">
     <div class="who">
       <span class="hello">Hola</span>
@@ -616,9 +594,9 @@
       </div>
 
       <div class="hint-card glass">
-        Tocá un día para marcarlo. Tocá las letras (L, M, M, J, V) para seleccionar días de la semana.
-        Tocá los números de semana para seleccionar semanas completas. Podés combinar múltiples selecciones.
-        Sábados y domingos no aplican.
+        Tocá un día para marcarlo. Tocá una letra (L, M, M, J, V) para seleccionar esa columna completa.
+        Tocá el número de semana para seleccionar la fila completa. Podés combinar libremente
+        días, columnas y semanas. Sábados y domingos no aplican.
       </div>
     </section>
 
@@ -654,7 +632,6 @@
   </button>
 </section>
 
-<!-- PANEL FLOTANTE DE ACCIÓN -->
 <div id="action-panel" class="glass">
   <div class="count">
     <span id="action-count">0 días seleccionados</span>
@@ -680,13 +657,11 @@
         <input id="extent-number" type="number" min="1" max="52" value="4" />
       </div>
     </div>
-    <div id="recurrence-exclude" class="recurrence-exclude hidden"></div>
   </div>
 
   <button id="btn-guardar" class="btn btn-primary" style="margin-top:14px;" disabled>Guardar</button>
 </div>
 
-<!-- MODAL: confirmación de turno -->
 <div id="modal-turno" class="modal-overlay hidden">
   <div class="modal-card glass">
     <h3>¿Viaja en qué turno?</h3>
@@ -728,17 +703,10 @@
     viewMonth: new Date().getMonth() + 1,
     calendarByDate: {},
     selected: new Set(),
-    selectionMeta: { 
-      mode: "day", 
-      weekdays: new Set(), 
-      weeks: new Set(), 
-      anchorDate: null 
-    },
     viajaChoice: true,
     recurrenceChoice: "none",
     extentType: "weeks",
     extentValue: 4,
-    excludeSet: new Set(),
     pendingDates: [],
     activeTab: "calendario",
     map: null,
@@ -789,7 +757,6 @@
   }
   function clearProfile() { localStorage.removeItem(STORAGE_KEY); }
 
-  // LOGIN
   const formLogin = document.getElementById("form-login");
   const btnLogin = document.getElementById("btn-login");
   const loginError = document.getElementById("login-error");
@@ -842,7 +809,6 @@
     updateTodayFabVisibility();
   }
 
-  // TABS
   document.querySelectorAll(".tab").forEach((btn) => {
     btn.addEventListener("click", () => switchTab(btn.dataset.tab));
   });
@@ -867,7 +833,6 @@
     document.getElementById("btn-today").classList.toggle("hidden", !show);
   }
 
-  // CALENDARIO
   document.getElementById("btn-prev-month").addEventListener("click", () => shiftMonth(-1));
   document.getElementById("btn-next-month").addEventListener("click", () => shiftMonth(1));
 
@@ -931,22 +896,42 @@
     body.innerHTML = "";
     const weeks = buildWeeks(state.viewYear, state.viewMonth);
     const today = todayISO();
-
-    // Actualizar estados visuales de headers
+    
+    // Calcular días de semana completamente seleccionados
+    const weekdaysFullySelected = new Set();
+    for (let wd = 0; wd < 5; wd++) {
+      const allDates = [];
+      weeks.forEach(week => {
+        const day = week[wd];
+        if (day !== null) {
+          allDates.push(toISODate(state.viewYear, state.viewMonth, day));
+        }
+      });
+      if (allDates.length > 0 && allDates.every(d => state.selected.has(d))) {
+        weekdaysFullySelected.add(wd);
+      }
+    }
+    
+    // Actualizar headers
     document.querySelectorAll(".cal-head-cell.clickable").forEach(el => {
       const wd = Number(el.dataset.weekday);
-      el.classList.toggle("active", state.selectionMeta.weekdays?.has(wd));
+      el.classList.toggle("active", weekdaysFullySelected.has(wd));
     });
 
     weeks.forEach((week, weekIdx) => {
       const row = document.createElement("div");
       row.className = "cal-row";
 
+      // Calcular si la semana está completamente seleccionada
+      const weekDates = week
+        .map((day, wd) => (day !== null && wd < 5 ? toISODate(state.viewYear, state.viewMonth, day) : null))
+        .filter(Boolean);
+      
+      const weekFullySelected = weekDates.length > 0 && 
+          weekDates.every(d => state.selected.has(d));
+
       const weekNumCell = document.createElement("div");
-      weekNumCell.className = "week-num";
-      if (state.selectionMeta.weeks?.has(weekIdx + 1)) {
-        weekNumCell.classList.add("active");
-      }
+      weekNumCell.className = "week-num" + (weekFullySelected ? " active" : "");
       weekNumCell.textContent = weekIdx + 1;
       weekNumCell.addEventListener("click", () => toggleWeekSelection(week, weekIdx));
       row.appendChild(weekNumCell);
@@ -1006,34 +991,13 @@
     el.addEventListener("click", () => toggleWeekdaySelection(Number(el.dataset.weekday)));
   });
 
-  // SELECCIÓN MEJORADA
   function toggleDateSelection(iso) {
-    // Si viene de selección por patrones, limpiar todo
-    if (state.selectionMeta.mode === "weekday-multi" || state.selectionMeta.mode === "week-multi") {
-      state.selected.clear();
-      state.selectionMeta.weekdays.clear();
-      state.selectionMeta.weeks.clear();
-    }
-    
     if (state.selected.has(iso)) {
       state.selected.delete(iso);
     } else {
       state.selected.add(iso);
     }
-    
-    if (state.selected.size === 1) {
-      state.selectionMeta.mode = "day";
-      state.selectionMeta.anchorDate = Array.from(state.selected)[0];
-    } else if (state.selected.size > 1) {
-      state.selectionMeta.mode = "multi";
-      state.selectionMeta.anchorDate = null;
-    } else {
-      state.selectionMeta.mode = "day";
-      state.selectionMeta.anchorDate = null;
-    }
-    
     state.recurrenceChoice = "none";
-    state.excludeSet.clear();
     renderCalendar();
     renderActionPanel();
   }
@@ -1045,41 +1009,20 @@
     const dates = [];
     weeks.forEach((week) => {
       const day = week[weekdayIdx];
-      if (day !== null) dates.push(toISODate(state.viewYear, state.viewMonth, day));
+      if (day !== null) {
+        dates.push(toISODate(state.viewYear, state.viewMonth, day));
+      }
     });
-    if (dates.length === 0) return;
     
-    // Inicializar sets si no existen
-    if (!state.selectionMeta.weekdays) state.selectionMeta.weekdays = new Set();
-    if (!state.selectionMeta.weeks) state.selectionMeta.weeks = new Set();
+    const allSelected = dates.every(d => state.selected.has(d));
     
-    // Si venía de selección de semanas, limpiar semanas
-    if (state.selectionMeta.mode === "week-multi") {
-      state.selectionMeta.weeks.clear();
-      state.selected.clear();
-    }
-    
-    // Toggle del día de la semana
-    if (state.selectionMeta.weekdays.has(weekdayIdx)) {
-      state.selectionMeta.weekdays.delete(weekdayIdx);
+    if (allSelected) {
       dates.forEach(d => state.selected.delete(d));
     } else {
-      state.selectionMeta.weekdays.add(weekdayIdx);
       dates.forEach(d => state.selected.add(d));
     }
     
-    // Actualizar modo
-    if (state.selectionMeta.weekdays.size > 0) {
-      state.selectionMeta.mode = "weekday-multi";
-    } else if (state.selectionMeta.weeks.size > 0) {
-      state.selectionMeta.mode = "week-multi";
-    } else {
-      state.selectionMeta.mode = "day";
-      state.selectionMeta.anchorDate = null;
-    }
-    
     state.recurrenceChoice = "none";
-    state.excludeSet.clear();
     renderCalendar();
     renderActionPanel();
   }
@@ -1088,53 +1031,23 @@
     const dates = week
       .map((day, wd) => (day !== null && wd < 5 ? toISODate(state.viewYear, state.viewMonth, day) : null))
       .filter(Boolean);
-    if (dates.length === 0) return;
     
-    // Inicializar sets si no existen
-    if (!state.selectionMeta.weeks) state.selectionMeta.weeks = new Set();
-    if (!state.selectionMeta.weekdays) state.selectionMeta.weekdays = new Set();
+    const allSelected = dates.every(d => state.selected.has(d));
     
-    // Si venía de selección de días de semana, limpiar weekdays
-    if (state.selectionMeta.mode === "weekday-multi") {
-      state.selectionMeta.weekdays.clear();
-      state.selected.clear();
-    }
-    
-    // Toggle de la semana
-    if (state.selectionMeta.weeks.has(weekIdx + 1)) {
-      state.selectionMeta.weeks.delete(weekIdx + 1);
+    if (allSelected) {
       dates.forEach(d => state.selected.delete(d));
     } else {
-      state.selectionMeta.weeks.add(weekIdx + 1);
       dates.forEach(d => state.selected.add(d));
     }
     
-    // Actualizar modo
-    if (state.selectionMeta.weeks.size > 0) {
-      state.selectionMeta.mode = "week-multi";
-    } else if (state.selectionMeta.weekdays.size > 0) {
-      state.selectionMeta.mode = "weekday-multi";
-    } else {
-      state.selectionMeta.mode = "day";
-      state.selectionMeta.anchorDate = null;
-    }
-    
     state.recurrenceChoice = "none";
-    state.excludeSet.clear();
     renderCalendar();
     renderActionPanel();
   }
 
   function clearSelection() {
     state.selected.clear();
-    state.selectionMeta = { 
-      mode: "day", 
-      weekdays: new Set(), 
-      weeks: new Set(), 
-      anchorDate: null 
-    };
     state.recurrenceChoice = "none";
-    state.excludeSet.clear();
     renderActionPanel();
   }
 
@@ -1144,7 +1057,6 @@
     renderCalendar();
   });
 
-  // BOTÓN "HOY"
   document.getElementById("btn-today").addEventListener("click", goToToday);
 
   function goToToday() {
@@ -1169,7 +1081,6 @@
     setTimeout(() => cell.classList.remove("pulse-jump"), 900);
   }
 
-  // TOGGLE VIAJO / NO VIAJO
   document.querySelectorAll(".seg-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
       state.viajaChoice = btn.dataset.viaja === "1";
@@ -1177,9 +1088,7 @@
     });
   });
 
-  // MOTOR DE RECURRENCIA
   const MAX_RECURRENCE_DATES = 366;
-  const MAX_EXCLUDE_CHIPS = 60;
 
   function endOfExtent(fromDate, extentType, extentValue) {
     if (extentType === "year") return new Date(fromDate.getFullYear(), 11, 31);
@@ -1194,21 +1103,50 @@
     return week.map((day) => (day === null ? null : new Date(year, month - 1, day)));
   }
 
+  function analyzeSelectionPattern() {
+    const dates = Array.from(state.selected).sort();
+    if (dates.length === 0) return null;
+    
+    const weekdays = new Set();
+    const weeksOfMonth = new Set();
+    
+    dates.forEach(iso => {
+      const d = parseISO(iso);
+      weekdays.add(isoWeekdayMonFirst(d));
+      
+      const firstDay = new Date(d.getFullYear(), d.getMonth(), 1);
+      const firstMondayOffset = (firstDay.getDay() + 6) % 7;
+      const dayOfMonth = d.getDate() + firstMondayOffset;
+      const weekNum = Math.ceil(dayOfMonth / 7);
+      weeksOfMonth.add(weekNum);
+    });
+    
+    return {
+      weekdays: Array.from(weekdays).sort(),
+      weeksOfMonth: Array.from(weeksOfMonth).sort(),
+      totalDates: dates.length,
+      firstDate: dates[0],
+      lastDate: dates[dates.length - 1],
+    };
+  }
+
   function computeRecurrenceDates(recurrenceId, extentType, extentValue) {
     const baseDates = Array.from(state.selected).sort();
     if (recurrenceId === "none" || baseDates.length === 0) return baseDates;
-
-    const meta = state.selectionMeta;
-    const fromDate = parseISO(baseDates[0]);
+    
+    const pattern = analyzeSelectionPattern();
+    if (!pattern) return baseDates;
+    
+    const fromDate = parseISO(pattern.firstDate);
     const until = endOfExtent(fromDate, extentType, extentValue);
     const out = new Set(baseDates);
     let count = out.size;
-
-    // Para selección de múltiples días de semana
-    if (recurrenceId === "multi-weekday-forever" && meta.mode === "weekday-multi") {
-      const selectedWeekdays = Array.from(meta.weekdays).sort();
-      let d = new Date(fromDate);
+    
+    if (recurrenceId === "weekdays-weekly") {
+      const selectedWeekdays = pattern.weekdays.filter(wd => wd < 5);
+      if (selectedWeekdays.length === 0) return baseDates;
       
+      let d = new Date(fromDate);
       while (d <= until && count < MAX_RECURRENCE_DATES) {
         const currentWeekday = isoWeekdayMonFirst(d);
         if (selectedWeekdays.includes(currentWeekday)) {
@@ -1217,26 +1155,41 @@
         }
         d = addDays(d, 1);
       }
-    }
-    // Para selección de múltiples semanas
-    else if (recurrenceId === "multi-week-forever" && meta.mode === "week-multi") {
-      const selectedWeeks = Array.from(meta.weeks).sort();
-      const weekdaysInBase = new Set();
+    } else if (recurrenceId === "monthdays-monthly") {
+      const selectedDays = new Set();
       baseDates.forEach(iso => {
-        weekdaysInBase.add(isoWeekdayMonFirst(parseISO(iso)));
+        selectedDays.add(parseISO(iso).getDate());
       });
       
+      let cursor = new Date(fromDate.getFullYear(), fromDate.getMonth(), 1);
+      while (cursor <= until && count < MAX_RECURRENCE_DATES) {
+        const lastDay = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 0).getDate();
+        selectedDays.forEach(day => {
+          if (day <= lastDay) {
+            const d = new Date(cursor.getFullYear(), cursor.getMonth(), day);
+            if (d >= fromDate && d <= until && count < MAX_RECURRENCE_DATES) {
+              out.add(isoFromDate(d));
+              count++;
+            }
+          }
+        });
+        cursor = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1);
+      }
+    } else if (recurrenceId === "weeks-monthly") {
+      const selectedWeeks = pattern.weeksOfMonth;
+      const selectedWeekdays = pattern.weekdays;
+      
       let cursorY = fromDate.getFullYear();
-      let cursorM = fromDate.getMonth() + 1;
+      let cursorM = fromDate.getMonth();
       
       while (count < MAX_RECURRENCE_DATES) {
-        const monthStart = new Date(cursorY, cursorM - 1, 1);
+        const monthStart = new Date(cursorY, cursorM, 1);
         if (monthStart > until) break;
         
         selectedWeeks.forEach(weekNum => {
-          const weekDates = nthWeekOfMonth(cursorY, cursorM, weekNum);
+          const weekDates = nthWeekOfMonth(cursorY, cursorM + 1, weekNum);
           weekDates.forEach((d, wd) => {
-            if (d && wd < 5 && weekdaysInBase.has(wd) && d <= until && count < MAX_RECURRENCE_DATES) {
+            if (d && wd < 5 && selectedWeekdays.includes(wd) && d >= fromDate && d <= until && count < MAX_RECURRENCE_DATES) {
               out.add(isoFromDate(d));
               count++;
             }
@@ -1244,54 +1197,13 @@
         });
         
         cursorM += 1;
-        if (cursorM > 12) {
-          cursorM = 1;
+        if (cursorM > 11) {
+          cursorM = 0;
           cursorY += 1;
         }
       }
     }
-    // Lógica original para días individuales
-    else if (recurrenceId === "weekday-forever" || recurrenceId === "weekday-except") {
-      const weekday = meta.mode === "day" ? isoWeekdayMonFirst(parseISO(meta.anchorDate)) : meta.weekday;
-      let d = new Date(fromDate);
-      while (isoWeekdayMonFirst(d) !== weekday) d = addDays(d, 1);
-      while (d <= until && count < MAX_RECURRENCE_DATES) {
-        out.add(isoFromDate(d));
-        d = addDays(d, 7);
-        count++;
-      }
-    } else if (recurrenceId === "monthday-forever") {
-      const targetDay = fromDate.getDate();
-      let monthOffset = 0;
-      while (count < MAX_RECURRENCE_DATES) {
-        const cursor = new Date(fromDate.getFullYear(), fromDate.getMonth() + monthOffset, 1);
-        if (cursor > until) break;
-        const lastDay = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 0).getDate();
-        const d = new Date(cursor.getFullYear(), cursor.getMonth(), Math.min(targetDay, lastDay));
-        if (d > until) break;
-        out.add(isoFromDate(d));
-        count++;
-        monthOffset++;
-      }
-    } else if (recurrenceId === "weeknum-forever") {
-      const weekdaysInBase = new Set(baseDates.map((iso) => isoWeekdayMonFirst(parseISO(iso))));
-      let cursorY = fromDate.getFullYear();
-      let cursorM = fromDate.getMonth() + 1 + 1;
-      while (count < MAX_RECURRENCE_DATES) {
-        if (cursorM > 12) { cursorM = 1; cursorY += 1; }
-        const monthStart = new Date(cursorY, cursorM - 1, 1);
-        if (monthStart > until) break;
-        const weekDates = nthWeekOfMonth(cursorY, cursorM, meta.weekNumber);
-        weekDates.forEach((d, wd) => {
-          if (d && wd < 5 && weekdaysInBase.has(wd) && d <= until && count < MAX_RECURRENCE_DATES) {
-            out.add(isoFromDate(d));
-            count++;
-          }
-        });
-        cursorM += 1;
-      }
-    }
-
+    
     return Array.from(out).sort();
   }
 
@@ -1310,41 +1222,80 @@
     const box = document.getElementById("recurrence-box");
     const optionsWrap = document.getElementById("recurrence-options");
     const extentWrap = document.getElementById("recurrence-extent");
-    const excludeWrap = document.getElementById("recurrence-exclude");
-    const meta = state.selectionMeta;
-
+    
     if (state.selected.size === 0) {
       box.classList.add("hidden");
       return;
     }
     box.classList.remove("hidden");
-
-    const opts = [{ id: "none", label: meta.mode === "day" ? "Solo este día" : "Solo estos días" }];
-
-    if (meta.mode === "day") {
-      const d = parseISO(meta.anchorDate);
-      const wd = FULL_WEEKDAY_LOWER[isoWeekdayMonFirst(d)];
-      opts.push({ id: "weekday-forever", label: `Repetir todos los ${wd}` });
-      opts.push({ id: "monthday-forever", label: `Repetir cada ${d.getDate()} de cada mes` });
-    } else if (meta.mode === "weekday-multi" && meta.weekdays && meta.weekdays.size > 0) {
-      const weekdaysList = Array.from(meta.weekdays).sort().map(wd => FULL_WEEKDAY_LOWER[wd]);
-      const label = weekdaysList.length > 1 
-        ? `Repetir ${weekdaysList.slice(0, -1).join(", ")} y ${weekdaysList[weekdaysList.length - 1]} cada semana`
-        : `Repetir todos los ${weekdaysList[0]}`;
-      opts.push({ id: "multi-weekday-forever", label });
-    } else if (meta.mode === "week-multi" && meta.weeks && meta.weeks.size > 0) {
-      const weeksList = Array.from(meta.weeks).sort().map(w => {
-        const ord = ORDINAL_WEEK_FEM[w - 1] || `${w}as`;
-        return ord;
+    
+    const pattern = analyzeSelectionPattern();
+    const opts = [{ id: "none", label: "Solo estas fechas" }];
+    
+    if (pattern) {
+      if (pattern.weekdays.some(wd => wd < 5)) {
+        const weekdaysNames = pattern.weekdays
+          .filter(wd => wd < 5)
+          .sort()
+          .map(wd => FULL_WEEKDAY_LOWER[wd]);
+        
+        if (weekdaysNames.length === 1) {
+          opts.push({ 
+            id: "weekdays-weekly", 
+            label: `Repetir todos los ${weekdaysNames[0]} cada semana` 
+          });
+        } else if (weekdaysNames.length > 1) {
+          const label = weekdaysNames.length === 2 
+            ? `Repetir ${weekdaysNames[0]} y ${weekdaysNames[1]} cada semana`
+            : `Repetir ${weekdaysNames.slice(0, -1).join(", ")} y ${weekdaysNames[weekdaysNames.length - 1]} cada semana`;
+          opts.push({ id: "weekdays-weekly", label });
+        }
+      }
+      
+      const daysOfMonth = new Set();
+      state.selected.forEach(iso => {
+        daysOfMonth.add(parseISO(iso).getDate());
       });
-      const label = weeksList.length > 1
-        ? `Repetir las ${weeksList.slice(0, -1).join(", ")} y ${weeksList[weeksList.length - 1]} semanas de cada mes`
-        : `Repetir todas las ${weeksList[0]} semanas de cada mes`;
-      opts.push({ id: "multi-week-forever", label });
+      
+      if (daysOfMonth.size > 0 && daysOfMonth.size <= 5) {
+        const daysList = Array.from(daysOfMonth).sort((a, b) => a - b);
+        if (daysList.length === 1) {
+          opts.push({ 
+            id: "monthdays-monthly", 
+            label: `Repetir el día ${daysList[0]} de cada mes` 
+          });
+        } else if (daysList.length > 1) {
+          opts.push({ 
+            id: "monthdays-monthly", 
+            label: `Repetir los días ${daysList.join(", ")} de cada mes` 
+          });
+        }
+      }
+      
+      if (pattern.weeksOfMonth.length > 0 && pattern.weekdays.size >= 3) {
+        const weeksNames = pattern.weeksOfMonth.map(w => {
+          const ord = ORDINAL_WEEK_FEM[w - 1] || `${w}ª`;
+          return ord;
+        });
+        
+        if (weeksNames.length === 1) {
+          opts.push({ 
+            id: "weeks-monthly", 
+            label: `Repetir la ${weeksNames[0]} semana de cada mes` 
+          });
+        } else if (weeksNames.length > 1) {
+          opts.push({ 
+            id: "weeks-monthly", 
+            label: `Repetir las ${weeksNames.join(", ")} semanas de cada mes` 
+          });
+        }
+      }
     }
-
-    if (!opts.find((o) => o.id === state.recurrenceChoice)) state.recurrenceChoice = "none";
-
+    
+    if (!opts.find((o) => o.id === state.recurrenceChoice)) {
+      state.recurrenceChoice = "none";
+    }
+    
     optionsWrap.innerHTML = "";
     opts.forEach((o) => {
       const btn = document.createElement("button");
@@ -1353,75 +1304,59 @@
       btn.textContent = o.label;
       btn.addEventListener("click", () => {
         state.recurrenceChoice = o.id;
-        state.excludeSet.clear();
         renderRecurrenceOptions();
+        if (state.recurrenceChoice !== "none") {
+          const previewDates = computeRecurrenceDates(
+            state.recurrenceChoice, 
+            state.extentType, 
+            state.extentValue
+          );
+          toast(`Se aplicará a ${previewDates.length} fechas`);
+        }
       });
       optionsWrap.appendChild(btn);
     });
-
+    
     const showExtent = state.recurrenceChoice !== "none";
     extentWrap.classList.toggle("hidden", !showExtent);
-
-    const showExclude = state.recurrenceChoice === "weekday-except";
-    excludeWrap.classList.toggle("hidden", !showExclude);
-    if (showExclude) renderExcludeChips();
+    
+    if (showExtent) {
+      const previewDates = computeRecurrenceDates(
+        state.recurrenceChoice, 
+        state.extentType, 
+        state.extentValue
+      );
+      const summaryDiv = document.createElement("div");
+      summaryDiv.className = "recurrence-summary";
+      summaryDiv.textContent = `Se aplicará a ${previewDates.length} fechas`;
+      optionsWrap.appendChild(summaryDiv);
+    }
   }
 
   document.getElementById("extent-select").addEventListener("change", (e) => {
     state.extentType = e.target.value;
     document.getElementById("extent-number").classList.toggle("hidden", state.extentType === "year");
-    if (state.recurrenceChoice === "weekday-except") renderExcludeChips();
+    renderRecurrenceOptions();
   });
   
   document.getElementById("extent-number").addEventListener("input", (e) => {
     state.extentValue = Math.max(1, Math.min(52, Number(e.target.value) || 1));
-    if (state.recurrenceChoice === "weekday-except") renderExcludeChips();
+    renderRecurrenceOptions();
   });
 
-  function renderExcludeChips() {
-    const wrap = document.getElementById("recurrence-exclude");
-    const candidates = computeRecurrenceDates("weekday-forever", state.extentType, state.extentValue);
-    const shown = candidates.slice(0, MAX_EXCLUDE_CHIPS);
-
-    wrap.innerHTML = '<div class="exclude-title">Tocá una fecha para excluirla:</div><div class="exclude-chips"></div>';
-    const chipsBox = wrap.querySelector(".exclude-chips");
-    shown.forEach((iso) => {
-      const d = parseISO(iso);
-      const chip = document.createElement("button");
-      chip.type = "button";
-      chip.className = "exclude-chip" + (state.excludeSet.has(iso) ? " excluded" : "");
-      chip.textContent = `${WEEKDAY_LABELS[isoWeekdayMonFirst(d)]} ${d.getDate()}/${d.getMonth() + 1}`;
-      chip.addEventListener("click", () => {
-        if (state.excludeSet.has(iso)) state.excludeSet.delete(iso);
-        else state.excludeSet.add(iso);
-        renderExcludeChips();
-      });
-      chipsBox.appendChild(chip);
-    });
-
-    if (candidates.length > MAX_EXCLUDE_CHIPS) {
-      const note = document.createElement("div");
-      note.className = "exclude-note";
-      note.textContent = `Mostrando las primeras ${MAX_EXCLUDE_CHIPS} fechas calculadas.`;
-      wrap.appendChild(note);
-    }
-  }
-
-  // GUARDAR
   document.getElementById("btn-guardar").addEventListener("click", () => {
     if (state.selected.size === 0) return;
-    let dates;
-    if (state.recurrenceChoice === "weekday-except") {
-      const candidates = computeRecurrenceDates("weekday-forever", state.extentType, state.extentValue);
-      dates = candidates.filter((d) => !state.excludeSet.has(d));
-    } else {
-      dates = computeRecurrenceDates(state.recurrenceChoice, state.extentType, state.extentValue);
-    }
+    
+    const dates = computeRecurrenceDates(
+      state.recurrenceChoice, 
+      state.extentType, 
+      state.extentValue
+    );
+    
     state.pendingDates = dates;
     openTurnoModal();
   });
 
-  // MODAL
   function openTurnoModal() {
     const n = state.pendingDates.length;
     document.getElementById("modal-turno-summary").textContent =
@@ -1476,7 +1411,6 @@
     }
   }
 
-  // MAPA EN VIVO
   function initMapIfNeeded() {
     if (state.map) return;
     state.map = L.map("map", { zoomControl: false, attributionControl: false }).setView([-34.9011, -56.1645], 12);
@@ -1566,7 +1500,6 @@
     }
   }
 
-  // ARRANQUE
   const existing = loadProfile();
   if (existing && existing.dni) {
     enterApp(existing);
