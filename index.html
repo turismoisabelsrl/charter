@@ -31,7 +31,7 @@
     --radius-sm: 10px;
     --safe-b: env(safe-area-inset-bottom, 0px);
     --safe-t: env(safe-area-inset-top, 0px);
-    --navh: 84px; /* clearance reserved above the bottom dock */
+    --navh: 84px;
   }
 
   * { box-sizing: border-box; }
@@ -269,7 +269,7 @@
   .hist-note-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--sky-alt); flex-shrink: 0; }
   .hist-row .chevron { color: var(--text-faint); margin-left: 2px; }
 
-  /* BOTTOM SHEET (MÓVIL) */
+  /* BOTTOM SHEET (MOVIL) */
   #action-panel {
     position: fixed; left: 0; right: 0; bottom: 0; max-height: 65vh;
     border-radius: 20px 20px 0 0; transform: translateY(100%);
@@ -323,7 +323,7 @@
     background: rgba(255, 255, 255, 0.04); color: var(--text); font-size: 0.84rem; flex: 1;
   }
 
-  /* DOCK DE NAVEGACIÓN INFERIOR */
+  /* DOCK DE NAVEGACION INFERIOR */
   .bottom-nav {
     position: fixed; left: 50%; transform: translateX(-50%);
     bottom: calc(14px + var(--safe-b));
@@ -342,7 +342,7 @@
   .nav-btn svg { width: 19px; height: 19px; }
   .nav-btn.active { background: var(--sky); color: #071020; }
 
-  /* BOTÓN HOY (fallback, calendario) */
+  /* BOTON HOY (fallback, calendario) */
   .fab-today {
     position: fixed; right: 16px; bottom: calc(var(--navh) + var(--safe-b));
     width: 48px; height: 48px; border-radius: 50%;
@@ -422,8 +422,8 @@
 <section id="screen-login" class="screen">
   <div class="login-card glass">
     <div class="brand">Charter TI</div>
-    <h1>Hola 👋</h1>
-    <p>Ingresá tu documento para ver tu calendario de viajes, tu historial y el mapa en vivo de tu unidad.</p>
+    <h1>Hola</h1>
+    <p>Ingresa tu documento para ver tu calendario de viajes, tu historial y el mapa en vivo de tu unidad.</p>
     <form id="form-login" autocomplete="off">
       <div class="field">
         <label for="input-dni">Documento (DNI)</label>
@@ -439,7 +439,7 @@
 <section id="screen-app" class="screen hidden">
   <header class="topbar">
     <div class="who">
-      <span class="name" id="topbar-name">—</span>
+      <span class="name" id="topbar-name">-</span>
     </div>
     <div class="topbar-actions">
       <button id="btn-undo" class="icon-btn hidden" title="Deshacer (Ctrl+Z)" aria-label="Deshacer" disabled>
@@ -454,7 +454,7 @@
           <path d="M20.49 15a9 9 0 1 1-2.13-9.36L23 10"></path>
         </svg>
       </button>
-      <button id="btn-logout" class="icon-btn" title="Cerrar sesión" aria-label="Cerrar sesión">
+      <button id="btn-logout" class="icon-btn" title="Cerrar sesion" aria-label="Cerrar sesion">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
           <polyline points="16 17 21 12 16 7"></polyline>
@@ -470,12 +470,12 @@
       <div class="home-wrap">
         <div class="home-greet">
           <span class="hello">Hola</span>
-          <h1 id="home-name" class="display">—</h1>
+          <h1 id="home-name" class="display">-</h1>
         </div>
 
         <div class="today-card glass">
-          <div class="today-card-label">Hoy · <span id="today-date">—</span></div>
-          <div class="today-card-status" id="today-status">Cargando…</div>
+          <div class="today-card-label">Hoy - <span id="today-date">-</span></div>
+          <div class="today-card-status" id="today-status">Cargando...</div>
         </div>
 
         <div class="home-cards">
@@ -489,7 +489,7 @@
               </svg>
             </span>
             <span class="home-card-title">Calendario</span>
-            <span class="home-card-desc">Marcá tus días de viaje</span>
+            <span class="home-card-desc">Marca tus dias de viaje</span>
           </button>
           <button type="button" class="home-card glass" data-tab="mapa">
             <span class="home-card-icon">
@@ -499,7 +499,7 @@
               </svg>
             </span>
             <span class="home-card-title">Mapa en vivo</span>
-            <span class="home-card-desc">Seguí tu unidad en tiempo real</span>
+            <span class="home-card-desc">Segui tu unidad en tiempo real</span>
           </button>
           <button type="button" class="home-card glass" data-tab="historial">
             <span class="home-card-icon">
@@ -509,7 +509,7 @@
               </svg>
             </span>
             <span class="home-card-title">Historial</span>
-            <span class="home-card-desc">Revisá tus días registrados</span>
+            <span class="home-card-desc">Revisa tus dias registrados</span>
           </button>
         </div>
       </div>
@@ -520,8 +520,8 @@
       <div class="calendar-layout">
         <div>
           <div class="month-nav">
-            <button id="btn-prev-month" aria-label="Mes anterior">‹</button>
-            <div class="label display" id="month-label">—</div>
+            <button id="btn-prev-month" aria-label="Mes anterior">&#8249;</button>
+            <div class="label display" id="month-label">-</div>
             <button id="btn-today-header" class="btn-hoy" title="Ir al mes de hoy">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="3" y="5" width="18" height="16" rx="3"></rect>
@@ -532,7 +532,7 @@
               </svg>
               Hoy
             </button>
-            <button id="btn-next-month" aria-label="Mes siguiente">›</button>
+            <button id="btn-next-month" aria-label="Mes siguiente">&#8250;</button>
           </div>
 
           <div class="cal-grid glass">
@@ -540,17 +540,17 @@
               <div class="cal-head-cell">Sem</div>
               <div class="cal-head-cell clickable" data-weekday="0">L</div>
               <div class="cal-head-cell clickable" data-weekday="1">M</div>
-              <div class="cal-head-cell clickable" data-weekday="2" title="Miércoles">M</div>
+              <div class="cal-head-cell clickable" data-weekday="2" title="Miercoles">M</div>
               <div class="cal-head-cell clickable" data-weekday="3">J</div>
               <div class="cal-head-cell clickable" data-weekday="4">V</div>
-              <div class="cal-head-cell weekend-head" title="Sábado (sin viajes)">S</div>
+              <div class="cal-head-cell weekend-head" title="Sabado (sin viajes)">S</div>
               <div class="cal-head-cell weekend-head" title="Domingo (sin viajes)">D</div>
             </div>
             <div id="cal-body"></div>
           </div>
 
           <div class="cal-legend" style="margin-top:12px;">
-            <span><i style="background:var(--green)"></i> Mañana</span>
+            <span><i style="background:var(--green)"></i> Manana</span>
             <span><i style="background:var(--sky-alt)"></i> Tarde</span>
             <span><i style="background:linear-gradient(135deg,var(--green) 50%,var(--sky-alt) 50%)"></i> Ambos</span>
             <span><i style="background:var(--text-faint)"></i> No viajo</span>
@@ -559,13 +559,13 @@
 
         <div class="desktop-sidebar">
           <div class="sidebar-card glass">
-            <h3>💡 Consejos</h3>
+            <h3>Consejos</h3>
             <ul>
-              <li>Tocá un día para marcarlo</li>
-              <li>Tocá una letra (L-V) para seleccionar la columna</li>
-              <li>Tocá el número de semana para la fila completa</li>
-              <li>Usá Ctrl+Z para deshacer</li>
-              <li>Usá Ctrl+Y para rehacer</li>
+              <li>Toca un dia para marcarlo</li>
+              <li>Toca una letra (L-V) para seleccionar la columna</li>
+              <li>Toca el numero de semana para la fila completa</li>
+              <li>Usa Ctrl+Z para deshacer</li>
+              <li>Usa Ctrl+Y para rehacer</li>
             </ul>
           </div>
         </div>
@@ -576,10 +576,10 @@
     <section id="tab-mapa" class="tab-panel hidden">
       <div id="map"></div>
       <div class="map-overlay-top glass hidden" id="map-info">
-        <div class="chofer" id="map-chofer">—</div>
-        <div class="meta" id="map-unidad">—</div>
-        <div class="address" id="map-address">—</div>
-        <div class="updated" id="map-updated">—</div>
+        <div class="chofer" id="map-chofer">-</div>
+        <div class="meta" id="map-unidad">-</div>
+        <div class="address" id="map-address">-</div>
+        <div class="updated" id="map-updated">-</div>
       </div>
       <div class="map-unavailable hidden" id="map-unavailable-box">
         <div class="box">
@@ -594,19 +594,19 @@
     <section id="tab-historial" class="tab-panel hidden">
       <div class="historial-wrap">
         <div class="month-nav">
-          <button id="btn-prev-month-hist" aria-label="Mes anterior">‹</button>
-          <div class="label display" id="month-label-hist">—</div>
-          <button id="btn-next-month-hist" aria-label="Mes siguiente">›</button>
+          <button id="btn-prev-month-hist" aria-label="Mes anterior">&#8249;</button>
+          <div class="label display" id="month-label-hist">-</div>
+          <button id="btn-next-month-hist" aria-label="Mes siguiente">&#8250;</button>
         </div>
 
         <div class="hist-summary">
           <div class="stat-card glass viaja">
             <span class="stat-num" id="stat-viajados">0</span>
-            <span class="stat-label">Días viajados</span>
+            <span class="stat-label">Dias viajados</span>
           </div>
           <div class="stat-card glass noviaja">
             <span class="stat-num" id="stat-noviajados">0</span>
-            <span class="stat-label">Días no viajados</span>
+            <span class="stat-label">Dias no viajados</span>
           </div>
         </div>
         <div class="hist-unmarked" id="hist-unmarked-note"></div>
@@ -626,8 +626,8 @@
     </svg>
   </button>
 
-  <!-- DOCK DE NAVEGACIÓN -->
-  <nav class="bottom-nav glass" aria-label="Navegación principal">
+  <!-- DOCK DE NAVEGACION -->
+  <nav class="bottom-nav glass" aria-label="Navegacion principal">
     <button type="button" class="nav-btn active" data-tab="inicio">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M3 11l9-8 9 8"></path>
@@ -661,13 +661,13 @@
   </nav>
 </section>
 
-<!-- BOTTOM SHEET / PANEL DE ACCIÓN -->
+<!-- BOTTOM SHEET / PANEL DE ACCION -->
 <div id="action-panel">
   <button type="button" class="action-panel-handle" id="action-panel-handle" aria-label="Expandir o colapsar">
     <span class="bar"></span>
   </button>
   <div class="count">
-    <span id="action-count">0 días seleccionados</span>
+    <span id="action-count">0 dias seleccionados</span>
     <a href="#" id="action-clear">Cancelar</a>
   </div>
 
@@ -678,15 +678,15 @@
     </div>
 
     <div id="recurrence-box" class="recurrence-box hidden">
-      <div class="recurrence-title">Repetición</div>
+      <div class="recurrence-title">Repeticion</div>
       <div id="recurrence-options" class="recurrence-options"></div>
       <div id="recurrence-extent" class="recurrence-extent hidden">
         <label for="extent-select">Aplicar durante</label>
         <div class="extent-row">
           <select id="extent-select">
-            <option value="weeks">Próximas semanas</option>
-            <option value="months">Próximos meses</option>
-            <option value="year">Resto del año</option>
+            <option value="weeks">Proximas semanas</option>
+            <option value="months">Proximos meses</option>
+            <option value="year">Resto del ano</option>
           </select>
           <input id="extent-number" type="number" min="1" max="52" value="4" />
         </div>
@@ -700,10 +700,10 @@
 <!-- MODAL TURNO -->
 <div id="modal-turno" class="modal-overlay hidden">
   <div class="modal-card glass">
-    <h3>¿Viaja en qué turno?</h3>
-    <p id="modal-turno-summary" class="modal-summary">—</p>
+    <h3>Viaja en que turno?</h3>
+    <p id="modal-turno-summary" class="modal-summary">-</p>
     <div class="modal-turno-options">
-      <button type="button" class="btn btn-ghost" data-turno="manana">Mañana</button>
+      <button type="button" class="btn btn-ghost" data-turno="manana">Manana</button>
       <button type="button" class="btn btn-ghost" data-turno="tarde">Tarde</button>
       <button type="button" class="btn btn-primary" data-turno="ambos">Ambos</button>
       <button type="button" id="modal-turno-cancel" class="btn btn-ghost">Cancelar</button>
@@ -711,11 +711,11 @@
   </div>
 </div>
 
-<!-- MODAL DETALLE DE DÍA (Historial) -->
+<!-- MODAL DETALLE DE DIA (Historial) -->
 <div id="modal-detalle" class="modal-overlay hidden">
   <div class="modal-card glass wide">
-    <h3 id="detalle-titulo">—</h3>
-    <p id="detalle-subtitulo" class="modal-summary">—</p>
+    <h3 id="detalle-titulo">-</h3>
+    <p id="detalle-subtitulo" class="modal-summary">-</p>
 
     <div class="modal-row-2">
       <div class="field">
@@ -737,7 +737,7 @@
 
     <div class="field">
       <label for="detalle-notas">Notas (imprevistos, incidentes, etc.)</label>
-      <textarea id="detalle-notas" placeholder="Ej: La unidad llegó 10 min tarde"></textarea>
+      <textarea id="detalle-notas" placeholder="Ej: La unidad llego 10 min tarde"></textarea>
     </div>
 
     <div class="modal-actions">
@@ -763,15 +763,14 @@
 
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  const WEEKDAY_LABELS = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
+  const WEEKDAY_LABELS = ["Lun", "Mar", "Mie", "Jue", "Vie", "Sab", "Dom"];
   const MONTH_LABELS = [
     "enero", "febrero", "marzo", "abril", "mayo", "junio",
     "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre",
   ];
-  const FULL_WEEKDAY_LOWER = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"];
+  const FULL_WEEKDAY_LOWER = ["lunes", "martes", "miercoles", "jueves", "viernes", "sabado", "domingo"];
   const ORDINAL_WEEK_FEM = ["primeras", "segundas", "terceras", "cuartas", "quintas"];
 
-  // HISTORIAL PARA DESHACER/REHACER (Calendario)
   const history = {
     undoStack: [],
     redoStack: [],
@@ -879,7 +878,6 @@
   }
   function clearProfile() { localStorage.removeItem(STORAGE_KEY); }
 
-  // LOGIN
   const formLogin = document.getElementById("form-login");
   const btnLogin = document.getElementById("btn-login");
   const loginError = document.getElementById("login-error");
@@ -889,7 +887,7 @@
     const dni = document.getElementById("input-dni").value.trim();
     loginError.textContent = "";
     if (!/^[0-9]{6,9}$/.test(dni)) {
-      loginError.textContent = "Ingresá un DNI válido (solo números).";
+      loginError.textContent = "Ingresa un DNI valido (solo numeros).";
       return;
     }
     btnLogin.disabled = true;
@@ -899,14 +897,14 @@
       if (error) throw error;
       const row = Array.isArray(data) ? data[0] : data;
       if (!row) {
-        loginError.textContent = "DNI no encontrado o no es abonado. Consultá con administración.";
+        loginError.textContent = "DNI no encontrado o no es abonado. Consulta con administracion.";
         return;
       }
       saveProfile(row);
       enterApp(row);
     } catch (e) {
       console.error(e);
-      loginError.textContent = "No pudimos verificar tu DNI. Probá de nuevo en unos segundos.";
+      loginError.textContent = "No pudimos verificar tu DNI. Proba de nuevo en unos segundos.";
     } finally {
       btnLogin.disabled = false;
       btnLogin.textContent = "Ingresar";
@@ -922,7 +920,6 @@
     document.getElementById("input-dni").value = "";
   });
 
-  // DESHACER/REHACER
   document.getElementById("btn-undo").addEventListener("click", () => {
     const prev = history.undo();
     if (prev) {
@@ -964,7 +961,6 @@
     history.updateButtons();
   }
 
-  // NAVEGACIÓN (dock inferior + tarjetas de inicio)
   document.querySelectorAll(".nav-btn").forEach((btn) => {
     btn.addEventListener("click", () => switchTab(btn.dataset.tab));
   });
@@ -1011,7 +1007,6 @@
     document.getElementById("btn-today").classList.toggle("hidden", !show);
   }
 
-  // Clasifica el estado de un día a partir de sus turnos
   function classifyDay(info) {
     const m = info.manana, t = info.tarde;
     const mViaja = !!(m && m.viaja);
@@ -1052,13 +1047,12 @@
     return weeks;
   }
 
-  // INICIO
   async function loadHomeStatus() {
     document.getElementById("home-name").textContent = state.profile.nombre || "Pasajero";
     const t = new Date();
     document.getElementById("today-date").textContent = `${t.getDate()} de ${MONTH_LABELS[t.getMonth()]}`;
     const statusEl = document.getElementById("today-status");
-    statusEl.textContent = "Cargando…";
+    statusEl.textContent = "Cargando...";
     const wd = t.getDay();
     if (wd === 0 || wd === 6) {
       statusEl.textContent = "Es fin de semana, no hay viajes.";
@@ -1070,13 +1064,13 @@
       const c = classifyDay(info);
       if (c.status === "viaja") {
         const parts = [];
-        if (c.mViaja) parts.push("mañana");
+        if (c.mViaja) parts.push("manana");
         if (c.tViaja) parts.push("tarde");
-        statusEl.textContent = `Viajás hoy · ${parts.join(" y ")}`;
+        statusEl.textContent = `Viajas hoy - ${parts.join(" y ")}`;
       } else if (c.status === "no") {
-        statusEl.textContent = "No viajás hoy";
+        statusEl.textContent = "No viajas hoy";
       } else {
-        statusEl.textContent = "Todavía no marcaste hoy";
+        statusEl.textContent = "Todavia no marcaste hoy";
       }
     } catch (e) {
       console.error(e);
@@ -1084,7 +1078,6 @@
     }
   }
 
-  // CALENDARIO
   document.getElementById("btn-prev-month").addEventListener("click", () => shiftMonth(-1));
   document.getElementById("btn-next-month").addEventListener("click", () => shiftMonth(1));
   document.getElementById("btn-today-header").addEventListener("click", goToToday);
@@ -1111,7 +1104,7 @@
 
   async function loadCalendar() {
     const body = document.getElementById("cal-body");
-    body.innerHTML = `<div style="padding:24px;text-align:center;color:var(--text-faint);font-size:0.85rem;">Cargando…</div>`;
+    body.innerHTML = `<div style="padding:24px;text-align:center;color:var(--text-faint);font-size:0.85rem;">Cargando...</div>`;
     try {
       state.calendarByDate = await fetchMonthData(state.viewYear, state.viewMonth);
       renderCalendar();
@@ -1404,7 +1397,7 @@
     panel.classList.toggle("open", n > 0);
     panel.classList.toggle("collapsed", state.panelCollapsed && n > 0);
     document.getElementById("action-count").textContent =
-      n === 1 ? "1 día seleccionado" : `${n} días seleccionados`;
+      n === 1 ? "1 dia seleccionado" : `${n} dias seleccionados`;
     document.getElementById("btn-guardar").disabled = n === 0;
     updateTodayFabVisibility();
     renderRecurrenceOptions();
@@ -1447,14 +1440,14 @@
       if (daysOfMonth.size > 0 && daysOfMonth.size <= 5) {
         const daysList = Array.from(daysOfMonth).sort((a, b) => a - b);
         if (daysList.length === 1) {
-          opts.push({ id: "monthdays-monthly", label: `Repetir el día ${daysList[0]} de cada mes` });
+          opts.push({ id: "monthdays-monthly", label: `Repetir el dia ${daysList[0]} de cada mes` });
         } else if (daysList.length > 1) {
-          opts.push({ id: "monthdays-monthly", label: `Repetir los días ${daysList.join(", ")} de cada mes` });
+          opts.push({ id: "monthdays-monthly", label: `Repetir los dias ${daysList.join(", ")} de cada mes` });
         }
       }
 
       if (pattern.weeksOfMonth.length > 0 && pattern.weekdays.size >= 3) {
-        const weeksNames = pattern.weeksOfMonth.map(w => ORDINAL_WEEK_FEM[w - 1] || `${w}ª`);
+        const weeksNames = pattern.weeksOfMonth.map(w => ORDINAL_WEEK_FEM[w - 1] || `${w}a`);
         if (weeksNames.length === 1) {
           opts.push({ id: "weeks-monthly", label: `Repetir la ${weeksNames[0]} semana de cada mes` });
         } else if (weeksNames.length > 1) {
@@ -1476,7 +1469,7 @@
         renderRecurrenceOptions();
         if (state.recurrenceChoice !== "none") {
           const previewDates = computeRecurrenceDates(state.recurrenceChoice, state.extentType, state.extentValue);
-          toast(`Se aplicará a ${previewDates.length} fechas`);
+          toast(`Se aplicara a ${previewDates.length} fechas`);
         }
       });
       optionsWrap.appendChild(btn);
@@ -1505,7 +1498,7 @@
   function openTurnoModal() {
     const n = state.pendingDates.length;
     document.getElementById("modal-turno-summary").textContent =
-      `Se aplicará a ${n} fecha${n === 1 ? "" : "s"} · ${state.viajaChoice ? "Viajo" : "No viajo"}`;
+      `Se aplicara a ${n} fecha${n === 1 ? "" : "s"} - ${state.viajaChoice ? "Viajo" : "No viajo"}`;
     document.getElementById("modal-turno").classList.remove("hidden");
   }
 
@@ -1550,13 +1543,12 @@
       await loadCalendar();
     } catch (e) {
       console.error(e);
-      toast("No se pudo guardar. Reintentá.", "err");
+      toast("No se pudo guardar. Reintenta.", "err");
     } finally {
       setSaving(false);
     }
   }
 
-  // HISTORIAL
   document.getElementById("btn-prev-month-hist").addEventListener("click", () => shiftHistMonth(-1));
   document.getElementById("btn-next-month-hist").addEventListener("click", () => shiftHistMonth(1));
 
@@ -1578,7 +1570,7 @@
 
   async function loadHistorial() {
     const list = document.getElementById("hist-list");
-    list.innerHTML = `<div style="padding:24px;text-align:center;color:var(--text-faint);font-size:0.85rem;">Cargando…</div>`;
+    list.innerHTML = `<div style="padding:24px;text-align:center;color:var(--text-faint);font-size:0.85rem;">Cargando...</div>`;
     try {
       state.historialByDate = await fetchMonthData(state.historialYear, state.historialMonth);
       renderHistorial();
@@ -1621,12 +1613,12 @@
     document.getElementById("stat-viajados").textContent = viajados;
     document.getElementById("stat-noviajados").textContent = noViajados;
     document.getElementById("hist-unmarked-note").textContent =
-      unmarked > 0 ? `${unmarked} día${unmarked === 1 ? "" : "s"} sin marcar ${isCurrentMonth ? "hasta hoy" : "este mes"}` : "";
+      unmarked > 0 ? `${unmarked} dia${unmarked === 1 ? "" : "s"} sin marcar ${isCurrentMonth ? "hasta hoy" : "este mes"}` : "";
 
     const list = document.getElementById("hist-list");
     list.innerHTML = "";
     if (rows.length === 0) {
-      list.innerHTML = `<div style="padding:20px;text-align:center;color:var(--text-faint);font-size:0.85rem;">${isCurrentMonth ? "Todavía no pasaron días hábiles este mes." : "Sin días hábiles este mes."}</div>`;
+      list.innerHTML = `<div style="padding:20px;text-align:center;color:var(--text-faint);font-size:0.85rem;">${isCurrentMonth ? "Todavia no pasaron dias habiles este mes." : "Sin dias habiles este mes."}</div>`;
       return;
     }
 
@@ -1650,7 +1642,7 @@
       const chips = document.createElement("div");
       chips.className = "hist-chips";
       if (r.status.status === "viaja") {
-        if (r.status.mViaja) chips.appendChild(makeChip("am", "Mañana"));
+        if (r.status.mViaja) chips.appendChild(makeChip("am", "Manana"));
         if (r.status.tViaja) chips.appendChild(makeChip("pm", "Tarde"));
       } else if (r.status.status === "no") {
         chips.appendChild(makeChip("no", "No viaja"));
@@ -1665,7 +1657,7 @@
       }
       const chevron = document.createElement("span");
       chevron.className = "chevron";
-      chevron.innerHTML = "›";
+      chevron.innerHTML = "&rsaquo;";
       chips.appendChild(chevron);
       row.appendChild(chips);
 
@@ -1673,11 +1665,6 @@
     });
   }
 
-  // DETALLE DE DÍA (Historial)
-  // NOTA: el guardado de detalle asume una tabla/RPC "rpc_set_detalle_asistencia"
-  // en Supabase con columnas (dni, fecha, subida, bajada, horario, notas).
-  // Si esa función todavía no existe en el backend, hay que crearla; mientras
-  // tanto el detalle se guarda localmente para no perder la información.
   const DETALLE_KEY = "charterti_detalles";
   function loadDetalles() {
     try { return JSON.parse(localStorage.getItem(DETALLE_KEY) || "{}"); } catch (e) { return {}; }
@@ -1697,11 +1684,11 @@
     let estadoTxt = "Sin marcar";
     if (r.status.status === "viaja") {
       const parts = [];
-      if (r.status.mViaja) parts.push("mañana");
+      if (r.status.mViaja) parts.push("manana");
       if (r.status.tViaja) parts.push("tarde");
-      estadoTxt = "Viajó · " + parts.join(" y ");
+      estadoTxt = "Viajo - " + parts.join(" y ");
     } else if (r.status.status === "no") {
-      estadoTxt = "No viajó";
+      estadoTxt = "No viajo";
     }
     document.getElementById("detalle-subtitulo").textContent = estadoTxt;
 
@@ -1734,12 +1721,10 @@
     const iso = state.detalleFecha;
     const key = state.profile.dni + "|" + iso;
 
-    // Guardado local inmediato (para no perder datos aunque falle el backend)
     const detalles = loadDetalles();
     detalles[key] = payload;
     saveDetalles(detalles);
 
-    // Intento de guardado remoto (requiere crear esta RPC en Supabase)
     try {
       await supabase.rpc("rpc_set_detalle_asistencia", {
         p_dni: state.profile.dni,
@@ -1750,7 +1735,7 @@
         p_notas: payload.notas,
       });
     } catch (e) {
-      console.warn("No se pudo sincronizar el detalle con el servidor (¿falta la función en Supabase?)", e);
+      console.warn("No se pudo sincronizar el detalle con el servidor", e);
     }
 
     toast("Detalle guardado", "ok");
@@ -1758,7 +1743,6 @@
     renderHistorial();
   });
 
-  // MAPA
   function initMapIfNeeded() {
     if (state.map) {
       setTimeout(() => state.map.invalidateSize(), 100);
@@ -1775,14 +1759,13 @@
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
         maxZoom: 19,
       }).addTo(state.map);
-      console.log("Mapa inicializado correctamente");
     } catch (e) {
       console.error("Error al inicializar el mapa:", e);
     }
   }
 
   function formatUpdatedTime(ts) {
-    if (!ts) return "—";
+    if (!ts) return "-";
     let iso = String(ts).trim().replace(" ", "T");
     if (/[+-]\d{2}$/.test(iso)) iso += ":00";
     const d = new Date(iso);
@@ -1807,14 +1790,14 @@
     const unidad = payload.unidad || {};
     const pos = Array.isArray(positions) ? positions[0] : positions;
     if (!pos || pos.lat == null || pos.lon == null) {
-      showMapUnavailable("Todavía no hay una posición reciente para tu unidad.");
+      showMapUnavailable("Todavia no hay una posicion reciente para tu unidad.");
       return;
     }
     hideMapUnavailable();
     document.getElementById("map-chofer").textContent = unidad.chofer || pos.driver || "Chofer";
     document.getElementById("map-unidad").textContent =
-      `Interno ${unidad.interno || "—"} · ${unidad.patente || pos.domain || ""}`;
-    document.getElementById("map-address").textContent = pos.position || "Ubicación no disponible";
+      `Interno ${unidad.interno || "-"} - ${unidad.patente || pos.domain || ""}`;
+    document.getElementById("map-address").textContent = pos.position || "Ubicacion no disponible";
     document.getElementById("map-updated").textContent = "Actualizado " + formatUpdatedTime(pos.ts);
 
     const latlng = [pos.lat, pos.lon];
@@ -1841,7 +1824,7 @@
       updateMapPosition(json);
     } catch (e) {
       console.error("Error en pollPosition:", e);
-      showMapUnavailable("No pudimos conectar con el GPS. Reintentando…");
+      showMapUnavailable("No pudimos conectar con el GPS. Reintentando...");
     }
   }
 
@@ -1859,7 +1842,6 @@
     }
   }
 
-  // ARRANQUE
   const existing = loadProfile();
   if (existing && existing.dni) {
     enterApp(existing);
@@ -1867,7 +1849,7 @@
 
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register("/sw.js").catch((e) => console.warn("[SW] registro falló", e));
+      navigator.serviceWorker.register("/sw.js").catch((e) => console.warn("[SW] registro fallo", e));
     });
   }
 })();
