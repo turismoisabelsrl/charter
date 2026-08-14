@@ -182,12 +182,21 @@
     .calendar-layout { grid-template-columns: 1fr 250px; align-items: start; }
   }
 
-  .month-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .month-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; gap: 8px; }
   .month-nav .label { font-size: 1.05rem; text-transform: capitalize; }
   .month-nav button {
     width: 34px; height: 34px; border-radius: 50%;
     background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text-dim);
+    flex-shrink: 0;
   }
+  .btn-hoy {
+    display: inline-flex; align-items: center; gap: 6px;
+    width: auto !important; height: auto !important; border-radius: 999px !important;
+    padding: 8px 14px; font-size: 0.78rem; background: rgba(58, 143, 209, 0.16) !important;
+    border-color: rgba(58, 143, 209, 0.4) !important; color: var(--sky-dim) !important;
+  }
+  .btn-hoy svg { width: 14px; height: 14px; }
+  .btn-hoy.hidden { display: none !important; }
 
   .cal-grid { padding: 14px 10px 16px; }
   .cal-row { display: grid; grid-template-columns: 30px repeat(7, 1fr); gap: 4px; }
@@ -244,30 +253,41 @@
   .stat-label { font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.06em; }
   .hist-unmarked { text-align: center; font-size: 0.74rem; color: var(--text-faint); margin: 6px 0 14px; min-height: 1.2em; }
   .hist-list { padding: 6px 4px; }
-  .hist-row { display: flex; align-items: center; justify-content: space-between; padding: 11px 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.06); }
+  .hist-row { display: flex; align-items: center; justify-content: space-between; padding: 11px 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.06); cursor: pointer; transition: background 0.15s ease; border-radius: 10px; }
+  .hist-row:hover { background: rgba(255, 255, 255, 0.04); }
   .hist-row:last-child { border-bottom: none; }
   .hist-row .when { display: flex; flex-direction: column; }
   .hist-row .wd { font-size: 0.66rem; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.05em; }
   .hist-row .dnum { font-size: 0.94rem; font-weight: 600; }
   .hist-row.today .dnum { color: var(--sky-dim); }
-  .hist-chips { display: flex; gap: 6px; }
+  .hist-chips { display: flex; align-items: center; gap: 6px; }
   .chip { font-size: 0.68rem; padding: 4px 9px; border-radius: 999px; font-weight: 600; white-space: nowrap; }
   .chip.am { background: rgba(44, 184, 122, 0.18); color: #a8f0cf; }
   .chip.pm { background: rgba(85, 179, 245, 0.18); color: #bfe3fc; }
   .chip.no { background: rgba(224, 68, 68, 0.16); color: #ffb3b3; }
   .chip.unmarked { background: rgba(255, 255, 255, 0.06); color: var(--text-faint); }
+  .hist-note-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--sky-alt); flex-shrink: 0; }
+  .hist-row .chevron { color: var(--text-faint); margin-left: 2px; }
 
   /* BOTTOM SHEET (MÓVIL) */
   #action-panel {
-    position: fixed; left: 0; right: 0; bottom: 0; max-height: 45vh;
+    position: fixed; left: 0; right: 0; bottom: 0; max-height: 65vh;
     border-radius: 20px 20px 0 0; transform: translateY(100%);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 65; padding: 20px 16px calc(16px + var(--safe-b));
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 65; padding: 10px 16px calc(16px + var(--safe-b));
     overflow-y: auto; background: rgba(12, 26, 46, 0.98);
   }
   #action-panel.open { transform: translateY(0); }
+  #action-panel.collapsed { max-height: 84px; overflow: hidden; }
+  .action-panel-handle {
+    width: 100%; display: flex; justify-content: center; padding: 4px 0 10px; cursor: pointer;
+    background: transparent; border: 0;
+  }
+  .action-panel-handle .bar { width: 36px; height: 4px; border-radius: 999px; background: var(--glass-border); }
   #action-panel .count { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
   #action-panel .count a { color: var(--sky-dim); font-size: 0.8rem; text-decoration: none; }
+  .action-panel-body { transition: opacity 0.15s ease; }
+  #action-panel.collapsed .action-panel-body { opacity: 0; pointer-events: none; }
 
   @media (min-width: 768px) {
     #action-panel {
@@ -276,6 +296,8 @@
       transform: translateX(120%);
     }
     #action-panel.open { transform: translateX(0); }
+    #action-panel.collapsed { max-height: 64px; }
+    .action-panel-handle { display: none; }
   }
 
   .viaja-toggle { display: flex; gap: 8px; margin-bottom: 4px; }
@@ -320,7 +342,7 @@
   .nav-btn svg { width: 19px; height: 19px; }
   .nav-btn.active { background: var(--sky); color: #071020; }
 
-  /* BOTÓN HOY */
+  /* BOTÓN HOY (fallback, calendario) */
   .fab-today {
     position: fixed; right: 16px; bottom: calc(var(--navh) + var(--safe-b));
     width: 48px; height: 48px; border-radius: 50%;
@@ -339,27 +361,42 @@
     background: rgba(4, 10, 20, 0.72); padding: 20px;
   }
   .modal-overlay.hidden { display: none; }
-  .modal-card { width: 100%; max-width: 400px; padding: 26px 22px; text-align: center; }
+  .modal-card { width: 100%; max-width: 400px; padding: 26px 22px; text-align: center; max-height: calc(100vh - 40px); overflow-y: auto; }
   .modal-card h3 { font-size: 1.08rem; margin-bottom: 8px; }
   .modal-summary { color: var(--text-dim); font-size: 0.85rem; margin-bottom: 20px; line-height: 1.5; }
   .modal-turno-options { display: flex; flex-direction: column; gap: 10px; }
 
+  .modal-card.wide { max-width: 460px; text-align: left; }
+  .modal-card .field { margin-bottom: 14px; }
+  .modal-card textarea {
+    width: 100%; padding: 11px 12px; border-radius: var(--radius-sm);
+    border: 1px solid var(--glass-border); background: rgba(255, 255, 255, 0.04);
+    color: var(--text); font-size: 0.9rem; font-family: "Inter", sans-serif; resize: vertical; min-height: 64px;
+  }
+  .modal-card textarea:focus, .modal-card .field input:focus { outline: none; border-color: var(--sky); box-shadow: 0 0 0 3px rgba(58, 143, 209, 0.25); }
+  .modal-row-2 { display: flex; gap: 10px; }
+  .modal-row-2 .field { flex: 1; }
+  .modal-actions { display: flex; gap: 10px; margin-top: 6px; }
+  .modal-actions .btn { flex: 1; }
+
   /* MAPA */
+  #tab-mapa { position: relative; z-index: 0; }
   #map { width: 100%; height: 100%; min-height: 400px; background: var(--navy); }
   .leaflet-container { background: var(--navy) !important; font-family: "Inter", sans-serif; width: 100% !important; height: 100% !important; }
-  .map-overlay-top { position: absolute; top: 12px; left: 12px; z-index: 500; padding: 12px 14px; max-width: 320px; }
+  .map-overlay-top { position: absolute; top: 12px; left: 12px; z-index: 20; padding: 12px 14px; max-width: 320px; }
   .map-overlay-top .chofer { font-family: "Syne", sans-serif; font-weight: 700; font-size: 0.95rem; }
   .map-overlay-top .meta { font-size: 0.75rem; color: var(--text-dim); margin-top: 2px; }
   .map-overlay-top .address { font-size: 0.74rem; color: var(--text-dim); margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--glass-border); }
   .map-overlay-top .updated { font-size: 0.68rem; color: var(--text-faint); margin-top: 4px; }
 
   .map-unavailable {
-    position: absolute; inset: 0; z-index: 600; display: flex; align-items: center; justify-content: center;
+    position: absolute; inset: 0; z-index: 25; display: flex; align-items: center; justify-content: center;
     padding: 24px; background: rgba(7, 16, 32, 0.95); text-align: center;
   }
   .map-unavailable .box { max-width: 300px; }
   .map-unavailable h3 { font-size: 1.05rem; margin-bottom: 8px; }
-  .map-unavailable p { color: var(--text-dim); font-size: 0.85rem; line-height: 1.5; }
+  .map-unavailable p { color: var(--text-dim); font-size: 0.85rem; line-height: 1.5; margin-bottom: 16px; }
+  .map-unavailable .btn { max-width: 220px; margin: 0 auto; }
 
   .marker-pulse {
     width: 16px; height: 16px; border-radius: 50%; background: var(--sky);
@@ -402,7 +439,6 @@
 <section id="screen-app" class="screen hidden">
   <header class="topbar">
     <div class="who">
-      <span class="hello">Hola</span>
       <span class="name" id="topbar-name">—</span>
     </div>
     <div class="topbar-actions">
@@ -486,6 +522,16 @@
           <div class="month-nav">
             <button id="btn-prev-month" aria-label="Mes anterior">‹</button>
             <div class="label display" id="month-label">—</div>
+            <button id="btn-today-header" class="btn-hoy" title="Ir al mes de hoy">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="5" width="18" height="16" rx="3"></rect>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+                <line x1="8" y1="3" x2="8" y2="7"></line>
+                <line x1="16" y1="3" x2="16" y2="7"></line>
+                <circle cx="12" cy="15" r="1.6" fill="currentColor" stroke="none"></circle>
+              </svg>
+              Hoy
+            </button>
             <button id="btn-next-month" aria-label="Mes siguiente">›</button>
           </div>
 
@@ -539,6 +585,7 @@
         <div class="box">
           <h3>Seguimiento no disponible</h3>
           <p id="map-unavailable-text">No hay una unidad en vivo para mostrarte en este turno.</p>
+          <button type="button" class="btn btn-ghost" id="btn-map-volver">Volver a Inicio</button>
         </div>
       </div>
     </section>
@@ -616,36 +663,41 @@
 
 <!-- BOTTOM SHEET / PANEL DE ACCIÓN -->
 <div id="action-panel">
+  <button type="button" class="action-panel-handle" id="action-panel-handle" aria-label="Expandir o colapsar">
+    <span class="bar"></span>
+  </button>
   <div class="count">
     <span id="action-count">0 días seleccionados</span>
     <a href="#" id="action-clear">Cancelar</a>
   </div>
 
-  <div class="viaja-toggle" role="group" aria-label="Estado de asistencia">
-    <button type="button" id="opt-viajo" class="seg-btn active" data-viaja="1">Viajo</button>
-    <button type="button" id="opt-noviajo" class="seg-btn" data-viaja="0">No viajo</button>
-  </div>
+  <div class="action-panel-body" id="action-panel-body">
+    <div class="viaja-toggle" role="group" aria-label="Estado de asistencia">
+      <button type="button" id="opt-viajo" class="seg-btn active" data-viaja="1">Viajo</button>
+      <button type="button" id="opt-noviajo" class="seg-btn" data-viaja="0">No viajo</button>
+    </div>
 
-  <div id="recurrence-box" class="recurrence-box hidden">
-    <div class="recurrence-title">Repetición</div>
-    <div id="recurrence-options" class="recurrence-options"></div>
-    <div id="recurrence-extent" class="recurrence-extent hidden">
-      <label for="extent-select">Aplicar durante</label>
-      <div class="extent-row">
-        <select id="extent-select">
-          <option value="weeks">Próximas semanas</option>
-          <option value="months">Próximos meses</option>
-          <option value="year">Resto del año</option>
-        </select>
-        <input id="extent-number" type="number" min="1" max="52" value="4" />
+    <div id="recurrence-box" class="recurrence-box hidden">
+      <div class="recurrence-title">Repetición</div>
+      <div id="recurrence-options" class="recurrence-options"></div>
+      <div id="recurrence-extent" class="recurrence-extent hidden">
+        <label for="extent-select">Aplicar durante</label>
+        <div class="extent-row">
+          <select id="extent-select">
+            <option value="weeks">Próximas semanas</option>
+            <option value="months">Próximos meses</option>
+            <option value="year">Resto del año</option>
+          </select>
+          <input id="extent-number" type="number" min="1" max="52" value="4" />
+        </div>
       </div>
     </div>
-  </div>
 
-  <button id="btn-guardar" class="btn btn-primary" style="margin-top:14px;" disabled>Guardar</button>
+    <button id="btn-guardar" class="btn btn-primary" style="margin-top:14px;" disabled>Guardar</button>
+  </div>
 </div>
 
-<!-- MODAL -->
+<!-- MODAL TURNO -->
 <div id="modal-turno" class="modal-overlay hidden">
   <div class="modal-card glass">
     <h3>¿Viaja en qué turno?</h3>
@@ -655,6 +707,42 @@
       <button type="button" class="btn btn-ghost" data-turno="tarde">Tarde</button>
       <button type="button" class="btn btn-primary" data-turno="ambos">Ambos</button>
       <button type="button" id="modal-turno-cancel" class="btn btn-ghost">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DETALLE DE DÍA (Historial) -->
+<div id="modal-detalle" class="modal-overlay hidden">
+  <div class="modal-card glass wide">
+    <h3 id="detalle-titulo">—</h3>
+    <p id="detalle-subtitulo" class="modal-summary">—</p>
+
+    <div class="modal-row-2">
+      <div class="field">
+        <label for="detalle-subida">Lugar de subida</label>
+        <input id="detalle-subida" type="text" placeholder="Ej: Esquina 18 de Julio" />
+      </div>
+      <div class="field">
+        <label for="detalle-bajada">Lugar de bajada</label>
+        <input id="detalle-bajada" type="text" placeholder="Ej: Terminal" />
+      </div>
+    </div>
+
+    <div class="modal-row-2">
+      <div class="field">
+        <label for="detalle-horario">Horario</label>
+        <input id="detalle-horario" type="text" placeholder="Ej: 07:15" />
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="detalle-notas">Notas (imprevistos, incidentes, etc.)</label>
+      <textarea id="detalle-notas" placeholder="Ej: La unidad llegó 10 min tarde"></textarea>
+    </div>
+
+    <div class="modal-actions">
+      <button type="button" id="detalle-cancel" class="btn btn-ghost">Cancelar</button>
+      <button type="button" id="detalle-guardar" class="btn btn-primary">Guardar detalle</button>
     </div>
   </div>
 </div>
@@ -739,10 +827,12 @@
     extentType: "weeks",
     extentValue: 4,
     pendingDates: [],
+    panelCollapsed: false,
 
     historialYear: null,
     historialMonth: null,
     historialByDate: {},
+    detalleFecha: null,
 
     map: null,
     mapMarker: null,
@@ -881,6 +971,7 @@
   document.querySelectorAll(".home-card").forEach((btn) => {
     btn.addEventListener("click", () => switchTab(btn.dataset.tab));
   });
+  document.getElementById("btn-map-volver").addEventListener("click", () => switchTab("inicio"));
 
   function switchTab(tab) {
     state.activeTab = tab;
@@ -996,6 +1087,7 @@
   // CALENDARIO
   document.getElementById("btn-prev-month").addEventListener("click", () => shiftMonth(-1));
   document.getElementById("btn-next-month").addEventListener("click", () => shiftMonth(1));
+  document.getElementById("btn-today-header").addEventListener("click", goToToday);
 
   function shiftMonth(delta) {
     let m = state.viewMonth + delta;
@@ -1012,6 +1104,9 @@
   function renderMonthLabel() {
     document.getElementById("month-label").textContent =
       `${MONTH_LABELS[state.viewMonth - 1]} ${state.viewYear}`;
+    const t = new Date();
+    const isCurrent = state.viewYear === t.getFullYear() && state.viewMonth === t.getMonth() + 1;
+    document.getElementById("btn-today-header").classList.toggle("hidden", isCurrent);
   }
 
   async function loadCalendar() {
@@ -1307,12 +1402,18 @@
     const panel = document.getElementById("action-panel");
     const n = state.selected.size;
     panel.classList.toggle("open", n > 0);
+    panel.classList.toggle("collapsed", state.panelCollapsed && n > 0);
     document.getElementById("action-count").textContent =
       n === 1 ? "1 día seleccionado" : `${n} días seleccionados`;
     document.getElementById("btn-guardar").disabled = n === 0;
     updateTodayFabVisibility();
     renderRecurrenceOptions();
   }
+
+  document.getElementById("action-panel-handle").addEventListener("click", () => {
+    state.panelCollapsed = !state.panelCollapsed;
+    renderActionPanel();
+  });
 
   function renderRecurrenceOptions() {
     const box = document.getElementById("recurrence-box");
@@ -1497,6 +1598,8 @@
   function renderHistorial() {
     const weeks = buildWeeks(state.historialYear, state.historialMonth);
     const today = todayISO();
+    const t = new Date();
+    const isCurrentMonth = state.historialYear === t.getFullYear() && state.historialMonth === t.getMonth() + 1;
     let viajados = 0, noViajados = 0, unmarked = 0;
     const rows = [];
 
@@ -1504,12 +1607,13 @@
       week.forEach((day, wd) => {
         if (day === null || wd >= 5) return;
         const iso = toISODate(state.historialYear, state.historialMonth, day);
+        if (isCurrentMonth && iso > today) return;
         const info = state.historialByDate[iso] || {};
         const c = classifyDay(info);
         if (c.status === "viaja") viajados++;
         else if (c.status === "no") noViajados++;
         else unmarked++;
-        rows.push({ iso, day, wd, status: c });
+        rows.push({ iso, day, wd, status: c, info });
       });
     });
     rows.sort((a, b) => a.iso.localeCompare(b.iso));
@@ -1517,18 +1621,19 @@
     document.getElementById("stat-viajados").textContent = viajados;
     document.getElementById("stat-noviajados").textContent = noViajados;
     document.getElementById("hist-unmarked-note").textContent =
-      unmarked > 0 ? `${unmarked} día${unmarked === 1 ? "" : "s"} sin marcar este mes` : "";
+      unmarked > 0 ? `${unmarked} día${unmarked === 1 ? "" : "s"} sin marcar ${isCurrentMonth ? "hasta hoy" : "este mes"}` : "";
 
     const list = document.getElementById("hist-list");
     list.innerHTML = "";
     if (rows.length === 0) {
-      list.innerHTML = `<div style="padding:20px;text-align:center;color:var(--text-faint);font-size:0.85rem;">Sin días hábiles este mes.</div>`;
+      list.innerHTML = `<div style="padding:20px;text-align:center;color:var(--text-faint);font-size:0.85rem;">${isCurrentMonth ? "Todavía no pasaron días hábiles este mes." : "Sin días hábiles este mes."}</div>`;
       return;
     }
 
     rows.forEach(r => {
       const row = document.createElement("div");
       row.className = "hist-row" + (r.iso === today ? " today" : "");
+      row.addEventListener("click", () => openDetalleModal(r));
 
       const when = document.createElement("div");
       when.className = "when";
@@ -1552,11 +1657,106 @@
       } else {
         chips.appendChild(makeChip("unmarked", "Sin marcar"));
       }
+      if (hasDetalle(r.iso)) {
+        const dot = document.createElement("span");
+        dot.className = "hist-note-dot";
+        dot.title = "Tiene detalle";
+        chips.appendChild(dot);
+      }
+      const chevron = document.createElement("span");
+      chevron.className = "chevron";
+      chevron.innerHTML = "›";
+      chips.appendChild(chevron);
       row.appendChild(chips);
 
       list.appendChild(row);
     });
   }
+
+  // DETALLE DE DÍA (Historial)
+  // NOTA: el guardado de detalle asume una tabla/RPC "rpc_set_detalle_asistencia"
+  // en Supabase con columnas (dni, fecha, subida, bajada, horario, notas).
+  // Si esa función todavía no existe en el backend, hay que crearla; mientras
+  // tanto el detalle se guarda localmente para no perder la información.
+  const DETALLE_KEY = "charterti_detalles";
+  function loadDetalles() {
+    try { return JSON.parse(localStorage.getItem(DETALLE_KEY) || "{}"); } catch (e) { return {}; }
+  }
+  function saveDetalles(obj) { localStorage.setItem(DETALLE_KEY, JSON.stringify(obj)); }
+  function hasDetalle(iso) {
+    const d = loadDetalles();
+    const key = state.profile.dni + "|" + iso;
+    return !!(d[key] && (d[key].subida || d[key].bajada || d[key].horario || d[key].notas));
+  }
+
+  function openDetalleModal(r) {
+    state.detalleFecha = r.iso;
+    const d = parseISO(r.iso);
+    document.getElementById("detalle-titulo").textContent =
+      `${FULL_WEEKDAY_LOWER[r.wd][0].toUpperCase() + FULL_WEEKDAY_LOWER[r.wd].slice(1)} ${r.day} de ${MONTH_LABELS[state.historialMonth - 1]}`;
+    let estadoTxt = "Sin marcar";
+    if (r.status.status === "viaja") {
+      const parts = [];
+      if (r.status.mViaja) parts.push("mañana");
+      if (r.status.tViaja) parts.push("tarde");
+      estadoTxt = "Viajó · " + parts.join(" y ");
+    } else if (r.status.status === "no") {
+      estadoTxt = "No viajó";
+    }
+    document.getElementById("detalle-subtitulo").textContent = estadoTxt;
+
+    const detalles = loadDetalles();
+    const key = state.profile.dni + "|" + r.iso;
+    const saved = detalles[key] || {};
+    document.getElementById("detalle-subida").value = saved.subida || "";
+    document.getElementById("detalle-bajada").value = saved.bajada || "";
+    document.getElementById("detalle-horario").value = saved.horario || "";
+    document.getElementById("detalle-notas").value = saved.notas || "";
+
+    document.getElementById("modal-detalle").classList.remove("hidden");
+  }
+
+  function closeDetalleModal() {
+    document.getElementById("modal-detalle").classList.add("hidden");
+    state.detalleFecha = null;
+  }
+
+  document.getElementById("detalle-cancel").addEventListener("click", closeDetalleModal);
+
+  document.getElementById("detalle-guardar").addEventListener("click", async () => {
+    if (!state.detalleFecha) return;
+    const payload = {
+      subida: document.getElementById("detalle-subida").value.trim(),
+      bajada: document.getElementById("detalle-bajada").value.trim(),
+      horario: document.getElementById("detalle-horario").value.trim(),
+      notas: document.getElementById("detalle-notas").value.trim(),
+    };
+    const iso = state.detalleFecha;
+    const key = state.profile.dni + "|" + iso;
+
+    // Guardado local inmediato (para no perder datos aunque falle el backend)
+    const detalles = loadDetalles();
+    detalles[key] = payload;
+    saveDetalles(detalles);
+
+    // Intento de guardado remoto (requiere crear esta RPC en Supabase)
+    try {
+      await supabase.rpc("rpc_set_detalle_asistencia", {
+        p_dni: state.profile.dni,
+        p_fecha: iso,
+        p_subida: payload.subida,
+        p_bajada: payload.bajada,
+        p_horario: payload.horario,
+        p_notas: payload.notas,
+      });
+    } catch (e) {
+      console.warn("No se pudo sincronizar el detalle con el servidor (¿falta la función en Supabase?)", e);
+    }
+
+    toast("Detalle guardado", "ok");
+    closeDetalleModal();
+    renderHistorial();
+  });
 
   // MAPA
   function initMapIfNeeded() {
