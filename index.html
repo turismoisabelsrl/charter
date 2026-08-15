@@ -118,8 +118,24 @@
 
   /* APP SHELL */
   #screen-app {
-    display: flex; flex-direction: column; height: 100dvh;
+    display: flex; flex-direction: column; height: 100dvh; position: relative;
     background: radial-gradient(circle at 20% -10%, #0d2140 0%, var(--navy) 55%);
+  }
+
+  /* EFECTO DE CONTINUIDAD (desktop): en pantallas anchas el contenido real
+     vive en una columna centrada de hasta 1200px. Sin esto, lo que sobra a
+     los costados se ve como negro plano contra las glass-cards mas claras
+     del centro. Este halo repite el mismo gradiente Navy de la App pero
+     desenfocado, para que el borde de la ventana se sienta integrado al
+     monitor en vez de una "tripa" recortada. En mobile no hay costados que
+     integrar, asi que queda desactivado. */
+  .desktop-glow { display: none; }
+  @media (min-width: 900px) {
+    .desktop-glow {
+      display: block; position: fixed; inset: -15%; z-index: -1;
+      background: radial-gradient(ellipse 1500px 950px at 50% -5%, #16324f 0%, #0c1a2e 42%, var(--navy) 75%);
+      filter: blur(90px); pointer-events: none;
+    }
   }
 
   .topbar {
@@ -140,6 +156,8 @@
   }
   .icon-btn:hover:not(:disabled) { background: var(--glass-bg-strong); color: var(--text); }
   .icon-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .icon-btn.spinning svg { animation: spin 0.7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
   main {
     flex: 1; overflow: hidden; position: relative;
@@ -259,9 +277,18 @@
   .chip.unmarked { background: rgba(255, 255, 255, 0.06); color: var(--text-faint); }
   .hist-row .chevron { color: var(--text-faint); margin-left: 2px; }
 
-  /* BOTTOM SHEET (MOVIL) — colapso animado con transform (no max-height),
-     para que la transición sea fluida sin importar cuánto contenido tenga. */
+  /* BOTTOM SHEET (MOVIL) — tres estados reales en vez de un simple on/off:
+       - state-collapsed: repliega casi todo, deja ver el conteo ("5 dias
+         seleccionados") para no tapar el calendario.
+       - state-mid: altura por defecto al seleccionar un dia — muestra el
+         toggle Viajo/No viajo y el selector de turno.
+       - state-expanded: arrastrando el handle hacia arriba se revela el
+         formulario completo de repeticion.
+     --collapsed-px y --mid-px se calculan en JS (updatePanelMetrics) segun
+     el contenido real, para que el corte quede siempre justo donde debe. */
   #action-panel {
+    --collapsed-px: 78px;
+    --mid-px: 210px;
     position: fixed; left: 0; right: 0; bottom: 0; max-height: 65vh;
     border-radius: 20px 20px 0 0; transform: translateY(100%);
     transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
@@ -269,17 +296,21 @@
     overflow-y: auto; background: rgba(12, 26, 46, 0.98);
     cursor: default;
   }
+  #action-panel.dragging { transition: none; }
   #action-panel.open { transform: translateY(0); }
-  #action-panel.open.collapsed { transform: translateY(calc(100% - 78px)); cursor: pointer; }
+  #action-panel.open.state-mid { transform: translateY(calc(100% - var(--mid-px))); }
+  #action-panel.open.state-collapsed { transform: translateY(calc(100% - var(--collapsed-px))); cursor: pointer; }
+  #action-panel.open.state-expanded { transform: translateY(0); }
   .action-panel-handle {
-    width: 100%; display: flex; justify-content: center; padding: 4px 0 10px; cursor: pointer;
-    background: transparent; border: 0;
+    width: 100%; display: flex; justify-content: center; padding: 4px 0 10px; cursor: grab;
+    background: transparent; border: 0; touch-action: none;
   }
-  .action-panel-handle .bar { width: 36px; height: 4px; border-radius: 999px; background: var(--glass-border); }
+  .action-panel-handle .bar { width: 36px; height: 4px; border-radius: 999px; background: var(--glass-border); transition: background 0.15s ease; }
+  #action-panel.dragging .action-panel-handle .bar { background: var(--sky-dim); }
   #action-panel .count { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
   #action-panel .count a { color: var(--sky-dim); font-size: 0.8rem; text-decoration: none; }
   .action-panel-body { transition: opacity 0.15s ease; }
-  #action-panel.collapsed .action-panel-body { pointer-events: none; }
+  #action-panel.open.state-collapsed .action-panel-body { pointer-events: none; }
 
   @media (min-width: 768px) {
     #action-panel {
@@ -287,8 +318,10 @@
       width: 320px; max-height: calc(100vh - 100px); border-radius: var(--radius);
       transform: translateX(120%);
     }
-    #action-panel.open { transform: translateX(0); }
-    #action-panel.open.collapsed { transform: translateX(0) translateY(calc(100% - 62px)); }
+    #action-panel.open,
+    #action-panel.open.state-mid,
+    #action-panel.open.state-expanded { transform: translateX(0); }
+    #action-panel.open.state-collapsed { transform: translateX(0) translateY(calc(100% - 62px)); }
     .action-panel-handle { display: none; }
   }
 
@@ -296,6 +329,10 @@
   .seg-btn { flex: 1; padding: 10px 0; border-radius: var(--radius-sm); font-size: 0.86rem; background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text-dim); }
   .seg-btn.active[data-viaja="1"] { background: rgba(44, 184, 122, 0.2); border-color: var(--green); color: #a8f0cf; }
   .seg-btn.active[data-viaja="0"] { background: rgba(224, 68, 68, 0.2); border-color: var(--red); color: #ffb3b3; }
+  .seg-btn.active[data-turno] { background: rgba(58, 143, 209, 0.2); border-color: var(--sky); color: var(--text); }
+
+  .turno-box { margin-top: 14px; }
+  .turno-box.hidden { display: none; }
 
   .recurrence-box { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--glass-border); }
   .recurrence-title { font-size: 0.72rem; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
@@ -344,7 +381,7 @@
   .modal-card { width: 100%; max-width: 400px; padding: 26px 22px; text-align: center; max-height: calc(100vh - 40px); overflow-y: auto; }
   .modal-card h3 { font-size: 1.08rem; margin-bottom: 8px; }
   .modal-summary { color: var(--text-dim); font-size: 0.85rem; margin-bottom: 20px; line-height: 1.5; }
-  .modal-turno-options { display: flex; flex-direction: column; gap: 10px; }
+  .modal-actions { display: flex; flex-direction: column; gap: 10px; }
 
   /* MAPA */
   #tab-mapa { position: relative; z-index: 0; }
@@ -385,6 +422,8 @@
 </head>
 <body>
 
+<div class="desktop-glow" aria-hidden="true"></div>
+
 <!-- LOGIN -->
 <section id="screen-login" class="screen">
   <div class="login-card glass">
@@ -409,6 +448,13 @@
       <span class="name" id="topbar-name">-</span>
     </div>
     <div class="topbar-actions">
+      <button id="btn-refresh" class="icon-btn" title="Refrescar datos" aria-label="Refrescar datos">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="23 4 23 10 17 10"></polyline>
+          <polyline points="1 20 1 14 7 14"></polyline>
+          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+        </svg>
+      </button>
       <button id="btn-logout" class="icon-btn" title="Cerrar sesion" aria-label="Cerrar sesion">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
@@ -500,7 +546,7 @@
           </div>
 
           <div class="cal-legend" style="margin-top:12px;">
-            <span><i style="background:var(--green)"></i> Manana</span>
+            <span><i style="background:var(--green)"></i> Mañana</span>
             <span><i style="background:var(--sky-alt)"></i> Tarde</span>
             <span><i style="background:linear-gradient(135deg,var(--green) 50%,var(--sky-alt) 50%)"></i> Ambos</span>
             <span><i style="background:var(--text-faint)"></i> No viajo</span>
@@ -591,17 +637,33 @@
   <button type="button" class="action-panel-handle" id="action-panel-handle" aria-label="Expandir o colapsar">
     <span class="bar"></span>
   </button>
-  <div class="count">
+  <div class="count" id="action-panel-count-row">
     <span id="action-count">0 dias seleccionados</span>
     <a href="#" id="action-clear">Cancelar</a>
   </div>
 
   <div class="action-panel-body" id="action-panel-body">
-    <div class="viaja-toggle" role="group" aria-label="Estado de asistencia">
+    <div class="viaja-toggle" id="viaja-toggle" role="group" aria-label="Estado de asistencia">
       <button type="button" id="opt-viajo" class="seg-btn active" data-viaja="1">Viajo</button>
       <button type="button" id="opt-noviajo" class="seg-btn" data-viaja="0">No viajo</button>
     </div>
 
+    <div id="turno-box" class="turno-box">
+      <div class="recurrence-title">Turno</div>
+      <div class="viaja-toggle" id="turno-toggle" role="group" aria-label="Turno">
+        <button type="button" class="seg-btn" data-turno="manana">Mañana</button>
+        <button type="button" class="seg-btn" data-turno="tarde">Tarde</button>
+        <button type="button" class="seg-btn active" data-turno="ambos">Ambos</button>
+      </div>
+    </div>
+
+    <button id="btn-guardar" class="btn btn-primary" style="margin-top:14px;" disabled>Guardar</button>
+
+    <!-- Repeticion: a proposito queda debajo de Guardar. En altura media
+         (mid) el corte del bottom sheet cae justo aca, asi que la
+         repeticion no se ve hasta que el usuario arrastra el handle hacia
+         arriba — el flujo simple (marcar dias, elegir turno, guardar) no
+         necesita tocarla. -->
     <div id="recurrence-box" class="recurrence-box hidden">
       <div class="recurrence-title">Repeticion</div>
       <div id="recurrence-options" class="recurrence-options"></div>
@@ -617,21 +679,19 @@
         </div>
       </div>
     </div>
-
-    <button id="btn-guardar" class="btn btn-primary" style="margin-top:14px;" disabled>Guardar</button>
   </div>
 </div>
 
-<!-- MODAL TURNO -->
-<div id="modal-turno" class="modal-overlay hidden">
+<!-- MODAL DE IMPACTO: solo aparece cuando una repeticion va a tocar mas
+     fechas de las que el usuario marco a mano, para que confirme antes de
+     que se sobreescriba algo que ya tenia configurado. -->
+<div id="modal-impact" class="modal-overlay hidden">
   <div class="modal-card glass">
-    <h3>Viaja en que turno?</h3>
-    <p id="modal-turno-summary" class="modal-summary">-</p>
-    <div class="modal-turno-options">
-      <button type="button" class="btn btn-ghost" data-turno="manana">Manana</button>
-      <button type="button" class="btn btn-ghost" data-turno="tarde">Tarde</button>
-      <button type="button" class="btn btn-primary" data-turno="ambos">Ambos</button>
-      <button type="button" id="modal-turno-cancel" class="btn btn-ghost">Cancelar</button>
+    <h3>Confirmar cambios</h3>
+    <p id="modal-impact-summary" class="modal-summary">Calculando impacto...</p>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-primary" id="modal-impact-confirm">Sobrescribir y guardar</button>
+      <button type="button" id="modal-impact-cancel" class="btn btn-ghost">Cancelar</button>
     </div>
   </div>
 </div>
@@ -669,12 +729,19 @@
     calendarByDate: {},
     selected: new Set(),
     viajaChoice: true,
+    turnoChoice: "ambos",
     recurrenceChoice: "none",
     suppressRecurrence: false,
     extentType: "weeks",
     extentValue: 4,
     pendingDates: [],
-    panelCollapsed: false,
+    panelState: "mid",
+
+    // Caché en memoria por mes ("YYYY-MM" -> datos). Calendario e Historial
+    // comparten el mismo dato subyacente (rpc_calendario_mes), asi que un
+    // solo mes descargado sirve para ambas pantallas. Se invalida cuando el
+    // usuario guarda cambios en ese mes, o cuando pide "refrescar".
+    monthCache: {},
 
     historialYear: null,
     historialMonth: null,
@@ -758,6 +825,30 @@
     }
   });
 
+  document.getElementById("btn-refresh").addEventListener("click", async () => {
+    const btn = document.getElementById("btn-refresh");
+    if (!state.profile || btn.disabled) return;
+    btn.disabled = true;
+    btn.classList.add("spinning");
+    try {
+      if (state.activeTab === "historial") {
+        delete state.monthCache[monthCacheKey(state.historialYear, state.historialMonth)];
+        await loadHistorial();
+      } else if (state.activeTab === "calendario") {
+        delete state.monthCache[monthCacheKey(state.viewYear, state.viewMonth)];
+        await loadCalendar();
+      } else {
+        const t = new Date();
+        delete state.monthCache[monthCacheKey(t.getFullYear(), t.getMonth() + 1)];
+        await loadHomeStatus();
+      }
+      toast("Actualizado", "ok");
+    } finally {
+      btn.disabled = false;
+      btn.classList.remove("spinning");
+    }
+  });
+
   document.getElementById("btn-logout").addEventListener("click", () => {
     clearProfile();
     stopMapPolling();
@@ -826,6 +917,8 @@
     return { status: "unmarked" };
   }
 
+  function monthCacheKey(year, month) { return `${year}-${pad2(month)}`; }
+
   async function fetchMonthData(year, month) {
     const { data, error } = await supabase.rpc("rpc_calendario_mes", {
       p_dni: state.profile.dni,
@@ -840,6 +933,26 @@
       map[key][row.turno] = { viaja: row.viaja, origen: row.origen };
     });
     return map;
+  }
+
+  // Envoltorio con caché: si el mes ya se descargó, lo devuelve al instante
+  // sin volver a pedirle nada a Supabase. Cambio de pestaña o de mes ya
+  // visitado = cero latencia.
+  async function fetchMonthDataCached(year, month, forceRefresh) {
+    const key = monthCacheKey(year, month);
+    if (!forceRefresh && state.monthCache[key]) {
+      return state.monthCache[key];
+    }
+    const data = await fetchMonthData(year, month);
+    state.monthCache[key] = data;
+    return data;
+  }
+
+  // Se llama despues de guardar cambios: los meses tocados ya no son
+  // validos en caché, para que la proxima vez se traigan frescos.
+  function invalidateMonthCache(dates) {
+    const keys = new Set(dates.map((iso) => iso.slice(0, 7)));
+    keys.forEach((k) => delete state.monthCache[k]);
   }
 
   function buildWeeks(year, month) {
@@ -866,12 +979,12 @@
       return;
     }
     try {
-      const map = await fetchMonthData(t.getFullYear(), t.getMonth() + 1);
+      const map = await fetchMonthDataCached(t.getFullYear(), t.getMonth() + 1);
       const info = map[todayISO()] || {};
       const c = classifyDay(info);
       if (c.status === "viaja") {
         const parts = [];
-        if (c.mViaja) parts.push("manana");
+        if (c.mViaja) parts.push("mañana");
         if (c.tViaja) parts.push("tarde");
         statusEl.textContent = `Viajas hoy - ${parts.join(" y ")}`;
       } else if (c.status === "no") {
@@ -913,7 +1026,7 @@
     const body = document.getElementById("cal-body");
     body.innerHTML = `<div style="padding:24px;text-align:center;color:var(--text-faint);font-size:0.85rem;">Cargando...</div>`;
     try {
-      state.calendarByDate = await fetchMonthData(state.viewYear, state.viewMonth);
+      state.calendarByDate = await fetchMonthDataCached(state.viewYear, state.viewMonth);
       renderCalendar();
     } catch (e) {
       console.error(e);
@@ -1015,16 +1128,16 @@
   });
 
   // Decide si, tras un toque en el calendario, el panel de acción debe
-  // quedar expandido (primera selección: mostramos las opciones) o
-  // replegado (el panel ya estaba abierto y el usuario sigue eligiendo
-  // días — se corre solito para no tapar el calendario).
-  function updatePanelCollapseAfterCalendarTap(wasEmpty) {
+  // "despertar" a media altura (primera selección: mostramos Viajo/No viajo
+  // y turno) o quedar replegado (el panel ya estaba abierto y el usuario
+  // sigue eligiendo días — se corre solito para no tapar el calendario).
+  function updatePanelStateAfterCalendarTap(wasEmpty) {
     if (state.selected.size === 0) {
-      state.panelCollapsed = false;
+      state.panelState = "mid";
     } else if (wasEmpty) {
-      state.panelCollapsed = false;
+      state.panelState = "mid";
     } else {
-      state.panelCollapsed = true;
+      state.panelState = "collapsed";
     }
   }
 
@@ -1037,7 +1150,7 @@
     }
     state.recurrenceChoice = "none";
     state.suppressRecurrence = !!suppressRecurrence;
-    updatePanelCollapseAfterCalendarTap(wasEmpty);
+    updatePanelStateAfterCalendarTap(wasEmpty);
     renderCalendar();
     renderActionPanel();
   }
@@ -1059,7 +1172,7 @@
       dates.forEach(d => state.selected.add(d));
     }
     state.recurrenceChoice = "none";
-    updatePanelCollapseAfterCalendarTap(wasEmpty);
+    updatePanelStateAfterCalendarTap(wasEmpty);
     renderCalendar();
     renderActionPanel();
   }
@@ -1077,7 +1190,7 @@
       dates.forEach(d => state.selected.add(d));
     }
     state.recurrenceChoice = "none";
-    updatePanelCollapseAfterCalendarTap(wasEmpty);
+    updatePanelStateAfterCalendarTap(wasEmpty);
     renderCalendar();
     renderActionPanel();
   }
@@ -1086,7 +1199,7 @@
     state.selected.clear();
     state.recurrenceChoice = "none";
     state.suppressRecurrence = false;
-    state.panelCollapsed = false;
+    state.panelState = "mid";
     renderActionPanel();
   }
 
@@ -1114,10 +1227,17 @@
     }
   }
 
-  document.querySelectorAll(".seg-btn").forEach((btn) => {
+  document.querySelectorAll("#viaja-toggle .seg-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
       state.viajaChoice = btn.dataset.viaja === "1";
-      document.querySelectorAll(".seg-btn").forEach((b) => b.classList.toggle("active", b === btn));
+      document.querySelectorAll("#viaja-toggle .seg-btn").forEach((b) => b.classList.toggle("active", b === btn));
+    });
+  });
+
+  document.querySelectorAll("#turno-toggle .seg-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      state.turnoChoice = btn.dataset.turno;
+      document.querySelectorAll("#turno-toggle .seg-btn").forEach((b) => b.classList.toggle("active", b === btn));
     });
   });
 
@@ -1222,44 +1342,143 @@
     return Array.from(out).sort();
   }
 
-  function renderActionPanel() {
+  function isDesktopPanel() {
+    return window.matchMedia("(min-width: 768px)").matches;
+  }
+
+  // Mide, con el contenido real ya renderizado, hasta dónde hay que dejar
+  // ver el panel en cada estado: state-collapsed corta justo debajo del
+  // conteo; state-mid corta justo debajo del selector de turno. Se
+  // recalcula en cada render porque el contenido (repeticion visible o no)
+  // cambia la altura.
+  function updatePanelMetrics() {
+    const panel = document.getElementById("action-panel");
+    const countRow = document.getElementById("action-panel-count-row");
+    const guardarBtn = document.getElementById("btn-guardar");
+    if (!countRow || !guardarBtn) return;
+    const collapsedPx = Math.round(countRow.offsetTop + countRow.offsetHeight + 12);
+    const midPx = Math.round(guardarBtn.offsetTop + guardarBtn.offsetHeight + 16);
+    panel.style.setProperty("--collapsed-px", collapsedPx + "px");
+    panel.style.setProperty("--mid-px", midPx + "px");
+  }
+
+  function setPanelState(name) {
+    state.panelState = name;
+    applyPanelState();
+  }
+
+  function applyPanelState() {
     const panel = document.getElementById("action-panel");
     const n = state.selected.size;
     panel.classList.toggle("open", n > 0);
-    panel.classList.toggle("collapsed", state.panelCollapsed && n > 0);
+    panel.classList.remove("state-collapsed", "state-mid", "state-expanded");
+    if (n > 0) panel.classList.add("state-" + state.panelState);
+  }
+
+  function renderActionPanel() {
+    const n = state.selected.size;
     document.getElementById("action-count").textContent =
       n === 1 ? "1 dia seleccionado" : `${n} dias seleccionados`;
     document.getElementById("btn-guardar").disabled = n === 0;
     renderRecurrenceOptions();
+    updatePanelMetrics();
+    applyPanelState();
   }
 
-  document.getElementById("action-panel-handle").addEventListener("click", () => {
-    state.panelCollapsed = !state.panelCollapsed;
-    renderActionPanel();
+  window.addEventListener("resize", () => {
+    if (document.getElementById("action-panel").classList.contains("open")) {
+      updatePanelMetrics();
+    }
   });
+
+  // --- Arrastre del handle (mobile): un toque corto alterna
+  // collapsed <-> mid; arrastrar hacia arriba pasa por mid y, si sigue
+  // subiendo, llega a expanded (formulario de repeticion completo).
+  const panelEl = document.getElementById("action-panel");
+  const handleEl = document.getElementById("action-panel-handle");
+  let dragState = null;
+
+  function getPanelTranslateY(panel) {
+    const t = window.getComputedStyle(panel).transform;
+    if (!t || t === "none") return 0;
+    if (t.startsWith("matrix3d")) {
+      return parseFloat(t.split(",")[13]) || 0;
+    }
+    const parts = t.match(/matrix\((.+)\)/);
+    if (!parts) return 0;
+    return parseFloat(parts[1].split(",")[5]) || 0;
+  }
+
+  handleEl.addEventListener("pointerdown", (e) => {
+    if (isDesktopPanel() || !panelEl.classList.contains("open")) return;
+    handleEl.setPointerCapture(e.pointerId);
+    dragState = {
+      pointerId: e.pointerId,
+      startY: e.clientY,
+      startTy: getPanelTranslateY(panelEl),
+      panelHeight: panelEl.offsetHeight,
+      currentTy: getPanelTranslateY(panelEl),
+      moved: false,
+    };
+    panelEl.classList.add("dragging");
+  });
+
+  handleEl.addEventListener("pointermove", (e) => {
+    if (!dragState || e.pointerId !== dragState.pointerId) return;
+    const delta = e.clientY - dragState.startY;
+    if (Math.abs(delta) > 4) dragState.moved = true;
+    const ty = Math.max(0, Math.min(dragState.panelHeight, dragState.startTy + delta));
+    dragState.currentTy = ty;
+    panelEl.style.transform = `translateY(${ty}px)`;
+  });
+
+  function finishDrag() {
+    if (!dragState) return;
+    const { moved, currentTy, panelHeight } = dragState;
+    panelEl.classList.remove("dragging");
+    panelEl.style.transform = "";
+    dragState = null;
+
+    if (!moved) {
+      setPanelState(state.panelState === "collapsed" ? "mid" : "collapsed");
+      return;
+    }
+
+    const collapsedPx = parseFloat(panelEl.style.getPropertyValue("--collapsed-px")) || 78;
+    const midPx = parseFloat(panelEl.style.getPropertyValue("--mid-px")) || 210;
+    const candidates = [
+      { name: "expanded", ty: 0 },
+      { name: "mid", ty: Math.max(0, panelHeight - midPx) },
+      { name: "collapsed", ty: Math.max(0, panelHeight - collapsedPx) },
+    ];
+    let best = candidates[0];
+    candidates.forEach((c) => {
+      if (Math.abs(c.ty - currentTy) < Math.abs(best.ty - currentTy)) best = c;
+    });
+    setPanelState(best.name);
+  }
+
+  handleEl.addEventListener("pointerup", finishDrag);
+  handleEl.addEventListener("pointercancel", finishDrag);
 
   // Tocar en cualquier parte visible del panel mientras está replegado
   // (la franja con el conteo, ya que el resto del cuerpo no es interactivo
-  // en ese estado) lo vuelve a expandir.
-  document.getElementById("action-panel").addEventListener("click", (e) => {
-    const panel = document.getElementById("action-panel");
-    if (!panel.classList.contains("open") || !panel.classList.contains("collapsed")) return;
+  // en ese estado) lo vuelve a media altura.
+  panelEl.addEventListener("click", (e) => {
+    if (!panelEl.classList.contains("open") || !panelEl.classList.contains("state-collapsed")) return;
     if (e.target.closest("#action-clear")) return;
-    state.panelCollapsed = false;
-    renderActionPanel();
+    setPanelState("mid");
   });
 
   // Tocar afuera del panel (topbar, dock de navegación, fondo) también lo
   // repliega. Los toques dentro del calendario y de Historial ya deciden
-  // esto por su cuenta en updatePanelCollapseAfterCalendarTap, así que se
+  // esto por su cuenta en updatePanelStateAfterCalendarTap, así que se
   // excluyen acá para no pisar esa lógica.
   document.addEventListener("click", (e) => {
-    const panel = document.getElementById("action-panel");
-    if (!panel.classList.contains("open") || panel.classList.contains("collapsed")) return;
-    if (panel.contains(e.target)) return;
+    if (!panelEl.classList.contains("open") || panelEl.classList.contains("state-collapsed")) return;
+    if (panelEl.contains(e.target)) return;
     if (e.target.closest(".day-cell, .week-num, .cal-head-cell, .hist-row")) return;
-    state.panelCollapsed = true;
-    renderActionPanel();
+    setPanelState("collapsed");
   });
 
   function renderRecurrenceOptions() {
@@ -1342,32 +1561,72 @@
     renderRecurrenceOptions();
   });
 
-  document.getElementById("btn-guardar").addEventListener("click", () => {
+  // Guardar: si la seleccion es tal cual (sin repeticion, o repeticion que
+  // no agrego fechas nuevas) se guarda directo. Si la repeticion expandio
+  // la seleccion original a mas fechas, primero se calcula el impacto real
+  // contra lo que ya existe en la base y se pide confirmacion.
+  document.getElementById("btn-guardar").addEventListener("click", async () => {
     if (state.selected.size === 0) return;
     const dates = computeRecurrenceDates(state.recurrenceChoice, state.extentType, state.extentValue);
     state.pendingDates = dates;
-    openTurnoModal();
+    const isExpanded = state.recurrenceChoice !== "none" && dates.length > state.selected.size;
+    if (isExpanded) {
+      await openImpactModal(dates);
+    } else {
+      await persistSelection(state.turnoChoice);
+    }
   });
 
-  function openTurnoModal() {
-    const n = state.pendingDates.length;
-    document.getElementById("modal-turno-summary").textContent =
-      `Se aplicara a ${n} fecha${n === 1 ? "" : "s"} - ${state.viajaChoice ? "Viajo" : "No viajo"}`;
-    document.getElementById("modal-turno").classList.remove("hidden");
+  async function openImpactModal(dates) {
+    const modal = document.getElementById("modal-impact");
+    const summary = document.getElementById("modal-impact-summary");
+    modal.classList.remove("hidden");
+    summary.textContent = "Calculando impacto...";
+    setImpactSaving(true);
+    try {
+      const months = Array.from(new Set(dates.map((d) => d.slice(0, 7))));
+      const results = await Promise.all(
+        months.map((ym) => {
+          const [y, m] = ym.split("-").map(Number);
+          return fetchMonthDataCached(y, m);
+        })
+      );
+      const merged = {};
+      results.forEach((data) => Object.assign(merged, data));
+      let withConfig = 0;
+      dates.forEach((iso) => {
+        const info = merged[iso];
+        if (info && (info.manana || info.tarde)) withConfig++;
+      });
+      summary.textContent = withConfig > 0
+        ? `Vas a modificar ${dates.length} dias, de los cuales ${withConfig} ya tenian una configuracion manual. ¿Deseas sobreescribirlos?`
+        : `Vas a modificar ${dates.length} dias. Ninguno tenia una configuracion previa.`;
+    } catch (e) {
+      console.error(e);
+      summary.textContent =
+        `Vas a modificar ${dates.length} dias. No pudimos verificar si alguno ya tenia una configuracion previa.`;
+    } finally {
+      setImpactSaving(false);
+    }
   }
 
-  function closeTurnoModal() {
-    document.getElementById("modal-turno").classList.add("hidden");
+  function closeImpactModal() {
+    document.getElementById("modal-impact").classList.add("hidden");
   }
 
-  document.getElementById("modal-turno-cancel").addEventListener("click", closeTurnoModal);
-  document.querySelectorAll("#modal-turno [data-turno]").forEach((btn) => {
-    btn.addEventListener("click", () => persistSelection(btn.dataset.turno));
+  document.getElementById("modal-impact-cancel").addEventListener("click", closeImpactModal);
+  document.getElementById("modal-impact-confirm").addEventListener("click", () => {
+    closeImpactModal();
+    persistSelection(state.turnoChoice);
   });
+
+  function setImpactSaving(isSaving) {
+    document.querySelectorAll("#modal-impact button").forEach((b) => (b.disabled = isSaving));
+  }
 
   function setSaving(isSaving) {
     document.getElementById("btn-guardar").disabled = isSaving || state.selected.size === 0;
-    document.querySelectorAll("#modal-turno button").forEach((b) => (b.disabled = isSaving));
+    setImpactSaving(isSaving);
   }
 
   async function persistSelection(turnoChoice) {
@@ -1377,7 +1636,7 @@
     const turnos = turnoChoice === "ambos" ? ["manana", "tarde"] : [turnoChoice];
     const CHUNK = 200;
 
-    closeTurnoModal();
+    closeImpactModal();
     setSaving(true);
     try {
       for (const turno of turnos) {
@@ -1393,10 +1652,14 @@
         }
       }
       toast(`Guardado (${dates.length} fecha${dates.length === 1 ? "" : "s"})`, "ok");
+      invalidateMonthCache(dates);
       clearSelection();
       await loadCalendar();
       if (state.activeTab === "historial") {
         await loadHistorial();
+      }
+      if (dates.includes(todayISO())) {
+        loadHomeStatus();
       }
     } catch (e) {
       console.error(e);
@@ -1429,7 +1692,7 @@
     const list = document.getElementById("hist-list");
     list.innerHTML = `<div style="padding:24px;text-align:center;color:var(--text-faint);font-size:0.85rem;">Cargando...</div>`;
     try {
-      state.historialByDate = await fetchMonthData(state.historialYear, state.historialMonth);
+      state.historialByDate = await fetchMonthDataCached(state.historialYear, state.historialMonth);
       renderHistorial();
     } catch (e) {
       console.error(e);
@@ -1495,7 +1758,7 @@
       const chips = document.createElement("div");
       chips.className = "hist-chips";
       if (r.status.status === "viaja") {
-        if (r.status.mViaja) chips.appendChild(makeChip("am", "Manana"));
+        if (r.status.mViaja) chips.appendChild(makeChip("am", "Mañana"));
         if (r.status.tViaja) chips.appendChild(makeChip("pm", "Tarde"));
       } else if (r.status.status === "no") {
         chips.appendChild(makeChip("no", "No viaja"));
@@ -1524,9 +1787,10 @@
         center: [-34.9011, -56.1645],
         zoom: 12
       });
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-        maxZoom: 19,
+      L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        subdomains: "abcd",
+        maxZoom: 20,
       }).addTo(state.map);
     } catch (e) {
       console.error("Error al inicializar el mapa:", e);
