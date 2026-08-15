@@ -62,7 +62,7 @@
     color: inherit;
   }
 
-  input { font-family: "Inter", sans-serif; }
+  input, select { font-family: "Inter", sans-serif; }
 
   .screen { min-height: 100dvh; }
   .hidden { display: none !important; }
@@ -114,6 +114,7 @@
   .btn-primary { background: var(--sky); color: #071020; }
   .btn-primary:hover { filter: brightness(1.08); }
   .btn-ghost { background: transparent; color: var(--text-dim); border: 1px solid var(--glass-border); }
+  .btn-sm { width: auto; padding: 9px 16px; font-size: 0.85rem; }
   .login-error { margin-top: 14px; font-size: 0.85rem; color: var(--red); min-height: 1.2em; }
 
   /* APP SHELL */
@@ -122,13 +123,6 @@
     background: radial-gradient(circle at 20% -10%, #0d2140 0%, var(--navy) 55%);
   }
 
-  /* EFECTO DE CONTINUIDAD (desktop): en pantallas anchas el contenido real
-     vive en una columna centrada de hasta 1200px. Sin esto, lo que sobra a
-     los costados se ve como negro plano contra las glass-cards mas claras
-     del centro. Este halo repite el mismo gradiente Navy de la App pero
-     desenfocado, para que el borde de la ventana se sienta integrado al
-     monitor en vez de una "tripa" recortada. En mobile no hay costados que
-     integrar, asi que queda desactivado. */
   .desktop-glow { display: none; }
   @media (min-width: 900px) {
     .desktop-glow {
@@ -167,32 +161,39 @@
   .tab-panel { height: 100%; overflow-y: auto; padding: 6px 18px calc(20px + var(--safe-b) + var(--navh)); }
   #tab-mapa.tab-panel { padding: 0; }
 
-  /* INICIO */
-  .home-wrap { max-width: 560px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px; padding-top: 4px; }
+  /* ---------------- INICIO (dashboard operativo) ---------------- */
+  .home-wrap { max-width: 560px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; padding-top: 4px; }
 
-  .today-card { padding: 18px 20px; }
-  .today-card-label { font-size: 0.72rem; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
-  .today-card-status { font-size: 1.05rem; font-weight: 600; font-family: "Syne", sans-serif; }
-
-  .home-cards { display: flex; flex-direction: column; gap: 12px; }
-  @media (min-width: 620px) { .home-cards { flex-direction: row; } }
-  .home-card {
-    display: flex; flex-direction: column; align-items: flex-start; gap: 10px;
-    padding: 18px 18px 20px; text-align: left; flex: 1;
-    transition: transform 0.15s ease, background 0.15s ease;
+  .home-banner { display: flex; gap: 12px; padding: 16px 18px; align-items: flex-start; }
+  .home-banner-dot {
+    width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 5px;
+    background: var(--text-faint); transition: background 0.2s ease;
   }
-  .home-card:active { transform: scale(0.98); }
-  .home-card:hover { background: var(--glass-bg-strong); }
-  .home-card-icon {
-    width: 38px; height: 38px; border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    background: rgba(58, 143, 209, 0.14); color: var(--sky-dim);
+  .home-banner.live .home-banner-dot {
+    background: var(--sky);
+    box-shadow: 0 0 0 0 rgba(58, 143, 209, 0.55);
+    animation: bannerPulse 1.8s infinite;
   }
-  .home-card-icon svg { width: 20px; height: 20px; }
-  .home-card-title { font-family: "Syne", sans-serif; font-weight: 700; font-size: 1rem; }
-  .home-card-desc { font-size: 0.78rem; color: var(--text-dim); line-height: 1.4; }
+  .home-banner.scheduled .home-banner-dot { background: var(--sky-dim); }
+  .home-banner.off .home-banner-dot { background: var(--text-faint); }
+  @keyframes bannerPulse {
+    0% { box-shadow: 0 0 0 0 rgba(58, 143, 209, 0.55); }
+    70% { box-shadow: 0 0 0 9px rgba(58, 143, 209, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(58, 143, 209, 0); }
+  }
+  .home-banner-title { font-family: "Syne", sans-serif; font-weight: 700; font-size: 0.98rem; }
+  .home-banner-desc { font-size: 0.8rem; color: var(--text-dim); margin-top: 3px; line-height: 1.4; }
 
-  /* CALENDARIO LAYOUT */
+  .next-trip-card { padding: 18px 20px 20px; }
+  .next-trip-label { font-size: 0.72rem; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
+  .next-trip-date { font-family: "Syne", sans-serif; font-weight: 700; font-size: 1.05rem; margin-bottom: 8px; text-transform: capitalize; }
+  .next-trip-row { display: flex; justify-content: space-between; gap: 10px; font-size: 0.86rem; padding: 7px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+  .next-trip-row:last-of-type { border-bottom: 0; }
+  .next-trip-row .label { color: var(--text-faint); flex-shrink: 0; }
+  .next-trip-row span:last-child { text-align: right; }
+  .next-trip-empty { color: var(--text-dim); font-size: 0.88rem; margin-bottom: 12px; line-height: 1.5; }
+
+  /* ---------------- CALENDARIO LAYOUT ---------------- */
   .calendar-layout { display: grid; grid-template-columns: 1fr; gap: 20px; max-width: 800px; margin: 0 auto; }
   @media (min-width: 768px) {
     .calendar-layout { grid-template-columns: 1fr 250px; align-items: start; }
@@ -229,99 +230,85 @@
   .day-cell {
     aspect-ratio: 1 / 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
     border-radius: 10px; font-size: 0.86rem; position: relative; cursor: pointer;
-    background: rgba(255, 255, 255, 0.03); border: 1px solid transparent; color: var(--text-dim);
+    background: rgba(255, 255, 255, 0.03); border: 1px solid transparent; color: var(--text);
     transition: all 0.15s ease;
   }
-  .day-cell:hover { background: rgba(255, 255, 255, 0.08); border-color: var(--glass-border); }
+  .day-cell:hover { filter: brightness(1.12); }
   .day-cell.empty { visibility: hidden; cursor: default; }
+  .day-cell.dim-text { color: var(--text-faint); }
   .day-cell .num { position: relative; z-index: 1; }
   .day-cell .dots { display: flex; gap: 3px; margin-top: 3px; position: relative; z-index: 1; }
   .day-cell .dot { width: 5px; height: 5px; border-radius: 50%; background: rgba(255, 255, 255, 0.14); }
-  .day-cell .dot.am-dot.on { background: var(--green); }
-  .day-cell .dot.pm-dot.on { background: var(--sky-alt); }
+  .day-cell .dot.dot-done { background: var(--green); }
+  .day-cell .dot.dot-scheduled { background: var(--sky-alt); }
+  .day-cell .dot.dot-no { background: var(--red); }
+  .day-cell .dot.dot-absent { background: rgba(255, 255, 255, 0.14); }
 
-  .day-cell.am:not(.pm) { background: rgba(44, 184, 122, 0.16); color: var(--text); }
-  .day-cell.pm:not(.am) { background: rgba(85, 179, 245, 0.16); color: var(--text); }
-  .day-cell.am.pm { background: linear-gradient(135deg, rgba(44, 184, 122, 0.32) 50%, rgba(85, 179, 245, 0.32) 50%); color: var(--text); }
-  .day-cell.noviaja { background: rgba(255, 255, 255, 0.03); color: var(--text-faint); }
-  .day-cell.weekend { background: rgba(255, 255, 255, 0.015); color: var(--text-faint); opacity: 0.4; cursor: default; }
+  .day-cell.weekend { background: rgba(255, 255, 255, 0.015) !important; color: var(--text-faint); opacity: 0.4; cursor: default; }
   .day-cell.today { border-color: var(--sky); }
-  .day-cell.selected { outline: 2px solid var(--sky); outline-offset: -2px; background: rgba(58, 143, 209, 0.22); }
+  .day-cell.selected { outline: 2px solid var(--sky); outline-offset: -2px; }
+  .day-cell.inspecting { outline: 2px solid var(--sky-dim); outline-offset: -2px; }
 
   .cal-legend { display: flex; flex-wrap: wrap; gap: 12px 16px; justify-content: center; font-size: 0.72rem; color: var(--text-faint); margin-top: 4px; }
   .cal-legend span { display: inline-flex; align-items: center; gap: 5px; }
   .cal-legend i { width: 9px; height: 9px; border-radius: 3px; display: inline-block; }
 
-  /* CAJA DE TIPS (debajo del calendario en mobile, al costado en desktop) */
   .tips-col { display: block; }
   @media (min-width: 768px) { .tips-col { position: sticky; top: 0; } }
   .tips-card { padding: 14px 16px; }
   .tips-card ul { margin: 0; padding-left: 16px; font-size: 0.78rem; color: var(--text-dim); line-height: 1.7; }
 
-  /* HISTORIAL */
-  .historial-wrap { max-width: 700px; margin: 0 auto; }
-  .hist-list { padding: 6px 4px; }
-  .hist-row { display: flex; align-items: center; justify-content: space-between; padding: 11px 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.06); cursor: pointer; transition: background 0.15s ease; border-radius: 10px; }
-  .hist-row:hover { background: rgba(255, 255, 255, 0.04); }
-  .hist-row:last-child { border-bottom: none; }
-  .hist-row.selected { background: rgba(58, 143, 209, 0.16); }
-  .hist-row .when { display: flex; flex-direction: column; }
-  .hist-row .wd { font-size: 0.66rem; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.05em; }
-  .hist-row .dnum { font-size: 0.94rem; font-weight: 600; }
-  .hist-row.today .dnum { color: var(--sky-dim); }
-  .hist-chips { display: flex; align-items: center; gap: 6px; }
-  .chip { font-size: 0.68rem; padding: 4px 9px; border-radius: 999px; font-weight: 600; white-space: nowrap; }
-  .chip.am { background: rgba(44, 184, 122, 0.18); color: #a8f0cf; }
-  .chip.pm { background: rgba(85, 179, 245, 0.18); color: #bfe3fc; }
-  .chip.no { background: rgba(224, 68, 68, 0.16); color: #ffb3b3; }
-  .chip.unmarked { background: rgba(255, 255, 255, 0.06); color: var(--text-faint); }
-  .hist-row .chevron { color: var(--text-faint); margin-left: 2px; }
-
-  /* BOTTOM SHEET (MOVIL) — tres estados reales en vez de un simple on/off:
-       - state-collapsed: repliega casi todo, deja ver el conteo ("5 dias
-         seleccionados") para no tapar el calendario.
-       - state-mid: altura por defecto al seleccionar un dia — muestra el
-         toggle Viajo/No viajo y el selector de turno.
-       - state-expanded: arrastrando el handle hacia arriba se revela el
-         formulario completo de repeticion.
-     --collapsed-px y --mid-px se calculan en JS (updatePanelMetrics) segun
-     el contenido real, para que el corte quede siempre justo donde debe. */
+  /* ---------------- BOTTOM SHEET (panel de acción / historial) ----------------
+     Un solo panel, dos contenidos posibles según la fecha tocada:
+       - panelMode "edit": fecha >= hoy -> formulario Viajo/No viajo + turno +
+         repetición (select compacto) + Guardar, fijo abajo del panel.
+       - panelMode "readonly": fecha < hoy -> tarjeta de solo lectura con lo
+         que realmente pasó ese día (viene de rpc_detalle_dia).
+     La altura ya no se maneja arrastrando el panel a mano por varias
+     posiciones: se restringe a un 46vh por defecto (dentro del 40-50%
+     pedido) y crece a 72vh con una transición CSS cuando la repetición
+     elegida revela el bloque de alcance ("tall"). Un toque en el handle
+     alterna entre esa altura y un estado "peek" (apenas el conteo), para
+     poder ver la grilla mientras se sigue seleccionando días.
+  ---------------------------------------------------------------------- */
   #action-panel {
-    --collapsed-px: 78px;
-    --mid-px: 210px;
-    position: fixed; left: 0; right: 0; bottom: 0; max-height: 65vh;
-    border-radius: 20px 20px 0 0; transform: translateY(100%);
-    transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 65; padding: 10px 16px calc(16px + var(--safe-b));
-    overflow-y: auto; background: rgba(12, 26, 46, 0.98);
-    cursor: default;
+    position: fixed; left: 0; right: 0; bottom: 0;
+    display: flex; flex-direction: column;
+    max-height: 0; overflow: hidden;
+    border-radius: 20px 20px 0 0;
+    background: rgba(12, 26, 46, 0.98);
+    transition: max-height 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 65;
+    padding-bottom: var(--safe-b);
   }
-  #action-panel.dragging { transition: none; }
-  #action-panel.open { transform: translateY(0); }
-  #action-panel.open.state-mid { transform: translateY(calc(100% - var(--mid-px))); }
-  #action-panel.open.state-collapsed { transform: translateY(calc(100% - var(--collapsed-px))); cursor: pointer; }
-  #action-panel.open.state-expanded { transform: translateY(0); }
+  #action-panel.open { max-height: 46vh; }
+  #action-panel.open.tall { max-height: 72vh; }
+  #action-panel.open.peek { max-height: 66px; }
+  #action-panel.peek .action-panel-scroll,
+  #action-panel.peek .action-panel-footer { visibility: hidden; pointer-events: none; }
+
   .action-panel-handle {
-    width: 100%; display: flex; justify-content: center; padding: 4px 0 10px; cursor: grab;
-    background: transparent; border: 0; touch-action: none;
+    width: 100%; flex-shrink: 0; display: flex; justify-content: center;
+    padding: 8px 0 6px; cursor: pointer; background: transparent; border: 0;
   }
-  .action-panel-handle .bar { width: 36px; height: 4px; border-radius: 999px; background: var(--glass-border); transition: background 0.15s ease; }
-  #action-panel.dragging .action-panel-handle .bar { background: var(--sky-dim); }
-  #action-panel .count { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
-  #action-panel .count a { color: var(--sky-dim); font-size: 0.8rem; text-decoration: none; }
-  .action-panel-body { transition: opacity 0.15s ease; }
-  #action-panel.open.state-collapsed .action-panel-body { pointer-events: none; }
+  .action-panel-handle .bar { width: 36px; height: 4px; border-radius: 999px; background: var(--glass-border); }
+
+  .action-panel-scroll { flex: 1 1 auto; overflow-y: auto; padding: 0 16px; }
+  .action-panel-footer { flex-shrink: 0; padding: 12px 16px 14px; }
+
+  #action-panel .count { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  #action-panel .count span:first-child { text-transform: capitalize; }
+  #action-panel .count a { color: var(--sky-dim); font-size: 0.8rem; text-decoration: none; flex-shrink: 0; }
 
   @media (min-width: 768px) {
     #action-panel {
-      position: fixed; left: auto; right: 20px; top: 80px; bottom: auto;
-      width: 320px; max-height: calc(100vh - 100px); border-radius: var(--radius);
-      transform: translateX(120%);
+      left: auto; right: 20px; top: 80px; bottom: auto;
+      width: 320px; border-radius: var(--radius);
+      max-height: 0;
     }
     #action-panel.open,
-    #action-panel.open.state-mid,
-    #action-panel.open.state-expanded { transform: translateX(0); }
-    #action-panel.open.state-collapsed { transform: translateX(0) translateY(calc(100% - 62px)); }
+    #action-panel.open.tall,
+    #action-panel.open.peek { max-height: calc(100vh - 140px); }
     .action-panel-handle { display: none; }
   }
 
@@ -332,17 +319,15 @@
   .seg-btn.active[data-turno] { background: rgba(58, 143, 209, 0.2); border-color: var(--sky); color: var(--text); }
 
   .turno-box { margin-top: 14px; }
-  .turno-box.hidden { display: none; }
+  .recurrence-title { font-size: 0.72rem; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; display: block; }
 
   .recurrence-box { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--glass-border); }
-  .recurrence-title { font-size: 0.72rem; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
-  .recurrence-options { display: flex; flex-direction: column; gap: 7px; }
-  .recurrence-opt {
-    text-align: left; padding: 10px 12px; border-radius: var(--radius-sm);
-    background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text-dim);
-    font-size: 0.85rem; font-weight: 500; font-family: "Inter", sans-serif;
+  .recurrence-select {
+    width: 100%; padding: 11px 12px; border-radius: var(--radius-sm);
+    background: rgba(255, 255, 255, 0.04); border: 1px solid var(--glass-border);
+    color: var(--text); font-size: 0.86rem;
   }
-  .recurrence-opt.active { background: rgba(58, 143, 209, 0.18); border-color: var(--sky); color: var(--text); }
+  .recurrence-select:focus { outline: none; border-color: var(--sky); }
 
   .recurrence-extent { margin-top: 12px; }
   .recurrence-extent label { display: block; font-size: 0.76rem; color: var(--text-dim); margin-bottom: 6px; }
@@ -352,7 +337,21 @@
     background: rgba(255, 255, 255, 0.04); color: var(--text); font-size: 0.84rem; flex: 1;
   }
 
-  /* DOCK DE NAVEGACION INFERIOR */
+  /* Tarjeta de solo lectura (día pasado) */
+  .readonly-turno { padding: 12px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.06); }
+  .readonly-turno:last-child { border-bottom: 0; }
+  .readonly-turno-head { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .readonly-estado { font-size: 0.85rem; color: var(--text-dim); font-weight: 600; }
+  .readonly-line { font-size: 0.82rem; color: var(--text-dim); line-height: 1.5; }
+  .readonly-novedades { font-size: 0.8rem; color: var(--sky-dim); margin-top: 4px; line-height: 1.5; }
+  .empty-note { padding: 18px 0; text-align: center; color: var(--text-faint); font-size: 0.85rem; }
+
+  .chip { font-size: 0.68rem; padding: 4px 9px; border-radius: 999px; font-weight: 600; white-space: nowrap; }
+  .chip.am { background: rgba(44, 184, 122, 0.18); color: #a8f0cf; }
+  .chip.pm { background: rgba(85, 179, 245, 0.18); color: #bfe3fc; }
+  .chip.no { background: rgba(224, 68, 68, 0.16); color: #ffb3b3; }
+
+  /* ---------------- DOCK DE NAVEGACION INFERIOR (3 pestañas) ---------------- */
   .bottom-nav {
     position: fixed; left: 50%; transform: translateX(-50%);
     bottom: calc(14px + var(--safe-b));
@@ -361,7 +360,7 @@
     border: 1px solid var(--glass-border);
     backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
-    width: calc(100% - 28px); max-width: 420px;
+    width: calc(100% - 28px); max-width: 340px;
   }
   .nav-btn {
     flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -466,52 +465,31 @@
   </header>
 
   <main>
-    <!-- INICIO -->
+    <!-- ============================================================
+         INICIO — dashboard operativo (banner en vivo + próximo viaje)
+    ============================================================ -->
     <section id="tab-inicio" class="tab-panel">
       <div class="home-wrap">
-        <div class="today-card glass">
-          <div class="today-card-label">Hoy - <span id="today-date">-</span></div>
-          <div class="today-card-status" id="today-status">Cargando...</div>
+        <div id="home-banner" class="home-banner glass off">
+          <div class="home-banner-dot" id="home-banner-dot"></div>
+          <div>
+            <div class="home-banner-title" id="home-banner-title">Cargando...</div>
+            <div class="home-banner-desc" id="home-banner-desc"></div>
+          </div>
         </div>
 
-        <div class="home-cards">
-          <button type="button" class="home-card glass" data-tab="calendario">
-            <span class="home-card-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="5" width="18" height="16" rx="2"></rect>
-                <line x1="3" y1="10" x2="21" y2="10"></line>
-                <line x1="8" y1="3" x2="8" y2="7"></line>
-                <line x1="16" y1="3" x2="16" y2="7"></line>
-              </svg>
-            </span>
-            <span class="home-card-title">Calendario</span>
-            <span class="home-card-desc">Marca tus dias de viaje</span>
-          </button>
-          <button type="button" class="home-card glass" data-tab="mapa">
-            <span class="home-card-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"></path>
-                <circle cx="12" cy="10" r="2.5"></circle>
-              </svg>
-            </span>
-            <span class="home-card-title">Mapa en vivo</span>
-            <span class="home-card-desc">Segui tu unidad en tiempo real</span>
-          </button>
-          <button type="button" class="home-card glass" data-tab="historial">
-            <span class="home-card-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="9"></circle>
-                <polyline points="12 7 12 12 15.5 14"></polyline>
-              </svg>
-            </span>
-            <span class="home-card-title">Historial</span>
-            <span class="home-card-desc">Revisa tus dias registrados</span>
-          </button>
+        <div class="next-trip-card glass">
+          <div class="next-trip-label">Próximo viaje</div>
+          <div id="next-trip-body">Cargando...</div>
         </div>
       </div>
     </section>
 
-    <!-- CALENDARIO -->
+    <!-- ============================================================
+         CALENDARIO — también hace de historial: los días pasados se
+         tocan igual que los futuros, pero abren la tarjeta de solo
+         lectura en vez del formulario.
+    ============================================================ -->
     <section id="tab-calendario" class="tab-panel hidden">
       <div class="calendar-layout">
         <div>
@@ -546,17 +524,18 @@
           </div>
 
           <div class="cal-legend" style="margin-top:12px;">
-            <span><i style="background:var(--green)"></i> Mañana</span>
-            <span><i style="background:var(--sky-alt)"></i> Tarde</span>
-            <span><i style="background:linear-gradient(135deg,var(--green) 50%,var(--sky-alt) 50%)"></i> Ambos</span>
-            <span><i style="background:var(--text-faint)"></i> No viajo</span>
+            <span><i style="background:var(--green)"></i> Realizado</span>
+            <span><i style="background:var(--sky-alt)"></i> Programado</span>
+            <span><i style="background:var(--red)"></i> No viaja</span>
+            <span><i style="background:var(--text-faint)"></i> Sin registro</span>
           </div>
         </div>
 
         <div class="tips-col">
           <div class="tips-card glass">
             <ul>
-              <li>Toca un dia para marcarlo</li>
+              <li>Toca un dia futuro para marcarlo</li>
+              <li>Toca un dia pasado para ver que paso ese dia</li>
               <li>Toca una letra (L-V) para seleccionar la columna</li>
               <li>Toca el numero de semana para la fila completa</li>
             </ul>
@@ -565,7 +544,9 @@
       </div>
     </section>
 
-    <!-- MAPA -->
+    <!-- ============================================================
+         MAPA
+    ============================================================ -->
     <section id="tab-mapa" class="tab-panel hidden">
       <div id="map"></div>
       <div class="map-overlay-top glass hidden" id="map-info">
@@ -582,22 +563,9 @@
         </div>
       </div>
     </section>
-
-    <!-- HISTORIAL -->
-    <section id="tab-historial" class="tab-panel hidden">
-      <div class="historial-wrap">
-        <div class="month-nav">
-          <button id="btn-prev-month-hist" aria-label="Mes anterior">&#8249;</button>
-          <div class="label display" id="month-label-hist">-</div>
-          <button id="btn-next-month-hist" aria-label="Mes siguiente">&#8250;</button>
-        </div>
-
-        <div class="hist-list glass" id="hist-list"></div>
-      </div>
-    </section>
   </main>
 
-  <!-- DOCK DE NAVEGACION -->
+  <!-- DOCK DE NAVEGACION: 3 pestañas -->
   <nav class="bottom-nav glass" aria-label="Navegacion principal">
     <button type="button" class="nav-btn active" data-tab="inicio">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -622,69 +590,71 @@
       </svg>
       <span>Mapa</span>
     </button>
-    <button type="button" class="nav-btn" data-tab="historial">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="9"></circle>
-        <polyline points="12 7 12 12 15.5 14"></polyline>
-      </svg>
-      <span>Historial</span>
-    </button>
   </nav>
 </section>
 
-<!-- BOTTOM SHEET / PANEL DE ACCION -->
+<!-- BOTTOM SHEET / PANEL DE ACCION Y DE HISTORIAL -->
 <div id="action-panel">
   <button type="button" class="action-panel-handle" id="action-panel-handle" aria-label="Expandir o colapsar">
     <span class="bar"></span>
   </button>
-  <div class="count" id="action-panel-count-row">
-    <span id="action-count">0 dias seleccionados</span>
-    <a href="#" id="action-clear">Cancelar</a>
-  </div>
 
-  <div class="action-panel-body" id="action-panel-body">
-    <div class="viaja-toggle" id="viaja-toggle" role="group" aria-label="Estado de asistencia">
-      <button type="button" id="opt-viajo" class="seg-btn active" data-viaja="1">Viajo</button>
-      <button type="button" id="opt-noviajo" class="seg-btn" data-viaja="0">No viajo</button>
+  <div class="action-panel-scroll">
+    <div class="count" id="action-panel-count-row">
+      <span id="action-count">0 dias seleccionados</span>
+      <a href="#" id="action-clear">Cancelar</a>
     </div>
 
-    <div id="turno-box" class="turno-box">
-      <div class="recurrence-title">Turno</div>
-      <div class="viaja-toggle" id="turno-toggle" role="group" aria-label="Turno">
-        <button type="button" class="seg-btn" data-turno="manana">Mañana</button>
-        <button type="button" class="seg-btn" data-turno="tarde">Tarde</button>
-        <button type="button" class="seg-btn active" data-turno="ambos">Ambos</button>
+    <!-- Modo edición: fecha >= hoy -->
+    <div class="action-panel-body" id="panel-edit-block">
+      <div class="viaja-toggle" id="viaja-toggle" role="group" aria-label="Estado de asistencia">
+        <button type="button" id="opt-viajo" class="seg-btn active" data-viaja="1">Viajo</button>
+        <button type="button" id="opt-noviajo" class="seg-btn" data-viaja="0">No viajo</button>
       </div>
-    </div>
 
-    <button id="btn-guardar" class="btn btn-primary" style="margin-top:14px;" disabled>Guardar</button>
+      <div id="turno-box" class="turno-box">
+        <span class="recurrence-title">Turno</span>
+        <div class="viaja-toggle" id="turno-toggle" role="group" aria-label="Turno">
+          <button type="button" class="seg-btn" data-turno="manana">Mañana</button>
+          <button type="button" class="seg-btn" data-turno="tarde">Tarde</button>
+          <button type="button" class="seg-btn active" data-turno="ambos">Ambos</button>
+        </div>
+      </div>
 
-    <!-- Repeticion: a proposito queda debajo de Guardar. En altura media
-         (mid) el corte del bottom sheet cae justo aca, asi que la
-         repeticion no se ve hasta que el usuario arrastra el handle hacia
-         arriba — el flujo simple (marcar dias, elegir turno, guardar) no
-         necesita tocarla. -->
-    <div id="recurrence-box" class="recurrence-box hidden">
-      <div class="recurrence-title">Repeticion</div>
-      <div id="recurrence-options" class="recurrence-options"></div>
-      <div id="recurrence-extent" class="recurrence-extent hidden">
-        <label for="extent-select">Aplicar durante</label>
-        <div class="extent-row">
-          <select id="extent-select">
-            <option value="weeks">Proximas semanas</option>
-            <option value="months">Proximos meses</option>
-            <option value="year">Resto del ano</option>
-          </select>
-          <input id="extent-number" type="number" min="1" max="52" value="4" />
+      <!-- Repeticion: ahora es un selector compacto, y va antes de Guardar
+           (que quedo fijo en el pie del panel). Elegir cualquier opcion
+           que no sea "Solo esta fecha" revela el bloque de alcance y
+           el panel crece de 46vh a 72vh con una transicion suave. -->
+      <div id="recurrence-box" class="recurrence-box hidden">
+        <label for="recurrence-select" class="recurrence-title">Repetición</label>
+        <select id="recurrence-select" class="recurrence-select"></select>
+        <div id="recurrence-extent" class="recurrence-extent hidden">
+          <label for="extent-select">Aplicar durante</label>
+          <div class="extent-row">
+            <select id="extent-select">
+              <option value="weeks">Próximas semanas</option>
+              <option value="months">Próximos meses</option>
+              <option value="year">Resto del año</option>
+            </select>
+            <input id="extent-number" type="number" min="1" max="52" value="4" />
+          </div>
         </div>
       </div>
     </div>
+
+    <!-- Modo solo lectura: fecha < hoy -->
+    <div class="action-panel-body hidden" id="panel-readonly-block">
+      <div id="readonly-turnos"></div>
+    </div>
+  </div>
+
+  <div class="action-panel-footer">
+    <button id="btn-guardar" class="btn btn-primary" disabled>Guardar</button>
+    <button id="btn-cerrar-readonly" class="btn btn-ghost hidden">Cerrar</button>
   </div>
 </div>
 
-<!-- MODAL DE IMPACTO: solo aparece cuando una repeticion va a tocar mas
-     fechas de las que el usuario marco a mano, para que confirme antes de
-     que se sobreescriba algo que ya tenia configurado. -->
+<!-- MODAL DE IMPACTO -->
 <div id="modal-impact" class="modal-overlay hidden">
   <div class="modal-card glass">
     <h3>Confirmar cambios</h3>
@@ -709,8 +679,25 @@
   const SUPABASE_ANON_KEY = "sb_publishable_HMwjMRn_QNztV3zhp0eAsw_OINb11YI";
   const EASYTRACK_FN_URL = SUPABASE_URL + "/functions/v1/easytrack-gps";
   const POLL_MS = 15000;
+  const HOME_POLL_MS = 20000;
 
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  // -------------------------------------------------------------------------
+  // NUEVO — esta pantalla asume una función RPC `rpc_detalle_dia(p_dni,
+  // p_fecha)` que todavía no existía en el backend, necesaria para dos
+  // piezas nuevas de este rediseño:
+  //   1) La tarjeta de solo lectura al tocar un día pasado en el calendario
+  //      (vehículo/interno, chofer, novedades).
+  //   2) El campo "Vehículo" del widget "Próximo viaje" en Inicio.
+  // Se espera un array con una fila por turno con datos ese día:
+  //   { turno, viaja, chofer_nombre, interno, patente, novedades }
+  // (cruzando asistencias + despacho por fecha/turno, similar a como lo
+  // hace el panel admin). Si la función no existe todavía, el fetch falla
+  // en silencio y la UI sigue funcionando con lo que ya trae
+  // rpc_calendario_mes — solo no se muestra vehículo/chofer/novedades
+  // hasta que se implemente del lado del backend.
+  // -------------------------------------------------------------------------
 
   const WEEKDAY_LABELS = ["Lun", "Mar", "Mie", "Jue", "Vie", "Sab", "Dom"];
   const MONTH_LABELS = [
@@ -719,6 +706,17 @@
   ];
   const FULL_WEEKDAY_LOWER = ["lunes", "martes", "miercoles", "jueves", "viernes", "sabado", "domingo"];
   const ORDINAL_WEEK_FEM = ["primeras", "segundas", "terceras", "cuartas", "quintas"];
+  const TURNO_LABELS = { manana: "Mañana", tarde: "Tarde" };
+
+  // Colores por estado de un turno en un día — usados tanto para el fondo
+  // de la celda (mezclados en diagonal si mañana y tarde difieren) como
+  // para el puntito debajo del número.
+  const CELL_TINT = {
+    done: "rgba(44, 184, 122, 0.30)",       // verde — realizado (pasado, viajo=true)
+    scheduled: "rgba(85, 179, 245, 0.30)",  // azul — programado (futuro, viajo=true)
+    no: "rgba(224, 68, 68, 0.20)",          // rojo — marco "no viajo"
+    absent: "rgba(255, 255, 255, 0.03)",    // gris — sin registro (pasado: falta; futuro: sin marcar)
+  };
 
   const state = {
     profile: null,
@@ -727,29 +725,29 @@
     viewYear: new Date().getFullYear(),
     viewMonth: new Date().getMonth() + 1,
     calendarByDate: {},
-    selected: new Set(),
+
+    selected: new Set(),          // fechas futuras/hoy elegidas para editar
+    inspectingDate: null,         // fecha pasada que se esta mostrando en modo lectura
+    panelMode: "edit",            // "edit" | "readonly"
+    sheetPeek: false,             // panel replegado a solo el conteo
+
     viajaChoice: true,
     turnoChoice: "ambos",
     recurrenceChoice: "none",
-    suppressRecurrence: false,
     extentType: "weeks",
     extentValue: 4,
     pendingDates: [],
-    panelState: "mid",
 
-    // Caché en memoria por mes ("YYYY-MM" -> datos). Calendario e Historial
-    // comparten el mismo dato subyacente (rpc_calendario_mes), asi que un
-    // solo mes descargado sirve para ambas pantallas. Se invalida cuando el
-    // usuario guarda cambios en ese mes, o cuando pide "refrescar".
+    // Cache en memoria por mes ("YYYY-MM" -> datos). Un solo mes descargado
+    // sirve para Calendario, Inicio (banner + proximo viaje) y la tarjeta
+    // de lectura, ya que todas leen del mismo rpc_calendario_mes.
     monthCache: {},
-
-    historialYear: null,
-    historialMonth: null,
-    historialByDate: {},
+    detalleDiaCache: new Map(),   // iso -> {turno: {...}} (rpc_detalle_dia)
 
     map: null,
     mapMarker: null,
     pollTimer: null,
+    homePollTimer: null,
   };
 
   function pad2(n) { return String(n).padStart(2, "0"); }
@@ -772,6 +770,7 @@
     r.setDate(Math.min(day, lastDay));
     return r;
   }
+  function capitalize(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
 
   let toastTimer = null;
   function toast(msg, kind) {
@@ -831,16 +830,16 @@
     btn.disabled = true;
     btn.classList.add("spinning");
     try {
-      if (state.activeTab === "historial") {
-        delete state.monthCache[monthCacheKey(state.historialYear, state.historialMonth)];
-        await loadHistorial();
-      } else if (state.activeTab === "calendario") {
+      if (state.activeTab === "calendario") {
         delete state.monthCache[monthCacheKey(state.viewYear, state.viewMonth)];
         await loadCalendar();
+      } else if (state.activeTab === "mapa") {
+        await pollPosition();
       } else {
         const t = new Date();
         delete state.monthCache[monthCacheKey(t.getFullYear(), t.getMonth() + 1)];
-        await loadHomeStatus();
+        state.detalleDiaCache.clear();
+        await loadHomeWidgets();
       }
       toast("Actualizado", "ok");
     } finally {
@@ -852,6 +851,7 @@
   document.getElementById("btn-logout").addEventListener("click", () => {
     clearProfile();
     stopMapPolling();
+    stopHomePolling();
     state.profile = null;
     document.getElementById("screen-app").classList.add("hidden");
     document.getElementById("screen-login").classList.remove("hidden");
@@ -871,38 +871,28 @@
   document.querySelectorAll(".nav-btn").forEach((btn) => {
     btn.addEventListener("click", () => switchTab(btn.dataset.tab));
   });
-  document.querySelectorAll(".home-card").forEach((btn) => {
-    btn.addEventListener("click", () => switchTab(btn.dataset.tab));
-  });
   document.getElementById("btn-map-volver").addEventListener("click", () => switchTab("inicio"));
 
   function switchTab(tab) {
     state.activeTab = tab;
     document.querySelectorAll(".nav-btn").forEach((b) => b.classList.toggle("active", b.dataset.tab === tab));
-    ["inicio", "calendario", "mapa", "historial"].forEach((id) => {
+    ["inicio", "calendario", "mapa"].forEach((id) => {
       document.getElementById("tab-" + id).classList.toggle("hidden", id !== tab);
     });
 
     if (tab === "mapa") {
+      stopHomePolling();
       setTimeout(() => {
         initMapIfNeeded();
         startMapPolling();
       }, 100);
+    } else if (tab === "inicio") {
+      stopMapPolling();
+      loadHomeWidgets();
+      startHomePolling();
     } else {
       stopMapPolling();
-    }
-
-    if (tab === "historial") {
-      if (state.historialYear === null) {
-        state.historialYear = state.viewYear;
-        state.historialMonth = state.viewMonth;
-      }
-      renderMonthLabelHist();
-      loadHistorial();
-    }
-
-    if (tab === "inicio") {
-      loadHomeStatus();
+      stopHomePolling();
     }
   }
 
@@ -915,6 +905,15 @@
     const tNo = !!(t && !t.viaja);
     if (mNo || tNo) return { status: "no" };
     return { status: "unmarked" };
+  }
+
+  // Estado visual de un turno puntual: cruza si viajo (o no, o no hay
+  // dato) con si la fecha ya paso, que es lo que decide entre verde
+  // (realizado) y azul (programado).
+  function turnoState(turnoInfo, isPast) {
+    if (turnoInfo && turnoInfo.viaja === true) return isPast ? "done" : "scheduled";
+    if (turnoInfo && turnoInfo.viaja === false) return "no";
+    return "absent";
   }
 
   function monthCacheKey(year, month) { return `${year}-${pad2(month)}`; }
@@ -935,9 +934,6 @@
     return map;
   }
 
-  // Envoltorio con caché: si el mes ya se descargó, lo devuelve al instante
-  // sin volver a pedirle nada a Supabase. Cambio de pestaña o de mes ya
-  // visitado = cero latencia.
   async function fetchMonthDataCached(year, month, forceRefresh) {
     const key = monthCacheKey(year, month);
     if (!forceRefresh && state.monthCache[key]) {
@@ -948,11 +944,32 @@
     return data;
   }
 
-  // Se llama despues de guardar cambios: los meses tocados ya no son
-  // validos en caché, para que la proxima vez se traigan frescos.
   function invalidateMonthCache(dates) {
     const keys = new Set(dates.map((iso) => iso.slice(0, 7)));
     keys.forEach((k) => delete state.monthCache[k]);
+  }
+
+  // Detalle puntual de un dia (vehiculo/chofer/novedades). Se pide una
+  // sola vez por fecha y se guarda en memoria — ver nota de
+  // rpc_detalle_dia mas arriba.
+  async function fetchDetalleDia(iso) {
+    if (state.detalleDiaCache.has(iso)) return state.detalleDiaCache.get(iso);
+    try {
+      const { data, error } = await supabase.rpc("rpc_detalle_dia", {
+        p_dni: state.profile.dni,
+        p_fecha: iso,
+      });
+      if (error) throw error;
+      const map = {};
+      (data || []).forEach((row) => { map[row.turno] = row; });
+      state.detalleDiaCache.set(iso, map);
+      return map;
+    } catch (e) {
+      console.warn("rpc_detalle_dia no disponible todavia, se muestra info basica", e);
+      const fallback = {};
+      state.detalleDiaCache.set(iso, fallback);
+      return fallback;
+    }
   }
 
   function buildWeeks(year, month) {
@@ -968,36 +985,198 @@
     return weeks;
   }
 
-  async function loadHomeStatus() {
-    const t = new Date();
-    document.getElementById("today-date").textContent = `${t.getDate()} de ${MONTH_LABELS[t.getMonth()]}`;
-    const statusEl = document.getElementById("today-status");
-    statusEl.textContent = "Cargando...";
-    const wd = t.getDay();
-    if (wd === 0 || wd === 6) {
-      statusEl.textContent = "Es fin de semana, no hay viajes.";
-      return;
-    }
+  // =========================================================================
+  // INICIO — banner en vivo + widget de proximo viaje
+  // =========================================================================
+  function setBanner(kind, title, desc) {
+    const el = document.getElementById("home-banner");
+    el.className = "home-banner glass " + kind;
+    document.getElementById("home-banner-title").textContent = title;
+    document.getElementById("home-banner-desc").textContent = desc || "";
+  }
+
+  async function checkServicioEnVivo() {
     try {
-      const map = await fetchMonthDataCached(t.getFullYear(), t.getMonth() + 1);
-      const info = map[todayISO()] || {};
-      const c = classifyDay(info);
-      if (c.status === "viaja") {
-        const parts = [];
-        if (c.mViaja) parts.push("mañana");
-        if (c.tViaja) parts.push("tarde");
-        statusEl.textContent = `Viajas hoy - ${parts.join(" y ")}`;
-      } else if (c.status === "no") {
-        statusEl.textContent = "No viajas hoy";
-      } else {
-        statusEl.textContent = "Todavia no marcaste hoy";
-      }
+      const res = await fetch(`${EASYTRACK_FN_URL}?dni=${encodeURIComponent(state.profile.dni)}`);
+      if (!res.ok) return { activo: false };
+      const json = await res.json();
+      const positions = json.data || json;
+      const pos = Array.isArray(positions) ? positions[0] : positions;
+      if (!pos || pos.lat == null) return { activo: false };
+      return { activo: true, address: pos.position };
     } catch (e) {
-      console.error(e);
-      statusEl.textContent = "No se pudo cargar tu estado de hoy.";
+      return null;
     }
   }
 
+  async function updateHomeBanner() {
+    const t = new Date();
+    const wd = t.getDay();
+    if (wd === 0 || wd === 6) {
+      setBanner("off", "Sin servicio hoy", "Es fin de semana, no hay viajes programados.");
+      return;
+    }
+    let map;
+    try {
+      map = await fetchMonthDataCached(t.getFullYear(), t.getMonth() + 1);
+    } catch (e) {
+      console.error(e);
+      setBanner("off", "No se pudo verificar", "Revisa tu conexion e intenta de nuevo.");
+      return;
+    }
+    if (state.activeTab !== "inicio") return;
+    const info = map[todayISO()] || {};
+    const c = classifyDay(info);
+    if (c.status !== "viaja") {
+      setBanner(
+        "off",
+        c.status === "no" ? "No viajas hoy" : "Todavia no marcaste hoy",
+        "No hay ninguna unidad en camino para vos en este momento."
+      );
+      return;
+    }
+    setBanner("scheduled", "Verificando tu unidad...", "");
+    const live = await checkServicioEnVivo();
+    if (state.activeTab !== "inicio") return;
+    if (live && live.activo) {
+      setBanner("live", "Tu unidad esta en camino", live.address || "Segui el recorrido en el mapa.");
+    } else {
+      const partes = [];
+      if (c.mViaja) partes.push("mañana");
+      if (c.tViaja) partes.push("tarde");
+      setBanner("scheduled", `Viaje de ${partes.join(" y ")} programado`, "La unidad todavia no salio.");
+    }
+  }
+
+  function startHomePolling() {
+    stopHomePolling();
+    state.homePollTimer = setInterval(updateHomeBanner, HOME_POLL_MS);
+  }
+  function stopHomePolling() {
+    if (state.homePollTimer) { clearInterval(state.homePollTimer); state.homePollTimer = null; }
+  }
+
+  // Busca, desde hoy hacia adelante (maximo 60 dias), el proximo dia habil
+  // con un viaje ya confirmado. Si no encuentra ninguno, devuelve el
+  // primer dia habil sin marcar para sugerir que lo confirme.
+  async function computeNextTripDescriptor() {
+    const t0 = new Date();
+    let cursor = new Date(t0.getFullYear(), t0.getMonth(), t0.getDate());
+    let firstUnmarked = null;
+    for (let i = 0; i < 60; i++) {
+      const iso = isoFromDate(cursor);
+      const wd = cursor.getDay();
+      if (wd !== 0 && wd !== 6) {
+        const map = await fetchMonthDataCached(cursor.getFullYear(), cursor.getMonth() + 1);
+        const info = map[iso] || {};
+        const c = classifyDay(info);
+        if (c.status === "viaja") {
+          return { mode: "scheduled", iso, mViaja: c.mViaja, tViaja: c.tViaja };
+        }
+        if (c.status === "unmarked" && firstUnmarked === null) {
+          firstUnmarked = iso;
+        }
+      }
+      cursor = addDays(cursor, 1);
+    }
+    if (firstUnmarked) return { mode: "suggest", iso: firstUnmarked };
+    return { mode: "none" };
+  }
+
+  function renderNextTripBody(descriptor, detalle) {
+    const body = document.getElementById("next-trip-body");
+    if (descriptor.mode === "none") {
+      body.innerHTML =
+        `<div class="next-trip-empty">No tenes viajes programados proximamente.</div>
+         <button type="button" class="btn btn-ghost btn-sm" id="btn-ir-calendario">Ir al calendario</button>`;
+      document.getElementById("btn-ir-calendario").addEventListener("click", () => switchTab("calendario"));
+      return;
+    }
+
+    const d = parseISO(descriptor.iso);
+    const fechaTxt = capitalize(`${FULL_WEEKDAY_LOWER[isoWeekdayMonFirst(d)]} ${d.getDate()} de ${MONTH_LABELS[d.getMonth()]}`);
+    const isSuggest = descriptor.mode === "suggest";
+
+    if (isSuggest) {
+      body.innerHTML = `
+        <div class="next-trip-date">${fechaTxt}</div>
+        <div class="next-trip-empty">Todavia no marcaste si viajas ese dia.</div>
+        <button type="button" class="btn btn-primary btn-sm" id="btn-next-trip-action">Confirmar asistencia</button>
+      `;
+      document.getElementById("btn-next-trip-action").addEventListener("click", () => {
+        quickSetAsistencia(descriptor.iso, "ambos", true);
+      });
+      return;
+    }
+
+    const turnoTxt = descriptor.mViaja && descriptor.tViaja ? "Mañana y tarde" : (descriptor.mViaja ? "Mañana" : "Tarde");
+    const turnoParaVehiculo = descriptor.mViaja ? "manana" : "tarde";
+    const det = (detalle && detalle[turnoParaVehiculo]) || {};
+    const vehiculoTxt = det.interno ? `Interno ${det.interno}${det.patente ? " · " + det.patente : ""}` : "A confirmar";
+
+    body.innerHTML = `
+      <div class="next-trip-date">${fechaTxt}</div>
+      <div class="next-trip-row"><span class="label">Turno</span><span>${turnoTxt}</span></div>
+      <div class="next-trip-row"><span class="label">Vehiculo</span><span>${vehiculoTxt}</span></div>
+      ${det.chofer_nombre ? `<div class="next-trip-row"><span class="label">Chofer</span><span>${det.chofer_nombre}</span></div>` : ""}
+      <button type="button" class="btn btn-ghost btn-sm" id="btn-next-trip-action" style="margin-top:12px;">Cancelar viaje</button>
+    `;
+    document.getElementById("btn-next-trip-action").addEventListener("click", () => {
+      if (!confirm(`¿Cancelar tu viaje del ${fechaTxt}?`)) return;
+      const turnoCancel = descriptor.mViaja && descriptor.tViaja ? "ambos" : turnoParaVehiculo;
+      quickSetAsistencia(descriptor.iso, turnoCancel, false);
+    });
+  }
+
+  async function loadHomeWidgets() {
+    updateHomeBanner();
+    const body = document.getElementById("next-trip-body");
+    body.textContent = "Cargando...";
+    try {
+      const descriptor = await computeNextTripDescriptor();
+      let detalle = {};
+      if (descriptor.mode === "scheduled") {
+        detalle = await fetchDetalleDia(descriptor.iso);
+      }
+      if (state.activeTab === "inicio") renderNextTripBody(descriptor, detalle);
+    } catch (e) {
+      console.error(e);
+      if (state.activeTab === "inicio") {
+        body.innerHTML = `<div class="next-trip-empty">No se pudo cargar tu proximo viaje.</div>`;
+      }
+    }
+  }
+
+  // Accion rapida (confirmar/cancelar) desde el widget de Inicio: usa el
+  // mismo RPC que el panel de edicion, pero para una sola fecha.
+  async function quickSetAsistencia(iso, turno, viaja) {
+    try {
+      const turnos = turno === "ambos" ? ["manana", "tarde"] : [turno];
+      for (const t of turnos) {
+        const { error } = await supabase.rpc("rpc_set_asistencia_masivo", {
+          p_dni: state.profile.dni,
+          p_fechas: [iso],
+          p_turno: t,
+          p_viaja: viaja,
+        });
+        if (error) throw error;
+      }
+      invalidateMonthCache([iso]);
+      state.detalleDiaCache.delete(iso);
+      toast(viaja ? "Asistencia confirmada" : "Viaje cancelado", "ok");
+      await loadHomeWidgets();
+      if (state.activeTab === "calendario" || monthCacheKey(state.viewYear, state.viewMonth) === iso.slice(0, 7)) {
+        await loadCalendar();
+      }
+    } catch (e) {
+      console.error(e);
+      toast("No se pudo actualizar. Reintenta.", "err");
+    }
+  }
+
+  // =========================================================================
+  // CALENDARIO
+  // =========================================================================
   document.getElementById("btn-prev-month").addEventListener("click", () => shiftMonth(-1));
   document.getElementById("btn-next-month").addEventListener("click", () => shiftMonth(1));
   document.getElementById("btn-today-header").addEventListener("click", goToToday);
@@ -1009,7 +1188,7 @@
     if (m > 12) { m = 1; y += 1; }
     state.viewMonth = m;
     state.viewYear = y;
-    clearSelection();
+    closeActionPanel();
     renderMonthLabel();
     loadCalendar();
   }
@@ -1040,18 +1219,23 @@
     const weeks = buildWeeks(state.viewYear, state.viewMonth);
     const today = todayISO();
 
+    // El resaltado de columna/fila completa solo considera fechas
+    // editables (>= hoy): un dia pasado nunca puede estar en
+    // state.selected, asi que no debe contar para el "todo seleccionado".
     const weekdaysFullySelected = new Set();
     for (let wd = 0; wd < 5; wd++) {
-      const allDates = [];
+      const editableDates = [];
       weeks.forEach(week => {
         const day = week[wd];
-        if (day !== null) allDates.push(toISODate(state.viewYear, state.viewMonth, day));
+        if (day !== null) {
+          const iso = toISODate(state.viewYear, state.viewMonth, day);
+          if (iso >= today) editableDates.push(iso);
+        }
       });
-      if (allDates.length > 0 && allDates.every(d => state.selected.has(d))) {
+      if (editableDates.length > 0 && editableDates.every(d => state.selected.has(d))) {
         weekdaysFullySelected.add(wd);
       }
     }
-
     document.querySelectorAll(".cal-head-cell.clickable").forEach(el => {
       const wd = Number(el.dataset.weekday);
       el.classList.toggle("active", weekdaysFullySelected.has(wd));
@@ -1061,16 +1245,16 @@
       const row = document.createElement("div");
       row.className = "cal-row";
 
-      const weekDates = week
+      const editableWeekDates = week
         .map((day, wd) => (day !== null && wd < 5 ? toISODate(state.viewYear, state.viewMonth, day) : null))
-        .filter(Boolean);
-
-      const weekFullySelected = weekDates.length > 0 && weekDates.every(d => state.selected.has(d));
+        .filter(Boolean)
+        .filter(iso => iso >= today);
+      const weekFullySelected = editableWeekDates.length > 0 && editableWeekDates.every(d => state.selected.has(d));
 
       const weekNumCell = document.createElement("div");
       weekNumCell.className = "week-num" + (weekFullySelected ? " active" : "");
       weekNumCell.textContent = weekIdx + 1;
-      weekNumCell.addEventListener("click", () => toggleWeekSelection(week, weekIdx));
+      weekNumCell.addEventListener("click", () => toggleWeekSelection(week));
       row.appendChild(weekNumCell);
 
       week.forEach((day, weekdayIdx) => {
@@ -1081,40 +1265,64 @@
           return;
         }
         const iso = toISODate(state.viewYear, state.viewMonth, day);
-        const info = state.calendarByDate[iso] || {};
-        const amViaja = !!(info.manana && info.manana.viaja);
-        const pmViaja = !!(info.tarde && info.tarde.viaja);
         const isWeekend = weekdayIdx >= 5;
+        const isPast = iso < today;
+        const info = state.calendarByDate[iso] || {};
 
         cell.className = "day-cell";
+        cell.dataset.date = iso;
+
         if (isWeekend) {
           cell.classList.add("weekend");
         } else {
-          if (amViaja) cell.classList.add("am");
-          if (pmViaja) cell.classList.add("pm");
-          if (!amViaja && !pmViaja) cell.classList.add("noviaja");
-        }
-        if (iso === today) cell.classList.add("today");
-        if (state.selected.has(iso)) cell.classList.add("selected");
-        cell.dataset.date = iso;
+          const stAM = turnoState(info.manana, isPast);
+          const stPM = turnoState(info.tarde, isPast);
+          const colorAM = CELL_TINT[stAM];
+          const colorPM = CELL_TINT[stPM];
+          cell.style.background = colorAM === colorPM
+            ? colorAM
+            : `linear-gradient(135deg, ${colorAM} 50%, ${colorPM} 50%)`;
+          if (stAM === "absent" && stPM === "absent") cell.classList.add("dim-text");
 
-        const num = document.createElement("span");
-        num.className = "num";
-        num.textContent = day;
-        cell.appendChild(num);
+          const num = document.createElement("span");
+          num.className = "num";
+          num.textContent = day;
+          cell.appendChild(num);
 
-        if (!isWeekend) {
           const dots = document.createElement("span");
           dots.className = "dots";
           const amDot = document.createElement("i");
-          amDot.className = "dot am-dot" + (amViaja ? " on" : "");
+          amDot.className = "dot dot-" + stAM;
           const pmDot = document.createElement("i");
-          pmDot.className = "dot pm-dot" + (pmViaja ? " on" : "");
+          pmDot.className = "dot dot-" + stPM;
           dots.appendChild(amDot);
           dots.appendChild(pmDot);
           cell.appendChild(dots);
-          cell.addEventListener("click", () => toggleDateSelection(iso));
+
+          cell.addEventListener("click", () => {
+            if (isPast) openReadonly(iso);
+            else toggleDateSelection(iso);
+          });
         }
+
+        if (!isWeekend) {
+          const num2 = cell.querySelector(".num");
+          if (!num2) {
+            const num = document.createElement("span");
+            num.className = "num";
+            num.textContent = day;
+            cell.appendChild(num);
+          }
+        } else {
+          const num = document.createElement("span");
+          num.className = "num";
+          num.textContent = day;
+          cell.appendChild(num);
+        }
+
+        if (iso === today) cell.classList.add("today");
+        if (state.selected.has(iso)) cell.classList.add("selected");
+        if (state.inspectingDate === iso) cell.classList.add("inspecting");
 
         row.appendChild(cell);
       });
@@ -1127,30 +1335,21 @@
     el.addEventListener("click", () => toggleWeekdaySelection(Number(el.dataset.weekday)));
   });
 
-  // Decide si, tras un toque en el calendario, el panel de acción debe
-  // "despertar" a media altura (primera selección: mostramos Viajo/No viajo
-  // y turno) o quedar replegado (el panel ya estaba abierto y el usuario
-  // sigue eligiendo días — se corre solito para no tapar el calendario).
-  function updatePanelStateAfterCalendarTap(wasEmpty) {
-    if (state.selected.size === 0) {
-      state.panelState = "mid";
-    } else if (wasEmpty) {
-      state.panelState = "mid";
-    } else {
-      state.panelState = "collapsed";
-    }
+  // Al tocar otro dia con el panel ya abierto, lo replegamos a "peek" para
+  // no tapar la grilla mientras se sigue seleccionando; la primera
+  // seleccion (o quedar en 0) abre el panel completo.
+  function updatePeekAfterCalendarTap(wasEmpty) {
+    state.sheetPeek = state.selected.size > 0 && !wasEmpty;
   }
 
-  function toggleDateSelection(iso, suppressRecurrence) {
+  function toggleDateSelection(iso) {
     const wasEmpty = state.selected.size === 0;
-    if (state.selected.has(iso)) {
-      state.selected.delete(iso);
-    } else {
-      state.selected.add(iso);
-    }
+    state.inspectingDate = null;
+    state.panelMode = "edit";
+    if (state.selected.has(iso)) state.selected.delete(iso);
+    else state.selected.add(iso);
     state.recurrenceChoice = "none";
-    state.suppressRecurrence = !!suppressRecurrence;
-    updatePanelStateAfterCalendarTap(wasEmpty);
+    updatePeekAfterCalendarTap(wasEmpty);
     renderCalendar();
     renderActionPanel();
   }
@@ -1158,59 +1357,103 @@
   function toggleWeekdaySelection(weekdayIdx) {
     if (weekdayIdx >= 5) return;
     const wasEmpty = state.selected.size === 0;
-    state.suppressRecurrence = false;
+    const today = todayISO();
+    state.inspectingDate = null;
+    state.panelMode = "edit";
     const weeks = buildWeeks(state.viewYear, state.viewMonth);
     const dates = [];
     weeks.forEach((week) => {
       const day = week[weekdayIdx];
-      if (day !== null) dates.push(toISODate(state.viewYear, state.viewMonth, day));
+      if (day !== null) {
+        const iso = toISODate(state.viewYear, state.viewMonth, day);
+        if (iso >= today) dates.push(iso);
+      }
     });
+    if (!dates.length) return;
     const allSelected = dates.every(d => state.selected.has(d));
-    if (allSelected) {
-      dates.forEach(d => state.selected.delete(d));
-    } else {
-      dates.forEach(d => state.selected.add(d));
-    }
+    if (allSelected) dates.forEach(d => state.selected.delete(d));
+    else dates.forEach(d => state.selected.add(d));
     state.recurrenceChoice = "none";
-    updatePanelStateAfterCalendarTap(wasEmpty);
+    updatePeekAfterCalendarTap(wasEmpty);
     renderCalendar();
     renderActionPanel();
   }
 
-  function toggleWeekSelection(week, weekIdx) {
+  function toggleWeekSelection(week) {
     const wasEmpty = state.selected.size === 0;
-    state.suppressRecurrence = false;
+    const today = todayISO();
+    state.inspectingDate = null;
+    state.panelMode = "edit";
     const dates = week
       .map((day, wd) => (day !== null && wd < 5 ? toISODate(state.viewYear, state.viewMonth, day) : null))
-      .filter(Boolean);
+      .filter(Boolean)
+      .filter(iso => iso >= today);
+    if (!dates.length) return;
     const allSelected = dates.every(d => state.selected.has(d));
-    if (allSelected) {
-      dates.forEach(d => state.selected.delete(d));
-    } else {
-      dates.forEach(d => state.selected.add(d));
-    }
+    if (allSelected) dates.forEach(d => state.selected.delete(d));
+    else dates.forEach(d => state.selected.add(d));
     state.recurrenceChoice = "none";
-    updatePanelStateAfterCalendarTap(wasEmpty);
+    updatePeekAfterCalendarTap(wasEmpty);
     renderCalendar();
     renderActionPanel();
   }
 
-  function clearSelection() {
+  async function openReadonly(iso) {
     state.selected.clear();
-    state.recurrenceChoice = "none";
-    state.suppressRecurrence = false;
-    state.panelState = "mid";
+    state.inspectingDate = iso;
+    state.panelMode = "readonly";
+    state.sheetPeek = false;
+    renderCalendar();
     renderActionPanel();
+    document.getElementById("readonly-turnos").innerHTML = `<div class="empty-note">Cargando...</div>`;
+    const detalle = await fetchDetalleDia(iso);
+    if (state.inspectingDate !== iso) return; // el usuario ya toco otra cosa
+    renderReadonlyCard(iso, detalle);
+  }
+
+  function renderReadonlyCard(iso, detalle) {
+    const info = state.calendarByDate[iso] || {};
+    const wrap = document.getElementById("readonly-turnos");
+    const turnosConDato = ["manana", "tarde"].filter(t => info[t]);
+    if (!turnosConDato.length) {
+      wrap.innerHTML = `<div class="empty-note">No hay registro de asistencia para este dia.</div>`;
+      return;
+    }
+    wrap.innerHTML = turnosConDato.map((t) => {
+      const base = info[t];
+      const det = detalle[t] || {};
+      const viajo = !!base.viaja;
+      const vehiculoLinea = viajo && (det.interno || det.chofer_nombre)
+        ? `<div class="readonly-line">${det.interno ? "Interno " + det.interno : ""}${det.patente ? " · " + det.patente : ""}${det.chofer_nombre ? " · " + det.chofer_nombre : ""}</div>`
+        : "";
+      const novedadesLinea = det.novedades
+        ? `<div class="readonly-novedades">Novedades: ${det.novedades}</div>`
+        : "";
+      return `
+        <div class="readonly-turno">
+          <div class="readonly-turno-head">
+            <span class="chip ${viajo ? "am" : "no"}">${TURNO_LABELS[t]}</span>
+            <span class="readonly-estado">${viajo ? "Viajo" : "No viajo"}</span>
+          </div>
+          ${vehiculoLinea}
+          ${novedadesLinea}
+        </div>`;
+    }).join("");
+  }
+
+  function closeActionPanel() {
+    state.selected.clear();
+    state.inspectingDate = null;
+    state.panelMode = "edit";
+    state.recurrenceChoice = "none";
+    state.sheetPeek = false;
+    renderActionPanel();
+    renderCalendar();
   }
 
   document.getElementById("action-clear").addEventListener("click", (ev) => {
     ev.preventDefault();
-    clearSelection();
-    if (state.activeTab === "historial") {
-      renderHistorial();
-    } else {
-      renderCalendar();
-    }
+    closeActionPanel();
   });
 
   function goToToday() {
@@ -1218,13 +1461,10 @@
     const changed = state.viewYear !== t.getFullYear() || state.viewMonth !== t.getMonth() + 1;
     state.viewYear = t.getFullYear();
     state.viewMonth = t.getMonth() + 1;
-    clearSelection();
+    closeActionPanel();
     renderMonthLabel();
-    if (changed) {
-      loadCalendar();
-    } else {
-      renderCalendar();
-    }
+    if (changed) loadCalendar();
+    else renderCalendar();
   }
 
   document.querySelectorAll("#viaja-toggle .seg-btn").forEach((btn) => {
@@ -1342,168 +1582,95 @@
     return Array.from(out).sort();
   }
 
-  function isDesktopPanel() {
-    return window.matchMedia("(min-width: 768px)").matches;
-  }
-
-  // Mide, con el contenido real ya renderizado, hasta dónde hay que dejar
-  // ver el panel en cada estado: state-collapsed corta justo debajo del
-  // conteo; state-mid corta justo debajo del selector de turno. Se
-  // recalcula en cada render porque el contenido (repeticion visible o no)
-  // cambia la altura.
-  function updatePanelMetrics() {
+  // -------------------------------------------------------------------------
+  // PANEL DE ACCION — un solo panel que alterna entre modo edicion y modo
+  // solo-lectura. La altura ya no se mide del contenido: esta fija en 46vh
+  // (modo por defecto, dentro del 40-50% pedido) y sube a 72vh con una
+  // transicion CSS cuando la repeticion elegida revela el bloque de
+  // alcance ("tall"). El handle solo alterna entre esa altura y "peek"
+  // (66px, apenas el conteo) para poder ver la grilla sin cerrar el panel.
+  // -------------------------------------------------------------------------
+  function applyPanelVisibility() {
     const panel = document.getElementById("action-panel");
-    const countRow = document.getElementById("action-panel-count-row");
-    const guardarBtn = document.getElementById("btn-guardar");
-    if (!countRow || !guardarBtn) return;
-    const collapsedPx = Math.round(countRow.offsetTop + countRow.offsetHeight + 12);
-    const midPx = Math.round(guardarBtn.offsetTop + guardarBtn.offsetHeight + 16);
-    panel.style.setProperty("--collapsed-px", collapsedPx + "px");
-    panel.style.setProperty("--mid-px", midPx + "px");
+    const isOpen = state.selected.size > 0 || !!state.inspectingDate;
+    const isTall = state.panelMode === "edit" && state.recurrenceChoice !== "none";
+    panel.classList.toggle("open", isOpen);
+    panel.classList.toggle("peek", isOpen && state.sheetPeek);
+    panel.classList.toggle("tall", isOpen && isTall);
+    document.getElementById("panel-edit-block").classList.toggle("hidden", state.panelMode !== "edit");
+    document.getElementById("panel-readonly-block").classList.toggle("hidden", state.panelMode !== "readonly");
+    document.getElementById("btn-guardar").classList.toggle("hidden", state.panelMode !== "edit");
+    document.getElementById("btn-cerrar-readonly").classList.toggle("hidden", state.panelMode !== "readonly");
   }
 
-  function setPanelState(name) {
-    state.panelState = name;
-    applyPanelState();
-  }
-
-  function applyPanelState() {
-    const panel = document.getElementById("action-panel");
-    const n = state.selected.size;
-    panel.classList.toggle("open", n > 0);
-    panel.classList.remove("state-collapsed", "state-mid", "state-expanded");
-    if (n > 0) panel.classList.add("state-" + state.panelState);
+  function renderCountRow() {
+    const countEl = document.getElementById("action-count");
+    const clearLink = document.getElementById("action-clear");
+    if (state.panelMode === "readonly" && state.inspectingDate) {
+      const d = parseISO(state.inspectingDate);
+      countEl.textContent = capitalize(`${FULL_WEEKDAY_LOWER[isoWeekdayMonFirst(d)]} ${d.getDate()} de ${MONTH_LABELS[d.getMonth()]}`);
+      clearLink.textContent = "Cerrar";
+    } else {
+      const n = state.selected.size;
+      countEl.textContent = n === 1 ? "1 dia seleccionado" : `${n} dias seleccionados`;
+      clearLink.textContent = "Cancelar";
+    }
   }
 
   function renderActionPanel() {
-    const n = state.selected.size;
-    document.getElementById("action-count").textContent =
-      n === 1 ? "1 dia seleccionado" : `${n} dias seleccionados`;
-    document.getElementById("btn-guardar").disabled = n === 0;
-    renderRecurrenceOptions();
-    updatePanelMetrics();
-    applyPanelState();
+    renderCountRow();
+    if (state.panelMode === "edit") {
+      document.getElementById("btn-guardar").disabled = state.selected.size === 0;
+      renderRecurrenceOptions();
+    }
+    applyPanelVisibility();
   }
 
-  window.addEventListener("resize", () => {
-    if (document.getElementById("action-panel").classList.contains("open")) {
-      updatePanelMetrics();
-    }
-  });
+  document.getElementById("btn-cerrar-readonly").addEventListener("click", closeActionPanel);
 
-  // --- Arrastre del handle (mobile): un toque corto alterna
-  // collapsed <-> mid; arrastrar hacia arriba pasa por mid y, si sigue
-  // subiendo, llega a expanded (formulario de repeticion completo).
   const panelEl = document.getElementById("action-panel");
   const handleEl = document.getElementById("action-panel-handle");
-  let dragState = null;
 
-  function getPanelTranslateY(panel) {
-    const t = window.getComputedStyle(panel).transform;
-    if (!t || t === "none") return 0;
-    if (t.startsWith("matrix3d")) {
-      return parseFloat(t.split(",")[13]) || 0;
-    }
-    const parts = t.match(/matrix\((.+)\)/);
-    if (!parts) return 0;
-    return parseFloat(parts[1].split(",")[5]) || 0;
-  }
-
-  handleEl.addEventListener("pointerdown", (e) => {
-    if (isDesktopPanel() || !panelEl.classList.contains("open")) return;
-    handleEl.setPointerCapture(e.pointerId);
-    dragState = {
-      pointerId: e.pointerId,
-      startY: e.clientY,
-      startTy: getPanelTranslateY(panelEl),
-      panelHeight: panelEl.offsetHeight,
-      currentTy: getPanelTranslateY(panelEl),
-      moved: false,
-    };
-    panelEl.classList.add("dragging");
+  handleEl.addEventListener("click", () => {
+    if (!panelEl.classList.contains("open")) return;
+    state.sheetPeek = !state.sheetPeek;
+    applyPanelVisibility();
   });
 
-  handleEl.addEventListener("pointermove", (e) => {
-    if (!dragState || e.pointerId !== dragState.pointerId) return;
-    const delta = e.clientY - dragState.startY;
-    if (Math.abs(delta) > 4) dragState.moved = true;
-    const ty = Math.max(0, Math.min(dragState.panelHeight, dragState.startTy + delta));
-    dragState.currentTy = ty;
-    panelEl.style.transform = `translateY(${ty}px)`;
-  });
-
-  function finishDrag() {
-    if (!dragState) return;
-    const { moved, currentTy, panelHeight } = dragState;
-    panelEl.classList.remove("dragging");
-    panelEl.style.transform = "";
-    dragState = null;
-
-    if (!moved) {
-      setPanelState(state.panelState === "collapsed" ? "mid" : "collapsed");
-      return;
-    }
-
-    const collapsedPx = parseFloat(panelEl.style.getPropertyValue("--collapsed-px")) || 78;
-    const midPx = parseFloat(panelEl.style.getPropertyValue("--mid-px")) || 210;
-    const candidates = [
-      { name: "expanded", ty: 0 },
-      { name: "mid", ty: Math.max(0, panelHeight - midPx) },
-      { name: "collapsed", ty: Math.max(0, panelHeight - collapsedPx) },
-    ];
-    let best = candidates[0];
-    candidates.forEach((c) => {
-      if (Math.abs(c.ty - currentTy) < Math.abs(best.ty - currentTy)) best = c;
-    });
-    setPanelState(best.name);
-  }
-
-  handleEl.addEventListener("pointerup", finishDrag);
-  handleEl.addEventListener("pointercancel", finishDrag);
-
-  // Tocar en cualquier parte visible del panel mientras está replegado
-  // (la franja con el conteo, ya que el resto del cuerpo no es interactivo
-  // en ese estado) lo vuelve a media altura.
-  panelEl.addEventListener("click", (e) => {
-    if (!panelEl.classList.contains("open") || !panelEl.classList.contains("state-collapsed")) return;
-    if (e.target.closest("#action-clear")) return;
-    setPanelState("mid");
-  });
-
-  // Tocar afuera del panel (topbar, dock de navegación, fondo) también lo
-  // repliega. Los toques dentro del calendario y de Historial ya deciden
-  // esto por su cuenta en updatePanelStateAfterCalendarTap, así que se
-  // excluyen acá para no pisar esa lógica.
+  // Tocar afuera del panel lo repliega a "peek" (no lo cierra: la
+  // seleccion/inspeccion se mantiene). Los toques dentro del calendario ya
+  // deciden esto por su cuenta.
   document.addEventListener("click", (e) => {
-    if (!panelEl.classList.contains("open") || panelEl.classList.contains("state-collapsed")) return;
+    if (!panelEl.classList.contains("open") || panelEl.classList.contains("peek")) return;
     if (panelEl.contains(e.target)) return;
-    if (e.target.closest(".day-cell, .week-num, .cal-head-cell, .hist-row")) return;
-    setPanelState("collapsed");
+    if (e.target.closest(".day-cell, .week-num, .cal-head-cell")) return;
+    state.sheetPeek = true;
+    applyPanelVisibility();
   });
 
   function renderRecurrenceOptions() {
     const box = document.getElementById("recurrence-box");
-    const optionsWrap = document.getElementById("recurrence-options");
+    const select = document.getElementById("recurrence-select");
     const extentWrap = document.getElementById("recurrence-extent");
 
-    if (state.selected.size === 0 || state.suppressRecurrence) {
+    if (state.selected.size === 0) {
       box.classList.add("hidden");
       return;
     }
     box.classList.remove("hidden");
 
     const pattern = analyzeSelectionPattern();
-    const opts = [{ id: "none", label: "Solo estas fechas" }];
+    const opts = [{ id: "none", label: "Solo esta fecha" }];
 
     if (pattern) {
       if (pattern.weekdays.some(wd => wd < 5)) {
         const weekdaysNames = pattern.weekdays.filter(wd => wd < 5).sort().map(wd => FULL_WEEKDAY_LOWER[wd]);
         if (weekdaysNames.length === 1) {
-          opts.push({ id: "weekdays-weekly", label: `Repetir todos los ${weekdaysNames[0]} cada semana` });
+          opts.push({ id: "weekdays-weekly", label: `Todos los ${weekdaysNames[0]}, cada semana` });
         } else if (weekdaysNames.length > 1) {
           const label = weekdaysNames.length === 2
-            ? `Repetir ${weekdaysNames[0]} y ${weekdaysNames[1]} cada semana`
-            : `Repetir ${weekdaysNames.slice(0, -1).join(", ")} y ${weekdaysNames[weekdaysNames.length - 1]} cada semana`;
+            ? `${capitalize(weekdaysNames[0])} y ${weekdaysNames[1]}, cada semana`
+            : `${weekdaysNames.slice(0, -1).map(capitalize).join(", ")} y ${weekdaysNames[weekdaysNames.length - 1]}, cada semana`;
           opts.push({ id: "weekdays-weekly", label });
         }
       }
@@ -1512,69 +1679,57 @@
       state.selected.forEach(iso => daysOfMonth.add(parseISO(iso).getDate()));
       if (daysOfMonth.size > 0 && daysOfMonth.size <= 5) {
         const daysList = Array.from(daysOfMonth).sort((a, b) => a - b);
-        if (daysList.length === 1) {
-          opts.push({ id: "monthdays-monthly", label: `Repetir el dia ${daysList[0]} de cada mes` });
-        } else if (daysList.length > 1) {
-          opts.push({ id: "monthdays-monthly", label: `Repetir los dias ${daysList.join(", ")} de cada mes` });
-        }
+        opts.push({
+          id: "monthdays-monthly",
+          label: daysList.length === 1
+            ? `Dia ${daysList[0]} de cada mes`
+            : `Dias ${daysList.join(", ")} de cada mes`,
+        });
       }
 
-      if (pattern.weeksOfMonth.length > 0 && pattern.weekdays.size >= 3) {
+      if (pattern.weeksOfMonth.length > 0 && pattern.weekdays.length >= 3) {
         const weeksNames = pattern.weeksOfMonth.map(w => ORDINAL_WEEK_FEM[w - 1] || `${w}a`);
-        if (weeksNames.length === 1) {
-          opts.push({ id: "weeks-monthly", label: `Repetir la ${weeksNames[0]} semana de cada mes` });
-        } else if (weeksNames.length > 1) {
-          opts.push({ id: "weeks-monthly", label: `Repetir las ${weeksNames.join(", ")} semanas de cada mes` });
-        }
+        opts.push({
+          id: "weeks-monthly",
+          label: weeksNames.length === 1
+            ? `${capitalize(weeksNames[0])} semana de cada mes`
+            : `Semanas ${weeksNames.join(", ")} de cada mes`,
+        });
       }
     }
 
     if (!opts.find((o) => o.id === state.recurrenceChoice)) state.recurrenceChoice = "none";
 
-    optionsWrap.innerHTML = "";
-    opts.forEach((o) => {
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "recurrence-opt" + (state.recurrenceChoice === o.id ? " active" : "");
-      btn.textContent = o.label;
-      btn.addEventListener("click", () => {
-        state.recurrenceChoice = o.id;
-        renderRecurrenceOptions();
-        if (state.recurrenceChoice !== "none") {
-          const previewDates = computeRecurrenceDates(state.recurrenceChoice, state.extentType, state.extentValue);
-          toast(`Se aplicara a ${previewDates.length} fechas`);
-        }
-      });
-      optionsWrap.appendChild(btn);
-    });
-
+    select.innerHTML = opts.map(o =>
+      `<option value="${o.id}"${o.id === state.recurrenceChoice ? " selected" : ""}>${o.label}</option>`
+    ).join("");
     extentWrap.classList.toggle("hidden", state.recurrenceChoice === "none");
   }
 
+  document.getElementById("recurrence-select").addEventListener("change", (e) => {
+    state.recurrenceChoice = e.target.value;
+    document.getElementById("recurrence-extent").classList.toggle("hidden", state.recurrenceChoice === "none");
+    applyPanelVisibility();
+    if (state.recurrenceChoice !== "none") {
+      const previewDates = computeRecurrenceDates(state.recurrenceChoice, state.extentType, state.extentValue);
+      toast(`Se aplicara a ${previewDates.length} fechas`);
+    }
+  });
+
   document.getElementById("extent-select").addEventListener("change", (e) => {
     state.extentType = e.target.value;
-    renderRecurrenceOptions();
   });
-
   document.getElementById("extent-number").addEventListener("input", (e) => {
     state.extentValue = Math.max(1, Math.min(52, Number(e.target.value) || 1));
-    renderRecurrenceOptions();
   });
 
-  // Guardar: si la seleccion es tal cual (sin repeticion, o repeticion que
-  // no agrego fechas nuevas) se guarda directo. Si la repeticion expandio
-  // la seleccion original a mas fechas, primero se calcula el impacto real
-  // contra lo que ya existe en la base y se pide confirmacion.
   document.getElementById("btn-guardar").addEventListener("click", async () => {
     if (state.selected.size === 0) return;
     const dates = computeRecurrenceDates(state.recurrenceChoice, state.extentType, state.extentValue);
     state.pendingDates = dates;
     const isExpanded = state.recurrenceChoice !== "none" && dates.length > state.selected.size;
-    if (isExpanded) {
-      await openImpactModal(dates);
-    } else {
-      await persistSelection(state.turnoChoice);
-    }
+    if (isExpanded) await openImpactModal(dates);
+    else await persistSelection(state.turnoChoice);
   });
 
   async function openImpactModal(dates) {
@@ -1653,14 +1808,10 @@
       }
       toast(`Guardado (${dates.length} fecha${dates.length === 1 ? "" : "s"})`, "ok");
       invalidateMonthCache(dates);
-      clearSelection();
+      dates.forEach((d) => state.detalleDiaCache.delete(d));
+      closeActionPanel();
       await loadCalendar();
-      if (state.activeTab === "historial") {
-        await loadHistorial();
-      }
-      if (dates.includes(todayISO())) {
-        loadHomeStatus();
-      }
+      if (dates.includes(todayISO())) updateHomeBanner();
     } catch (e) {
       console.error(e);
       toast("No se pudo guardar. Reintenta.", "err");
@@ -1669,112 +1820,9 @@
     }
   }
 
-  document.getElementById("btn-prev-month-hist").addEventListener("click", () => shiftHistMonth(-1));
-  document.getElementById("btn-next-month-hist").addEventListener("click", () => shiftHistMonth(1));
-
-  function shiftHistMonth(delta) {
-    let m = state.historialMonth + delta;
-    let y = state.historialYear;
-    if (m < 1) { m = 12; y -= 1; }
-    if (m > 12) { m = 1; y += 1; }
-    state.historialMonth = m;
-    state.historialYear = y;
-    renderMonthLabelHist();
-    loadHistorial();
-  }
-
-  function renderMonthLabelHist() {
-    document.getElementById("month-label-hist").textContent =
-      `${MONTH_LABELS[state.historialMonth - 1]} ${state.historialYear}`;
-  }
-
-  async function loadHistorial() {
-    const list = document.getElementById("hist-list");
-    list.innerHTML = `<div style="padding:24px;text-align:center;color:var(--text-faint);font-size:0.85rem;">Cargando...</div>`;
-    try {
-      state.historialByDate = await fetchMonthDataCached(state.historialYear, state.historialMonth);
-      renderHistorial();
-    } catch (e) {
-      console.error(e);
-      list.innerHTML = `<div style="padding:24px;text-align:center;color:var(--red);font-size:0.85rem;">No se pudo cargar el historial.</div>`;
-    }
-  }
-
-  function makeChip(cls, label) {
-    const s = document.createElement("span");
-    s.className = "chip " + cls;
-    s.textContent = label;
-    return s;
-  }
-
-  function renderHistorial() {
-    const weeks = buildWeeks(state.historialYear, state.historialMonth);
-    const today = todayISO();
-    const rows = [];
-
-    weeks.forEach(week => {
-      week.forEach((day, wd) => {
-        if (day === null || wd >= 5) return; // fines de semana no aplican
-        const iso = toISODate(state.historialYear, state.historialMonth, day);
-        const info = state.historialByDate[iso] || {};
-        const c = classifyDay(info);
-        rows.push({ iso, day, wd, status: c });
-      });
-    });
-    rows.sort((a, b) => a.iso.localeCompare(b.iso));
-
-    const list = document.getElementById("hist-list");
-    list.innerHTML = "";
-    if (rows.length === 0) {
-      list.innerHTML = `<div style="padding:20px;text-align:center;color:var(--text-faint);font-size:0.85rem;">Sin dias habiles este mes.</div>`;
-      return;
-    }
-
-    rows.forEach(r => {
-      const row = document.createElement("div");
-      row.className = "hist-row"
-        + (r.iso === today ? " today" : "")
-        + (state.selected.has(r.iso) ? " selected" : "");
-      // Misma acción que tocar un día en el calendario (selecciona/deselecciona
-      // esa fecha), pero marcada para que el panel no ofrezca repetición: solo
-      // aplica al día tocado.
-      row.addEventListener("click", () => {
-        toggleDateSelection(r.iso, true);
-        renderHistorial();
-      });
-
-      const when = document.createElement("div");
-      when.className = "when";
-      const wdSpan = document.createElement("span");
-      wdSpan.className = "wd";
-      wdSpan.textContent = WEEKDAY_LABELS[r.wd];
-      const dnum = document.createElement("span");
-      dnum.className = "dnum";
-      dnum.textContent = `${r.day} ${MONTH_LABELS[state.historialMonth - 1].slice(0, 3)}`;
-      when.appendChild(wdSpan);
-      when.appendChild(dnum);
-      row.appendChild(when);
-
-      const chips = document.createElement("div");
-      chips.className = "hist-chips";
-      if (r.status.status === "viaja") {
-        if (r.status.mViaja) chips.appendChild(makeChip("am", "Mañana"));
-        if (r.status.tViaja) chips.appendChild(makeChip("pm", "Tarde"));
-      } else if (r.status.status === "no") {
-        chips.appendChild(makeChip("no", "No viaja"));
-      } else {
-        chips.appendChild(makeChip("unmarked", "Sin marcar"));
-      }
-      const chevron = document.createElement("span");
-      chevron.className = "chevron";
-      chevron.innerHTML = "&rsaquo;";
-      chips.appendChild(chevron);
-      row.appendChild(chips);
-
-      list.appendChild(row);
-    });
-  }
-
+  // =========================================================================
+  // MAPA
+  // =========================================================================
   function initMapIfNeeded() {
     if (state.map) {
       setTimeout(() => state.map.invalidateSize(), 100);
