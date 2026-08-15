@@ -12,7 +12,7 @@
 
 <style>
   /* ---------------------------------------------------------------------
-     CHARTER TI — Design tokens (idénticos a index.html, no modificar)
+     CHARTER TI — Design tokens (idénticos a index.html / app del pasajero)
   --------------------------------------------------------------------- */
   :root {
     --navy: #071020;
@@ -40,7 +40,7 @@
   html, body {
     margin: 0;
     height: 100%;
-    background: radial-gradient(circle at 20% -10%, #0d2140 0%, var(--navy) 55%);
+    background: var(--navy);
     color: var(--text);
     font-family: "Inter", system-ui, sans-serif;
     -webkit-tap-highlight-color: transparent;
@@ -83,6 +83,7 @@
     align-items: center;
     justify-content: center;
     padding: 24px;
+    background: radial-gradient(circle at 20% -10%, #0d2140 0%, var(--navy) 55%);
   }
   .login-card {
     width: 100%;
@@ -143,6 +144,7 @@
   .btn-primary:hover { filter: brightness(1.08); }
   .btn-green { background: var(--green); color: #06251a; }
   .btn-red { background: transparent; color: var(--red); border: 1px solid rgba(224, 68, 68, 0.5); }
+  .btn-red-solid { background: var(--red); color: #2a0a0a; }
   .btn-ghost { background: transparent; color: var(--text-dim); border: 1px solid var(--glass-border); }
   .btn-inline { width: auto; padding: 9px 16px; font-size: 0.85rem; }
   .btn-sm { width: auto; padding: 7px 12px; font-size: 0.78rem; border-radius: 8px; }
@@ -155,10 +157,14 @@
   }
 
   /* ---------------- APP SHELL ---------------- */
+  body {
+    background: var(--navy);
+  }
   #screen-app {
     display: flex;
     flex-direction: column;
     height: 100dvh;
+    background: radial-gradient(circle at 20% -10%, #0d2140 0%, var(--navy) 55%);
   }
   .topbar {
     display: flex;
@@ -167,9 +173,9 @@
     padding: calc(14px + var(--safe-t)) 18px 12px;
     flex-shrink: 0;
   }
-  .topbar .who { display: flex; flex-direction: column; }
+  .topbar .who { display: flex; flex-direction: column; min-width: 0; }
   .topbar .who .hello { font-size: 0.72rem; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.1em; }
-  .topbar .who .name { font-size: 1.02rem; font-family: "Syne", sans-serif; font-weight: 700; word-break: break-all; }
+  .topbar .who .name { font-size: 1.02rem; font-family: "Syne", sans-serif; font-weight: 700; word-break: break-word; }
   .icon-btn {
     width: 38px; height: 38px;
     border-radius: 50%;
@@ -187,10 +193,12 @@
     padding: 0 14px 14px;
     flex-shrink: 0;
     overflow-x: auto;
+    scrollbar-width: none;
   }
+  .tabs::-webkit-scrollbar { display: none; }
   .tab {
-    flex: 1;
-    padding: 10px 4px;
+    flex: 0 0 auto;
+    padding: 10px 16px;
     text-align: center;
     border-radius: 999px;
     font-size: 0.78rem;
@@ -212,6 +220,7 @@
   .section-header {
     display: flex; align-items: center; justify-content: space-between;
     margin-bottom: 14px;
+    gap: 10px;
   }
   .section-header .section-title { margin-bottom: 0; }
 
@@ -219,6 +228,7 @@
   .form-msg { margin-top: 12px; font-size: 0.83rem; min-height: 1.2em; }
   .form-msg.ok { color: var(--green); }
   .form-msg.err { color: var(--red); }
+  .form-msg.warn { color: var(--amber); }
 
   .turno-switch { display: flex; gap: 8px; }
   .turno-switch button {
@@ -308,6 +318,8 @@
   .chip-green { background: rgba(44, 184, 122, 0.16); color: #7fe0b6; }
   .chip-dim { background: rgba(255, 255, 255, 0.08); color: var(--text-dim); }
   .chip-sky { background: rgba(58, 143, 209, 0.18); color: var(--sky-dim); }
+  .chip-red { background: rgba(224, 68, 68, 0.16); color: #f29b9b; }
+  .chip-amber { background: rgba(209, 165, 58, 0.16); color: #e6c877; }
 
   .empty-state {
     padding: 28px 16px;
@@ -354,6 +366,34 @@
     font-size: 0.85rem;
   }
 
+  /* ---------------- DESPACHO / KILL SWITCH ---------------- */
+  .activos-card { padding: 6px 6px; margin-bottom: 18px; }
+  .activos-empty { padding: 18px 12px; text-align: center; color: var(--text-faint); font-size: 0.82rem; }
+  .activo-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 13px 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+  .activo-row:last-child { border-bottom: 0; }
+  .activo-row .info { min-width: 0; }
+  .activo-row .line1 { font-family: "Syne", sans-serif; font-weight: 700; font-size: 0.92rem; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .activo-row .line2 { font-size: 0.78rem; color: var(--text-dim); margin-top: 4px; }
+  .pulse-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 0 0 rgba(44, 184, 122, 0.6);
+    animation: pulse 1.8s infinite;
+    flex-shrink: 0;
+  }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(44, 184, 122, 0.55); }
+    70% { box-shadow: 0 0 0 8px rgba(44, 184, 122, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(44, 184, 122, 0); }
+  }
+
   /* ---------------- MANIFIESTO ---------------- */
   .manifiesto-card { padding: 16px 16px 6px; margin-bottom: 16px; }
   .manifiesto-header {
@@ -376,19 +416,23 @@
   }
   .manifiesto-item:last-child { border-bottom: 0; }
   .manifiesto-item .idx { color: var(--text-faint); font-size: 0.8rem; width: 20px; flex-shrink: 0; }
+  .manifiesto-item .hora { color: var(--sky-dim); font-size: 0.8rem; width: 44px; flex-shrink: 0; }
   .manifiesto-item .who { flex: 1; min-width: 0; }
   .manifiesto-item .punto { color: var(--text-dim); font-size: 0.8rem; }
   .manifiesto-actions { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; margin-bottom: 20px; }
+  .refreshing-dot { display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--sky); margin-left:6px; animation: pulse 1.2s infinite; vertical-align:middle; }
 
   /* ---------------- HEATMAP (calendario admin) ---------------- */
   .month-nav {
-    display: flex; align-items: center; justify-content: space-between;
+    display: flex; align-items: center; justify-content: center;
+    gap: 10px;
     margin: 14px 0;
   }
-  .month-nav .label { font-size: 1.02rem; text-transform: capitalize; }
+  .month-nav .label { font-size: 1.02rem; text-transform: capitalize; flex: 1; text-align: center; }
   .month-nav button {
     width: 34px; height: 34px; border-radius: 50%;
     background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text-dim);
+    flex-shrink: 0;
   }
   .cal-grid { padding: 14px 10px 16px; }
   .cal-row { display: grid; grid-template-columns: 26px repeat(7, 1fr); gap: 4px; }
@@ -432,6 +476,30 @@
   #toast.show { opacity: 1; transform: translate(-50%, 0); }
   #toast.err { border-color: rgba(224, 68, 68, 0.5); color: #ffb3b3; }
   #toast.ok { border-color: rgba(44, 184, 122, 0.5); color: #a8f0cf; }
+
+  /* ---------------------------------------------------------------------
+     PC / desktop — la app queda centrada como un "frame" de teléfono,
+     coherente con la app del pasajero, en vez de estirarse a lo ancho.
+  --------------------------------------------------------------------- */
+  @media (min-width: 720px) {
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 16px;
+    }
+    #screen-login { min-height: auto; }
+    #screen-app {
+      width: 100%;
+      max-width: 460px;
+      height: min(880px, 92vh);
+      border-radius: 28px;
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 40px 90px -24px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.03);
+    }
+    .login-card { box-shadow: 0 40px 90px -24px rgba(0, 0, 0, 0.65); }
+    #toast { max-width: 400px; }
+  }
 </style>
 </head>
 <body>
@@ -443,7 +511,7 @@
   <div class="login-card glass">
     <div class="brand">Charter TI · Admin</div>
     <h1>Panel de administración</h1>
-    <p>Ingresá con tu cuenta de administrador para gestionar despacho, pasajeros y manifiestos.</p>
+    <p>Ingresá con tu cuenta de administrador para gestionar despacho, flota, pasajeros y manifiestos.</p>
     <form id="form-login" autocomplete="on">
       <div class="field">
         <label for="input-email">Email</label>
@@ -474,6 +542,7 @@
 
   <nav class="tabs">
     <button class="tab active" data-tab="despacho">Despacho</button>
+    <button class="tab" data-tab="flota">Flota</button>
     <button class="tab" data-tab="pasajeros">Pasajeros</button>
     <button class="tab" data-tab="manifiesto">Manifiesto</button>
     <button class="tab" data-tab="calendario">Calendario</button>
@@ -481,10 +550,16 @@
 
   <main>
     <!-- ============================================================
-         MÓDULO 1 — DESPACHO DIARIO
+         MÓDULO 1 — DESPACHO DIARIO + KILL SWITCH
     ============================================================ -->
     <section id="tab-despacho" class="tab-panel">
       <h2 class="section-title">Despacho diario</h2>
+
+      <div class="glass activos-card">
+        <div id="turnos-activos-list">
+          <div class="activos-empty">Cargando turnos activos…</div>
+        </div>
+      </div>
 
       <form id="form-despacho" class="glass form-card">
         <div class="field">
@@ -509,16 +584,23 @@
         <button type="submit" id="btn-guardar-despacho" class="btn btn-primary" style="margin-top:18px;">Guardar y activar GPS</button>
         <div id="despacho-msg" class="form-msg"></div>
       </form>
+    </section>
 
-      <div class="glass status-card">
-        <div class="status-label">Estado para la fecha y turno elegidos</div>
-        <div id="despacho-status-body">Cargando…</div>
-        <button id="btn-finalizar-despacho" class="btn btn-red hidden">Finalizar turno (apagar GPS)</button>
+    <!-- ============================================================
+         MÓDULO 2 — FLOTA (unidades / easytrack_domain)
+    ============================================================ -->
+    <section id="tab-flota" class="tab-panel hidden">
+      <div class="section-header">
+        <h2 class="section-title">Flota</h2>
+        <button id="btn-nueva-unidad" class="btn btn-primary btn-inline" type="button">+ Unidad</button>
+      </div>
+      <div id="flota-list" class="list">
+        <div class="empty-state">Cargando…</div>
       </div>
     </section>
 
     <!-- ============================================================
-         MÓDULO 2 — GESTIÓN DE PASAJEROS
+         MÓDULO 3 — GESTIÓN DE PASAJEROS
     ============================================================ -->
     <section id="tab-pasajeros" class="tab-panel hidden">
       <div class="section-header">
@@ -532,7 +614,7 @@
     </section>
 
     <!-- ============================================================
-         MÓDULO 3 — MANIFIESTO DE CARGA
+         MÓDULO 4 — MANIFIESTO DE CARGA
     ============================================================ -->
     <section id="tab-manifiesto" class="tab-panel hidden">
       <h2 class="section-title">Manifiesto de carga</h2>
@@ -564,7 +646,7 @@
     </section>
 
     <!-- ============================================================
-         MÓDULO 4 — CALENDARIO DE OCUPACIÓN (HEATMAP)
+         MÓDULO 5 — CALENDARIO DE OCUPACIÓN (HEATMAP)
     ============================================================ -->
     <section id="tab-calendario" class="tab-panel hidden">
       <h2 class="section-title">Ocupación mensual</h2>
@@ -578,6 +660,7 @@
       <div class="month-nav">
         <button id="heatmap-prev-month" aria-label="Mes anterior" type="button">‹</button>
         <div class="label display" id="heatmap-month-label">—</div>
+        <button id="heatmap-refresh" aria-label="Actualizar" title="Actualizar datos del mes" type="button">↻</button>
         <button id="heatmap-next-month" aria-label="Mes siguiente" type="button">›</button>
       </div>
 
@@ -656,6 +739,41 @@
   </div>
 </div>
 
+<!-- =====================================================================
+     MODAL — ALTA / EDICIÓN DE UNIDAD (FLOTA)
+===================================================================== -->
+<div id="modal-unidad" class="modal-overlay hidden">
+  <div class="modal-card glass">
+    <div class="modal-header">
+      <h3 id="modal-unidad-title">Nueva unidad</h3>
+      <button class="modal-close" id="modal-unidad-close" type="button" aria-label="Cerrar">✕</button>
+    </div>
+    <form id="form-unidad">
+      <input type="hidden" id="unidad-id-original" />
+      <div class="field">
+        <label for="unidad-interno">Interno</label>
+        <input id="unidad-interno" type="text" placeholder="Ej: 04" required />
+      </div>
+      <div class="field">
+        <label for="unidad-patente">Patente</label>
+        <input id="unidad-patente" type="text" placeholder="Opcional" />
+      </div>
+      <div class="field" style="margin-bottom:14px;">
+        <label for="unidad-easytrack-domain">Dominio EasyTrack (GPS)</label>
+        <input id="unidad-easytrack-domain" type="text" placeholder="Ej: IAA3000" required />
+        <small class="field-hint">Matrícula tal cual figura en la plataforma AVL-EasyTrack. Se usa para cruzar la posición GPS con esta unidad.</small>
+      </div>
+      <div class="field switch-row" style="margin-bottom:0;">
+        <span>Unidad activa (disponible para despachar)</span>
+        <div class="switch on" id="switch-unidad-activa"><div class="knob"></div></div>
+      </div>
+      <button type="submit" class="btn btn-primary" style="margin-top:18px;">Guardar</button>
+      <button type="button" id="btn-eliminar-unidad" class="btn btn-red hidden" style="margin-top:10px;">Eliminar unidad</button>
+      <div id="unidad-form-msg" class="form-msg"></div>
+    </form>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
@@ -672,20 +790,39 @@
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   // -------------------------------------------------------------------------
-  // ⚠️ ESQUEMA ASUMIDO — no tenía el SQL de despacho/pasajeros/asistencias/
-  // plantillas/unidades/admins a la vista, así que infiero los nombres de
-  // columnas a partir de lo que usa index.html (rpc_login_pasajero,
-  // rpc_calendario_mes, rpc_set_asistencia). Si tu esquema real difiere,
-  // ajustá los nombres acá abajo — el resto del archivo los referencia
-  // desde este único lugar.
+  // Esquema — confirmado contra el diagrama real de Supabase (ya no es una
+  // suposición). Quedan como supuestos únicamente dos cosas que un diagrama
+  // de columnas no muestra: el nombre de la función RPC de verificación de
+  // admin, y las claves de conflicto (constraints UNIQUE) usadas en los
+  // upsert. Si el guardado de despacho/pasajero falla por constraint,
+  // ajustar DESPACHO_CONFLICT / PASAJERO_CONFLICT más abajo.
+  //
+  // Tablas confirmadas:
+  //   admins      (user_id uuid → auth.users.id, nombre text, created_at)
+  //   unidades    (id uuid, interno text, patente text,
+  //                easytrack_domain text, activa bool, created_at)
+  //   despacho    (id uuid, fecha date, turno turno_tipo, unidad_id uuid,
+  //                chofer_nombre text, activo bool, iniciado_at)
+  //   pasajeros   (dni text, nombre, telefono, es_abonado bool,
+  //                abono_tipo text, punto_subida, horario_subida time,
+  //                created_at)
+  //   plantillas  (id uuid, dni, dia_semana int2, turno turno_tipo,
+  //                viaja bool, updated_at)
+  //   asistencias (id uuid, dni, fecha date, turno turno_tipo,
+  //                viaja bool, created_at)
+  //   api_config  (id, jwt_token, expires_at) — usada por un proceso de
+  //                backend para hablar con la API de EasyTrack (obtención
+  //                de posiciones GPS); esta pantalla no la toca, solo
+  //                carga el "easytrack_domain" de cada unidad para que ese
+  //                proceso sepa qué matrícula corresponde a qué interno.
   // -------------------------------------------------------------------------
   const T = {
-    admins: "admins",             // user_id (uuid) referenciando auth.users
-    unidades: "unidades",         // id, interno, patente
-    despacho: "despacho",         // fecha (date), turno (text), unidad_id (fk), chofer (text), activo (bool)
-    pasajeros: "pasajeros",       // dni (pk, text), nombre, telefono, es_abonado (bool), abono_tipo ('M'|'T'|'D'), punto_subida, horario_subida
-    asistencias: "asistencias",   // dni, fecha (date), turno (text), viaja (bool), origen (text)
-    plantillas: "plantillas",     // dni, dia_semana (0=Lun..6=Dom), turno (text), viaja (bool)
+    admins: "admins",
+    unidades: "unidades",
+    despacho: "despacho",
+    pasajeros: "pasajeros",
+    asistencias: "asistencias",
+    plantillas: "plantillas",
   };
   const RPC_IS_ADMIN = "fn_is_admin"; // se llama sin argumentos, valida contra auth.uid()
   // Conflicto asumido para el upsert de despacho: una unidad activa por fecha+turno.
@@ -698,7 +835,6 @@
     "enero", "febrero", "marzo", "abril", "mayo", "junio",
     "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre",
   ];
-  const WEEKDAY_SHORT = ["L", "M", "X", "J", "V", "S", "D"];
 
   // =========================================================================
   // ESTADO
@@ -706,7 +842,9 @@
   const state = {
     session: null,
     activeTab: "despacho",
-    unidades: [],                 // [{id, interno, patente}]
+    unidades: [],                 // [{id, interno, patente, easytrack_domain, activa}]
+    unidadesById: new Map(),
+    turnosActivos: [],            // despachos con activo:true (para el kill switch)
     pasajeros: [],                // cache de pasajeros
     pasajerosByDni: new Map(),
     plantillasIdx: null,          // Map("dow|turno" -> Map(dni -> viaja))  (cache global, recargable)
@@ -714,9 +852,12 @@
       viewYear: new Date().getFullYear(),
       viewMonth: new Date().getMonth() + 1,
       turno: "ambos",
+      cache: new Map(),          // "y-m-turno" -> counts (permite cambio de pestaña instantáneo)
     },
-    editingPasajeroDni: null,     // si no es null, el modal está en modo edición
-    lastHojaTexto: "",
+    editingPasajeroDni: null,     // si no es null, el modal de pasajero está en modo edición
+    editingUnidadId: null,        // idem para el modal de unidad
+    manifiestoActual: null,
+    manifiestoBusy: false,
   };
 
   // =========================================================================
@@ -734,6 +875,14 @@
   }
   // 0 = Lunes ... 6 = Domingo (mismo criterio que el calendario de index.html)
   function weekdayMon0(dateObj) { return (dateObj.getDay() + 6) % 7; }
+  function fmtHora(t) { return t ? String(t).slice(0, 5) : ""; }
+  function fmtHoraCorta(t) {
+    // "07:00" -> "7:00" (más natural para WhatsApp)
+    const hhmm = fmtHora(t);
+    if (!hhmm) return "";
+    const [hh, mm] = hhmm.split(":");
+    return `${parseInt(hh, 10)}:${mm}`;
+  }
 
   // =========================================================================
   // TOAST
@@ -766,6 +915,17 @@
     }
   }
 
+  async function fetchAdminNombre(userId) {
+    try {
+      const { data, error } = await supabase.from(T.admins).select("nombre").eq("user_id", userId).maybeSingle();
+      if (error) throw error;
+      return (data && data.nombre) || null;
+    } catch (e) {
+      console.warn("No se pudo obtener el nombre del admin", e);
+      return null;
+    }
+  }
+
   formLogin.addEventListener("submit", async (ev) => {
     ev.preventDefault();
     const email = document.getElementById("input-email").value.trim();
@@ -782,7 +942,7 @@
         loginError.textContent = "Esta cuenta no tiene permisos de administrador.";
         return;
       }
-      enterApp(data.session);
+      await enterApp(data.session);
     } catch (e) {
       console.error(e);
       loginError.textContent = "No pudimos iniciar sesión. Revisá el email y la contraseña.";
@@ -801,13 +961,15 @@
     if (event === "SIGNED_OUT") exitApp();
   });
 
-  function enterApp(session) {
+  async function enterApp(session) {
     state.session = session;
     document.getElementById("topbar-name").textContent = (session.user && session.user.email) || "Admin";
     document.getElementById("screen-login").classList.add("hidden");
     document.getElementById("screen-app").classList.remove("hidden");
     initDefaults();
     loadTabData("despacho");
+    const nombre = await fetchAdminNombre(session.user.id);
+    if (nombre) document.getElementById("topbar-name").textContent = nombre;
   }
 
   function exitApp() {
@@ -832,7 +994,7 @@
   });
 
   // =========================================================================
-  // TABS
+  // TABS — con render instantáneo desde caché + refresco en segundo plano
   // =========================================================================
   document.querySelectorAll(".tab").forEach((btn) => {
     btn.addEventListener("click", () => switchTab(btn.dataset.tab));
@@ -841,50 +1003,135 @@
   function switchTab(tab) {
     state.activeTab = tab;
     document.querySelectorAll(".tab").forEach((b) => b.classList.toggle("active", b.dataset.tab === tab));
-    ["despacho", "pasajeros", "manifiesto", "calendario"].forEach((t) => {
+    ["despacho", "flota", "pasajeros", "manifiesto", "calendario"].forEach((t) => {
       document.getElementById("tab-" + t).classList.toggle("hidden", t !== tab);
     });
     loadTabData(tab);
   }
 
   function loadTabData(tab) {
-    if (tab === "despacho") { loadUnidades().then(refreshDespachoStatus); }
-    else if (tab === "pasajeros") { loadPasajeros(); }
-    else if (tab === "manifiesto") { ensurePlantillas().then(() => { loadPasajeros(true); loadManifiesto(); }); }
-    else if (tab === "calendario") { ensurePlantillas().then(() => { loadPasajeros(true); renderHeatmapMonthLabel(); loadHeatmap(); }); }
+    if (tab === "despacho") {
+      loadTurnosActivos(state.turnosActivos.length > 0);
+      loadUnidades(state.unidades.length > 0).then(() => { fillUnidadesSelect(); refreshDespachoWarning(); });
+    } else if (tab === "flota") {
+      if (state.unidades.length) renderFlota();
+      loadUnidades(state.unidades.length > 0).then(renderFlota);
+    } else if (tab === "pasajeros") {
+      if (state.pasajeros.length) renderPasajeros();
+      loadPasajeros(state.pasajeros.length > 0);
+    } else if (tab === "manifiesto") {
+      ensurePlantillas().then(() => { loadPasajeros(true); loadManifiesto(); });
+    } else if (tab === "calendario") {
+      ensurePlantillas().then(() => { loadPasajeros(true); renderHeatmapMonthLabel(); loadHeatmap(); });
+    }
   }
 
   // =========================================================================
-  // MÓDULO 1 — DESPACHO DIARIO
+  // MÓDULO 1 — DESPACHO DIARIO + KILL SWITCH
   // =========================================================================
   let despachoTurno = "manana";
   document.querySelectorAll("#despacho-turno-switch button").forEach((btn) => {
     btn.addEventListener("click", () => {
       despachoTurno = btn.dataset.turno;
       document.querySelectorAll("#despacho-turno-switch button").forEach((b) => b.classList.toggle("active", b === btn));
-      refreshDespachoStatus();
+      refreshDespachoWarning();
     });
   });
-  document.getElementById("despacho-fecha").addEventListener("change", refreshDespachoStatus);
+  document.getElementById("despacho-fecha").addEventListener("change", refreshDespachoWarning);
 
-  async function loadUnidades() {
-    if (state.unidades.length) return fillUnidadesSelect();
+  async function loadUnidades(silent) {
     try {
-      const { data, error } = await supabase.from(T.unidades).select("id, interno, patente").order("interno");
+      const { data, error } = await supabase
+        .from(T.unidades)
+        .select("id, interno, patente, easytrack_domain, activa")
+        .order("interno");
       if (error) throw error;
       state.unidades = data || [];
-      fillUnidadesSelect();
+      state.unidadesById = new Map(state.unidades.map((u) => [String(u.id), u]));
     } catch (e) {
       console.error(e);
-      toast("No se pudieron cargar las unidades.", "err");
+      if (!silent) toast("No se pudieron cargar las unidades.", "err");
     }
   }
 
   function fillUnidadesSelect() {
     const sel = document.getElementById("despacho-unidad");
-    sel.innerHTML = state.unidades
+    const activas = state.unidades.filter((u) => u.activa !== false);
+    sel.innerHTML = activas
       .map((u) => `<option value="${u.id}">Interno ${u.interno}${u.patente ? " · " + u.patente : ""}</option>`)
-      .join("");
+      .join("") || `<option value="">Sin unidades activas</option>`;
+  }
+
+  // --- Turnos activos (panel "kill switch") ---
+  async function loadTurnosActivos(silent) {
+    const listEl = document.getElementById("turnos-activos-list");
+    if (!silent) listEl.innerHTML = `<div class="activos-empty">Cargando turnos activos…</div>`;
+    try {
+      const { data, error } = await supabase
+        .from(T.despacho)
+        .select("id, fecha, turno, chofer_nombre, iniciado_at, " + T.unidades + "(interno, patente)")
+        .eq("activo", true)
+        .order("fecha", { ascending: false });
+      if (error) throw error;
+      state.turnosActivos = data || [];
+      renderTurnosActivos();
+      refreshDespachoWarning();
+    } catch (e) {
+      console.error(e);
+      if (!silent) listEl.innerHTML = `<div class="activos-empty">No se pudieron cargar los turnos activos.</div>`;
+    }
+  }
+
+  function renderTurnosActivos() {
+    const listEl = document.getElementById("turnos-activos-list");
+    if (!state.turnosActivos.length) {
+      listEl.innerHTML = `<div class="activos-empty">No hay turnos con GPS activo en este momento.</div>`;
+      return;
+    }
+    listEl.innerHTML = state.turnosActivos.map((d) => {
+      const unidad = d[T.unidades] || {};
+      const horaInicio = d.iniciado_at
+        ? new Date(d.iniciado_at).toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" })
+        : null;
+      return `
+        <div class="activo-row" data-id="${d.id}">
+          <div class="info">
+            <div class="line1"><span class="pulse-dot"></span>Interno ${unidad.interno || "—"} · ${TURNO_LABELS[d.turno] || d.turno}</div>
+            <div class="line2">${d.chofer_nombre || "Sin chofer"} · ${d.fecha}${horaInicio ? " · desde " + horaInicio : ""}</div>
+          </div>
+          <button class="btn btn-red-solid btn-sm" data-action="finalizar" data-id="${d.id}" type="button">Finalizar</button>
+        </div>`;
+    }).join("");
+
+    listEl.querySelectorAll('[data-action="finalizar"]').forEach((btn) => {
+      btn.addEventListener("click", () => finalizarDespachoPorId(btn.dataset.id));
+    });
+  }
+
+  async function finalizarDespachoPorId(id) {
+    try {
+      const { error } = await supabase.from(T.despacho).update({ activo: false }).eq("id", id);
+      if (error) throw error;
+      toast("Turno finalizado. GPS apagado.", "ok");
+      loadTurnosActivos();
+    } catch (e) {
+      console.error(e);
+      toast("No se pudo finalizar el turno.", "err");
+    }
+  }
+
+  function refreshDespachoWarning() {
+    const msg = document.getElementById("despacho-msg");
+    const fecha = document.getElementById("despacho-fecha").value || todayISO();
+    const existe = state.turnosActivos.find((d) => d.fecha === fecha && d.turno === despachoTurno);
+    if (existe) {
+      const unidad = existe[T.unidades] || {};
+      msg.textContent = `Ya hay un despacho activo para ${TURNO_LABELS[despachoTurno]} el ${fecha} (Interno ${unidad.interno || "—"}). Guardar lo reemplazará.`;
+      msg.className = "form-msg warn";
+    } else if (msg.className.indexOf("warn") !== -1) {
+      msg.textContent = "";
+      msg.className = "form-msg";
+    }
   }
 
   document.getElementById("form-despacho").addEventListener("submit", async (ev) => {
@@ -894,10 +1141,8 @@
     const chofer = document.getElementById("despacho-chofer").value.trim();
     const msg = document.getElementById("despacho-msg");
     const btn = document.getElementById("btn-guardar-despacho");
-    msg.textContent = "";
-    msg.className = "form-msg";
     if (!fecha || !unidadId || !chofer) {
-      msg.textContent = "Completá turno, unidad y chofer.";
+      msg.textContent = "Completá fecha, unidad y chofer.";
       msg.className = "form-msg err";
       return;
     }
@@ -905,14 +1150,22 @@
     btn.textContent = "Guardando...";
     try {
       const { error } = await supabase.from(T.despacho).upsert(
-        { fecha, turno: despachoTurno, unidad_id: unidadId, chofer, activo: true },
+        {
+          fecha,
+          turno: despachoTurno,
+          unidad_id: unidadId,
+          chofer_nombre: chofer,
+          activo: true,
+          iniciado_at: new Date().toISOString(),
+        },
         { onConflict: DESPACHO_CONFLICT }
       );
       if (error) throw error;
       msg.textContent = "Despacho guardado. GPS activado para ese turno.";
       msg.className = "form-msg ok";
       toast("Despacho guardado", "ok");
-      refreshDespachoStatus();
+      document.getElementById("despacho-chofer").value = "";
+      loadTurnosActivos();
     } catch (e) {
       console.error(e);
       msg.textContent = "No se pudo guardar el despacho. Revisá la conexión.";
@@ -923,56 +1176,139 @@
     }
   });
 
-  async function refreshDespachoStatus() {
-    const fecha = document.getElementById("despacho-fecha").value || todayISO();
-    const body = document.getElementById("despacho-status-body");
-    const btnFin = document.getElementById("btn-finalizar-despacho");
-    body.textContent = "Cargando…";
-    btnFin.classList.add("hidden");
-    try {
-      const { data, error } = await supabase
-        .from(T.despacho)
-        .select("unidad_id, chofer, activo, " + T.unidades + "(interno, patente)")
-        .eq("fecha", fecha)
-        .eq("turno", despachoTurno)
-        .maybeSingle();
-      if (error) throw error;
-      if (!data) {
-        body.innerHTML = `Sin despacho cargado para <b>${TURNO_LABELS[despachoTurno]}</b> el ${fecha}.`;
-        return;
-      }
-      const unidad = data[T.unidades] || {};
-      const estado = data.activo
-        ? `<span class="chip chip-green">GPS activo</span>`
-        : `<span class="chip chip-dim">Finalizado</span>`;
-      body.innerHTML =
-        `Interno ${unidad.interno || "—"}${unidad.patente ? " · " + unidad.patente : ""} — ${data.chofer || "—"} ${estado}`;
-      btnFin.classList.toggle("hidden", !data.activo);
-    } catch (e) {
-      console.error(e);
-      body.textContent = "No se pudo consultar el estado del despacho.";
+  // =========================================================================
+  // MÓDULO 2 — FLOTA (unidades)
+  // =========================================================================
+  function renderFlota() {
+    const listEl = document.getElementById("flota-list");
+    if (!state.unidades.length) {
+      listEl.innerHTML = `<div class="empty-state">No hay unidades cargadas todavía.</div>`;
+      return;
     }
+    listEl.innerHTML = state.unidades.map((u) => {
+      const estadoChip = u.activa !== false
+        ? `<span class="chip chip-green">Activa</span>`
+        : `<span class="chip chip-dim">Deshabilitada</span>`;
+      return `
+        <div class="list-row" data-id="${u.id}">
+          <div class="info">
+            <div class="name">Interno ${u.interno}${u.patente ? " · " + u.patente : ""}</div>
+            <div class="meta">
+              <span class="chip chip-sky">GPS: ${u.easytrack_domain || "sin asignar"}</span>
+              ${estadoChip}
+            </div>
+          </div>
+          <div class="row-actions">
+            <button class="btn btn-ghost btn-sm" data-action="editar" data-id="${u.id}" type="button">Editar</button>
+          </div>
+        </div>`;
+    }).join("");
+
+    listEl.querySelectorAll('[data-action="editar"]').forEach((btn) => {
+      btn.addEventListener("click", () => openUnidadModal(btn.dataset.id));
+    });
   }
 
-  document.getElementById("btn-finalizar-despacho").addEventListener("click", async () => {
-    const fecha = document.getElementById("despacho-fecha").value || todayISO();
+  document.getElementById("btn-nueva-unidad").addEventListener("click", () => openUnidadModal(null));
+
+  const modalUnidad = document.getElementById("modal-unidad");
+  const switchUnidadActiva = document.getElementById("switch-unidad-activa");
+
+  document.getElementById("modal-unidad-close").addEventListener("click", closeUnidadModal);
+  modalUnidad.addEventListener("click", (ev) => { if (ev.target === modalUnidad) closeUnidadModal(); });
+  switchUnidadActiva.addEventListener("click", () => {
+    switchUnidadActiva.classList.toggle("on");
+  });
+
+  function openUnidadModal(id) {
+    state.editingUnidadId = id;
+    document.getElementById("unidad-form-msg").textContent = "";
+    document.getElementById("unidad-form-msg").className = "form-msg";
+    const btnEliminar = document.getElementById("btn-eliminar-unidad");
+
+    if (id) {
+      const u = state.unidadesById.get(String(id)) || {};
+      document.getElementById("modal-unidad-title").textContent = "Editar unidad";
+      document.getElementById("unidad-id-original").value = id;
+      document.getElementById("unidad-interno").value = u.interno || "";
+      document.getElementById("unidad-patente").value = u.patente || "";
+      document.getElementById("unidad-easytrack-domain").value = u.easytrack_domain || "";
+      switchUnidadActiva.classList.toggle("on", u.activa !== false);
+      btnEliminar.classList.remove("hidden");
+    } else {
+      document.getElementById("modal-unidad-title").textContent = "Nueva unidad";
+      document.getElementById("unidad-id-original").value = "";
+      document.getElementById("form-unidad").reset();
+      switchUnidadActiva.classList.add("on");
+      btnEliminar.classList.add("hidden");
+    }
+    modalUnidad.classList.remove("hidden");
+  }
+
+  function closeUnidadModal() {
+    modalUnidad.classList.add("hidden");
+    state.editingUnidadId = null;
+  }
+
+  document.getElementById("form-unidad").addEventListener("submit", async (ev) => {
+    ev.preventDefault();
+    const msg = document.getElementById("unidad-form-msg");
+    const id = document.getElementById("unidad-id-original").value || null;
+    const record = {
+      interno: document.getElementById("unidad-interno").value.trim(),
+      patente: document.getElementById("unidad-patente").value.trim() || null,
+      easytrack_domain: document.getElementById("unidad-easytrack-domain").value.trim(),
+      activa: switchUnidadActiva.classList.contains("on"),
+    };
+    if (!record.interno || !record.easytrack_domain) {
+      msg.textContent = "Completá interno y dominio EasyTrack.";
+      msg.className = "form-msg err";
+      return;
+    }
+    const submitBtn = ev.target.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
     try {
-      const { error } = await supabase
-        .from(T.despacho)
-        .update({ activo: false })
-        .eq("fecha", fecha)
-        .eq("turno", despachoTurno);
+      let error;
+      if (id) {
+        ({ error } = await supabase.from(T.unidades).update(record).eq("id", id));
+      } else {
+        ({ error } = await supabase.from(T.unidades).insert(record));
+      }
       if (error) throw error;
-      toast("Turno finalizado", "ok");
-      refreshDespachoStatus();
+      toast("Unidad guardada", "ok");
+      closeUnidadModal();
+      await loadUnidades();
+      renderFlota();
+      fillUnidadesSelect();
     } catch (e) {
       console.error(e);
-      toast("No se pudo finalizar el turno.", "err");
+      msg.textContent = "No se pudo guardar la unidad. Verificá que el interno no esté repetido.";
+      msg.className = "form-msg err";
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+
+  document.getElementById("btn-eliminar-unidad").addEventListener("click", async () => {
+    const id = document.getElementById("unidad-id-original").value;
+    if (!id) return;
+    if (!confirm("¿Eliminar esta unidad? Si tiene despachos asociados, puede fallar: en ese caso convení desactivarla en vez de borrarla.")) return;
+    try {
+      const { error } = await supabase.from(T.unidades).delete().eq("id", id);
+      if (error) throw error;
+      toast("Unidad eliminada", "ok");
+      closeUnidadModal();
+      await loadUnidades();
+      renderFlota();
+      fillUnidadesSelect();
+    } catch (e) {
+      console.error(e);
+      toast("No se pudo eliminar. Probá desactivarla en su lugar.", "err");
     }
   });
 
   // =========================================================================
-  // MÓDULO 2 — GESTIÓN DE PASAJEROS
+  // MÓDULO 3 — GESTIÓN DE PASAJEROS
   // =========================================================================
   async function loadPasajeros(silent) {
     const listEl = document.getElementById("pasajeros-list");
@@ -986,7 +1322,7 @@
       state.pasajeros = data || [];
       state.pasajerosByDni = new Map(state.pasajeros.map((p) => [String(p.dni), p]));
       fillPuntosDatalist();
-      if (!silent) renderPasajeros();
+      if (state.activeTab === "pasajeros") renderPasajeros();
     } catch (e) {
       console.error(e);
       if (!silent) listEl.innerHTML = `<div class="empty-state">No se pudieron cargar los pasajeros.</div>`;
@@ -1018,6 +1354,7 @@
       const tipoChip = p.es_abonado && p.abono_tipo
         ? `<span class="chip chip-sky">${abonoTipoLabel(p.abono_tipo)}</span>`
         : "";
+      const horaTxt = p.horario_subida ? `<span class="plain">${fmtHora(p.horario_subida)}</span>` : "";
       const punto = p.punto_subida ? `<span class="plain">${p.punto_subida}</span>` : "";
       return `
         <div class="list-row" data-dni="${p.dni}">
@@ -1025,7 +1362,7 @@
             <div class="name">${p.nombre || "(sin nombre)"}</div>
             <div class="meta">
               <span class="plain">DNI ${p.dni}</span>
-              ${abonadoChip}${tipoChip}${punto}
+              ${abonadoChip}${tipoChip}${punto}${horaTxt}
             </div>
           </div>
           <div class="row-actions">
@@ -1073,7 +1410,7 @@
       document.getElementById("pasajero-nombre").value = p.nombre || "";
       document.getElementById("pasajero-telefono").value = p.telefono || "";
       document.getElementById("pasajero-punto").value = p.punto_subida || "";
-      document.getElementById("pasajero-horario").value = p.horario_subida ? p.horario_subida.slice(0, 5) : "";
+      document.getElementById("pasajero-horario").value = fmtHora(p.horario_subida);
       switchAbonado.classList.toggle("on", !!p.es_abonado);
       fieldAbonoTipo.classList.toggle("hidden", !p.es_abonado);
       document.getElementById("pasajero-abono-tipo").value = p.abono_tipo || "M";
@@ -1182,7 +1519,7 @@
   }
 
   // =========================================================================
-  // MÓDULO 3 — MANIFIESTO DE CARGA
+  // MÓDULO 4 — MANIFIESTO DE CARGA
   // =========================================================================
   let manifiestoTurno = "manana";
   document.querySelectorAll("#manifiesto-turno-switch button").forEach((btn) => {
@@ -1199,9 +1536,19 @@
     const listEl = document.getElementById("manifiesto-list");
     const emptyEl = document.getElementById("manifiesto-empty");
     const headerEl = document.getElementById("manifiesto-unidad-info");
-    listEl.innerHTML = "";
-    emptyEl.classList.add("hidden");
-    headerEl.textContent = "Cargando…";
+
+    // Si ya hay algo renderizado, lo dejamos a la vista con un indicador
+    // sutil de "actualizando" en vez de vaciar la pantalla (evita el
+    // parpadeo al cambiar de fecha/turno o al volver a la pestaña).
+    const hadContent = !!state.manifiestoActual;
+    if (!hadContent) {
+      listEl.innerHTML = "";
+      emptyEl.classList.add("hidden");
+      headerEl.textContent = "Cargando…";
+    } else {
+      headerEl.insertAdjacentHTML("beforeend", '<span class="refreshing-dot" id="manifiesto-refreshing"></span>');
+    }
+    state.manifiestoBusy = true;
 
     try {
       await ensurePlantillas();
@@ -1209,7 +1556,7 @@
 
       const [despachoRes, asistRes] = await Promise.all([
         supabase.from(T.despacho)
-          .select("chofer, activo, " + T.unidades + "(interno, patente)")
+          .select("chofer_nombre, activo, " + T.unidades + "(interno, patente)")
           .eq("fecha", fecha).eq("turno", manifiestoTurno).maybeSingle(),
         supabase.from(T.asistencias)
           .select("dni, viaja")
@@ -1219,7 +1566,7 @@
       if (asistRes.error) throw asistRes.error;
 
       const unidad = (despachoRes.data && despachoRes.data[T.unidades]) || null;
-      const chofer = despachoRes.data ? despachoRes.data.chofer : null;
+      const chofer = despachoRes.data ? despachoRes.data.chofer_nombre : null;
       if (unidad) {
         headerEl.innerHTML = `Interno ${unidad.interno || "—"}${unidad.patente ? " · " + unidad.patente : ""} — ${chofer || "—"}` +
           `<span class="sub">${fecha} · Turno ${TURNO_LABELS[manifiestoTurno]}</span>`;
@@ -1247,22 +1594,31 @@
       state.manifiestoActual = {
         fecha, turno: manifiestoTurno,
         interno: unidad ? unidad.interno : null,
+        chofer: chofer || null,
         pasajeros: pasajerosQueViajan,
       };
 
       if (!pasajerosQueViajan.length) {
+        listEl.innerHTML = "";
         emptyEl.classList.remove("hidden");
         return;
       }
+      emptyEl.classList.add("hidden");
       listEl.innerHTML = pasajerosQueViajan.map((p, i) => `
         <div class="manifiesto-item">
           <span class="idx">${i + 1}.</span>
+          <span class="hora">${fmtHora(p.horario_subida) || "—"}</span>
           <span class="who">${p.nombre || "(sin nombre)"}</span>
           <span class="punto">${p.punto_subida || "—"}</span>
         </div>`).join("");
     } catch (e) {
       console.error(e);
-      headerEl.textContent = "No se pudo cargar el manifiesto.";
+      if (!hadContent) headerEl.textContent = "No se pudo cargar el manifiesto.";
+      else toast("No se pudo actualizar el manifiesto.", "err");
+    } finally {
+      state.manifiestoBusy = false;
+      const dot = document.getElementById("manifiesto-refreshing");
+      if (dot) dot.remove();
     }
   }
 
@@ -1270,16 +1626,19 @@
     const m = state.manifiestoActual;
     if (!m || !m.pasajeros.length) return "";
     const internoTxt = m.interno ? `Interno ${m.interno}` : "Sin unidad asignada";
+    const choferTxt = m.chofer ? ` (Chofer: ${m.chofer})` : "";
     const listado = m.pasajeros
-      .map((p, i) => `${i + 1}. ${p.nombre}${p.punto_subida ? " (" + p.punto_subida + ")" : ""}`)
+      .map((p, i) => {
+        const hora = fmtHoraCorta(p.horario_subida);
+        return `${i + 1}. ${p.nombre}${hora ? " (" + hora + ")" : ""}`;
+      })
       .join(", ");
-    return `${internoTxt} - Turno ${TURNO_LABELS[m.turno]} (${m.fecha}): ${listado}`;
+    return `Turno ${TURNO_LABELS[m.turno]} - ${internoTxt}${choferTxt} - Pasajeros: ${listado}`;
   }
 
   document.getElementById("btn-enviar-hoja").addEventListener("click", () => {
     const texto = buildHojaDeRutaTexto();
     if (!texto) { toast("No hay pasajeros para enviar.", "err"); return; }
-    state.lastHojaTexto = texto;
     const url = "https://wa.me/?text=" + encodeURIComponent(texto);
     window.open(url, "_blank", "noopener");
   });
@@ -1297,7 +1656,7 @@
   });
 
   // =========================================================================
-  // MÓDULO 4 — CALENDARIO DE OCUPACIÓN (HEATMAP)
+  // MÓDULO 5 — CALENDARIO DE OCUPACIÓN (HEATMAP) — con caché por mes/turno
   // =========================================================================
   document.querySelectorAll("#heatmap-turno-switch button").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -1308,6 +1667,7 @@
   });
   document.getElementById("heatmap-prev-month").addEventListener("click", () => shiftHeatmapMonth(-1));
   document.getElementById("heatmap-next-month").addEventListener("click", () => shiftHeatmapMonth(1));
+  document.getElementById("heatmap-refresh").addEventListener("click", () => loadHeatmap(true));
 
   function shiftHeatmapMonth(delta) {
     let m = state.heatmap.viewMonth + delta;
@@ -1338,10 +1698,23 @@
     return weeks;
   }
 
-  async function loadHeatmap() {
-    const { viewYear, viewMonth } = state.heatmap;
+  function heatmapCacheKey(y, m, turno) { return `${y}-${m}-${turno}`; }
+
+  async function loadHeatmap(forceRefresh) {
+    const { viewYear, viewMonth, turno } = state.heatmap;
+    const key = heatmapCacheKey(viewYear, viewMonth, turno);
+    const cached = state.heatmap.cache.get(key);
+
+    // Render instantáneo desde caché al cambiar de pestaña/mes/turno ya visitado.
+    if (cached && !forceRefresh) {
+      renderHeatmap(cached);
+      return;
+    }
+
     const body = document.getElementById("heatmap-body");
-    body.innerHTML = `<div style="padding:24px;text-align:center;color:var(--text-faint);font-size:0.85rem;">Cargando…</div>`;
+    if (!cached) {
+      body.innerHTML = `<div style="padding:24px;text-align:center;color:var(--text-faint);font-size:0.85rem;">Cargando…</div>`;
+    }
     try {
       await ensurePlantillas();
       if (!state.pasajeros.length) await loadPasajeros(true);
@@ -1359,12 +1732,12 @@
 
       const asistPorFecha = new Map(); // "fecha|turno" -> Map(dni->viaja)
       (data || []).forEach((row) => {
-        const key = `${row.fecha}|${row.turno}`;
-        if (!asistPorFecha.has(key)) asistPorFecha.set(key, new Map());
-        asistPorFecha.get(key).set(String(row.dni), !!row.viaja);
+        const k = `${row.fecha}|${row.turno}`;
+        if (!asistPorFecha.has(k)) asistPorFecha.set(k, new Map());
+        asistPorFecha.get(k).set(String(row.dni), !!row.viaja);
       });
 
-      const turnos = state.heatmap.turno === "ambos" ? ["manana", "tarde"] : [state.heatmap.turno];
+      const turnos = turno === "ambos" ? ["manana", "tarde"] : [turno];
       const counts = {}; // fecha -> {manana, tarde, total}
       for (let d = 1; d <= daysInMonth; d++) {
         const fecha = toISODate(viewYear, viewMonth, d);
@@ -1381,10 +1754,15 @@
         counts[fecha] = dayCounts;
       }
 
+      state.heatmap.cache.set(key, counts);
       renderHeatmap(counts);
     } catch (e) {
       console.error(e);
-      body.innerHTML = `<div style="padding:24px;text-align:center;color:var(--red);font-size:0.85rem;">No se pudo cargar la ocupación.</div>`;
+      if (!cached) {
+        body.innerHTML = `<div style="padding:24px;text-align:center;color:var(--red);font-size:0.85rem;">No se pudo cargar la ocupación.</div>`;
+      } else {
+        toast("No se pudo actualizar la ocupación.", "err");
+      }
     }
   }
 
