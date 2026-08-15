@@ -118,24 +118,8 @@
 
   /* APP SHELL */
   #screen-app {
-    display: flex; flex-direction: column; height: 100dvh; position: relative;
+    display: flex; flex-direction: column; height: 100dvh;
     background: radial-gradient(circle at 20% -10%, #0d2140 0%, var(--navy) 55%);
-  }
-
-  /* EFECTO DE CONTINUIDAD (desktop): en pantallas anchas el contenido real
-     vive en una columna centrada de hasta 1200px. Sin esto, lo que sobra a
-     los costados se ve como negro plano contra las glass-cards mas claras
-     del centro. Este halo repite el mismo gradiente Navy de la App pero
-     desenfocado, para que el borde de la ventana se sienta integrado al
-     monitor en vez de una "tripa" recortada. En mobile no hay costados que
-     integrar, asi que queda desactivado. */
-  .desktop-glow { display: none; }
-  @media (min-width: 900px) {
-    .desktop-glow {
-      display: block; position: fixed; inset: -15%; z-index: -1;
-      background: radial-gradient(ellipse 1500px 950px at 50% -5%, #16324f 0%, #0c1a2e 42%, var(--navy) 75%);
-      filter: blur(90px); pointer-events: none;
-    }
   }
 
   .topbar {
@@ -156,8 +140,6 @@
   }
   .icon-btn:hover:not(:disabled) { background: var(--glass-bg-strong); color: var(--text); }
   .icon-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-  .icon-btn.spinning svg { animation: spin 0.7s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
 
   main {
     flex: 1; overflow: hidden; position: relative;
@@ -277,18 +259,9 @@
   .chip.unmarked { background: rgba(255, 255, 255, 0.06); color: var(--text-faint); }
   .hist-row .chevron { color: var(--text-faint); margin-left: 2px; }
 
-  /* BOTTOM SHEET (MOVIL) — tres estados reales en vez de un simple on/off:
-       - state-collapsed: repliega casi todo, deja ver el conteo ("5 dias
-         seleccionados") para no tapar el calendario.
-       - state-mid: altura por defecto al seleccionar un dia — muestra el
-         toggle Viajo/No viajo y el selector de turno.
-       - state-expanded: arrastrando el handle hacia arriba se revela el
-         formulario completo de repeticion.
-     --collapsed-px y --mid-px se calculan en JS (updatePanelMetrics) segun
-     el contenido real, para que el corte quede siempre justo donde debe. */
+  /* BOTTOM SHEET (MOVIL) — colapso animado con transform (no max-height),
+     para que la transición sea fluida sin importar cuánto contenido tenga. */
   #action-panel {
-    --collapsed-px: 78px;
-    --mid-px: 210px;
     position: fixed; left: 0; right: 0; bottom: 0; max-height: 65vh;
     border-radius: 20px 20px 0 0; transform: translateY(100%);
     transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
@@ -296,21 +269,17 @@
     overflow-y: auto; background: rgba(12, 26, 46, 0.98);
     cursor: default;
   }
-  #action-panel.dragging { transition: none; }
   #action-panel.open { transform: translateY(0); }
-  #action-panel.open.state-mid { transform: translateY(calc(100% - var(--mid-px))); }
-  #action-panel.open.state-collapsed { transform: translateY(calc(100% - var(--collapsed-px))); cursor: pointer; }
-  #action-panel.open.state-expanded { transform: translateY(0); }
+  #action-panel.open.collapsed { transform: translateY(calc(100% - 78px)); cursor: pointer; overflow: hidden; touch-action: none; }
   .action-panel-handle {
-    width: 100%; display: flex; justify-content: center; padding: 4px 0 10px; cursor: grab;
-    background: transparent; border: 0; touch-action: none;
+    width: 100%; display: flex; justify-content: center; padding: 4px 0 10px; cursor: pointer;
+    background: transparent; border: 0;
   }
-  .action-panel-handle .bar { width: 36px; height: 4px; border-radius: 999px; background: var(--glass-border); transition: background 0.15s ease; }
-  #action-panel.dragging .action-panel-handle .bar { background: var(--sky-dim); }
+  .action-panel-handle .bar { width: 36px; height: 4px; border-radius: 999px; background: var(--glass-border); }
   #action-panel .count { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
   #action-panel .count a { color: var(--sky-dim); font-size: 0.8rem; text-decoration: none; }
   .action-panel-body { transition: opacity 0.15s ease; }
-  #action-panel.open.state-collapsed .action-panel-body { pointer-events: none; }
+  #action-panel.collapsed .action-panel-body { pointer-events: none; }
 
   @media (min-width: 768px) {
     #action-panel {
@@ -318,10 +287,12 @@
       width: 320px; max-height: calc(100vh - 100px); border-radius: var(--radius);
       transform: translateX(120%);
     }
-    #action-panel.open,
-    #action-panel.open.state-mid,
-    #action-panel.open.state-expanded { transform: translateX(0); }
-    #action-panel.open.state-collapsed { transform: translateX(0) translateY(calc(100% - 62px)); }
+    #action-panel.open { transform: translateX(0); }
+    /* En desktop el panel ya entra completo en la pantalla, asi que no tiene
+       sentido que se repliegue/mueva como en movil: se mantiene siempre
+       visible e interactivo aunque quede marcado como "collapsed". */
+    #action-panel.open.collapsed { transform: translateX(0); cursor: default; overflow-y: auto; }
+    #action-panel.collapsed .action-panel-body { pointer-events: auto; }
     .action-panel-handle { display: none; }
   }
 
@@ -329,13 +300,13 @@
   .seg-btn { flex: 1; padding: 10px 0; border-radius: var(--radius-sm); font-size: 0.86rem; background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text-dim); }
   .seg-btn.active[data-viaja="1"] { background: rgba(44, 184, 122, 0.2); border-color: var(--green); color: #a8f0cf; }
   .seg-btn.active[data-viaja="0"] { background: rgba(224, 68, 68, 0.2); border-color: var(--red); color: #ffb3b3; }
-  .seg-btn.active[data-turno] { background: rgba(58, 143, 209, 0.2); border-color: var(--sky); color: var(--text); }
-
-  .turno-box { margin-top: 14px; }
-  .turno-box.hidden { display: none; }
 
   .recurrence-box { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--glass-border); }
-  .recurrence-title { font-size: 0.72rem; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+  .recurrence-title {
+    font-size: 0.78rem; color: var(--sky-dim); text-transform: uppercase; letter-spacing: 0.06em;
+    margin-bottom: 8px; display: flex; align-items: center; gap: 6px; font-weight: 700;
+  }
+  .recurrence-title svg { width: 13px; height: 13px; flex-shrink: 0; }
   .recurrence-options { display: flex; flex-direction: column; gap: 7px; }
   .recurrence-opt {
     text-align: left; padding: 10px 12px; border-radius: var(--radius-sm);
@@ -381,7 +352,7 @@
   .modal-card { width: 100%; max-width: 400px; padding: 26px 22px; text-align: center; max-height: calc(100vh - 40px); overflow-y: auto; }
   .modal-card h3 { font-size: 1.08rem; margin-bottom: 8px; }
   .modal-summary { color: var(--text-dim); font-size: 0.85rem; margin-bottom: 20px; line-height: 1.5; }
-  .modal-actions { display: flex; flex-direction: column; gap: 10px; }
+  .modal-turno-options { display: flex; flex-direction: column; gap: 10px; }
 
   /* MAPA */
   #tab-mapa { position: relative; z-index: 0; }
@@ -418,11 +389,31 @@
   #toast.show { opacity: 1; transform: translate(-50%, 0); }
   #toast.err { border-color: rgba(224, 68, 68, 0.5); color: #ffb3b3; }
   #toast.ok { border-color: rgba(44, 184, 122, 0.5); color: #a8f0cf; }
+
+  /* CELULARES CHICOS (~360px de ancho o menos): el layout base esta pensado
+     para telefonos "normales"; aca se ajustan paddings, tipografia y la
+     grilla del calendario para que no se sientan amontonados ni con
+     objetivos de toque demasiado chicos. */
+  @media (max-width: 380px) {
+    .topbar { padding-left: 12px; padding-right: 12px; }
+    .tab-panel { padding-left: 12px; padding-right: 12px; }
+    .login-card { padding: 26px 18px; }
+    .cal-grid { padding: 12px 5px 14px; }
+    .cal-row { grid-template-columns: 20px repeat(7, 1fr); gap: 3px; }
+    .cal-head-cell { font-size: 0.66rem; padding: 4px 0; }
+    .week-num { font-size: 0.6rem; }
+    .day-cell { font-size: 0.78rem; border-radius: 8px; }
+    .day-cell .dot { width: 4px; height: 4px; }
+    .cal-legend { gap: 8px 10px; font-size: 0.68rem; }
+    .bottom-nav { width: calc(100% - 16px); padding: 5px; gap: 0; }
+    .nav-btn { padding: 8px 2px 7px; }
+    .nav-btn span { font-size: 0.58rem; }
+    #action-panel { padding: 10px 12px calc(14px + var(--safe-b)); }
+    .extent-row { flex-direction: column; }
+  }
 </style>
 </head>
 <body>
-
-<div class="desktop-glow" aria-hidden="true"></div>
 
 <!-- LOGIN -->
 <section id="screen-login" class="screen">
@@ -448,13 +439,6 @@
       <span class="name" id="topbar-name">-</span>
     </div>
     <div class="topbar-actions">
-      <button id="btn-refresh" class="icon-btn" title="Refrescar datos" aria-label="Refrescar datos">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="23 4 23 10 17 10"></polyline>
-          <polyline points="1 20 1 14 7 14"></polyline>
-          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
-        </svg>
-      </button>
       <button id="btn-logout" class="icon-btn" title="Cerrar sesion" aria-label="Cerrar sesion">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
@@ -546,7 +530,7 @@
           </div>
 
           <div class="cal-legend" style="margin-top:12px;">
-            <span><i style="background:var(--green)"></i> Mañana</span>
+            <span><i style="background:var(--green)"></i> Manana</span>
             <span><i style="background:var(--sky-alt)"></i> Tarde</span>
             <span><i style="background:linear-gradient(135deg,var(--green) 50%,var(--sky-alt) 50%)"></i> Ambos</span>
             <span><i style="background:var(--text-faint)"></i> No viajo</span>
@@ -559,6 +543,7 @@
               <li>Toca un dia para marcarlo</li>
               <li>Toca una letra (L-V) para seleccionar la columna</li>
               <li>Toca el numero de semana para la fila completa</li>
+              <li>Al elegir dias podes repetirlos cada semana o cada mes</li>
             </ul>
           </div>
         </div>
@@ -637,35 +622,22 @@
   <button type="button" class="action-panel-handle" id="action-panel-handle" aria-label="Expandir o colapsar">
     <span class="bar"></span>
   </button>
-  <div class="count" id="action-panel-count-row">
+  <div class="count">
     <span id="action-count">0 dias seleccionados</span>
     <a href="#" id="action-clear">Cancelar</a>
   </div>
 
   <div class="action-panel-body" id="action-panel-body">
-    <div class="viaja-toggle" id="viaja-toggle" role="group" aria-label="Estado de asistencia">
+    <div class="viaja-toggle" role="group" aria-label="Estado de asistencia">
       <button type="button" id="opt-viajo" class="seg-btn active" data-viaja="1">Viajo</button>
       <button type="button" id="opt-noviajo" class="seg-btn" data-viaja="0">No viajo</button>
     </div>
 
-    <div id="turno-box" class="turno-box">
-      <div class="recurrence-title">Turno</div>
-      <div class="viaja-toggle" id="turno-toggle" role="group" aria-label="Turno">
-        <button type="button" class="seg-btn" data-turno="manana">Mañana</button>
-        <button type="button" class="seg-btn" data-turno="tarde">Tarde</button>
-        <button type="button" class="seg-btn active" data-turno="ambos">Ambos</button>
-      </div>
-    </div>
-
-    <button id="btn-guardar" class="btn btn-primary" style="margin-top:14px;" disabled>Guardar</button>
-
-    <!-- Repeticion: a proposito queda debajo de Guardar. En altura media
-         (mid) el corte del bottom sheet cae justo aca, asi que la
-         repeticion no se ve hasta que el usuario arrastra el handle hacia
-         arriba — el flujo simple (marcar dias, elegir turno, guardar) no
-         necesita tocarla. -->
     <div id="recurrence-box" class="recurrence-box hidden">
-      <div class="recurrence-title">Repeticion</div>
+      <div class="recurrence-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+        Repeticion
+      </div>
       <div id="recurrence-options" class="recurrence-options"></div>
       <div id="recurrence-extent" class="recurrence-extent hidden">
         <label for="extent-select">Aplicar durante</label>
@@ -679,19 +651,21 @@
         </div>
       </div>
     </div>
+
+    <button id="btn-guardar" class="btn btn-primary" style="margin-top:14px;" disabled>Guardar</button>
   </div>
 </div>
 
-<!-- MODAL DE IMPACTO: solo aparece cuando una repeticion va a tocar mas
-     fechas de las que el usuario marco a mano, para que confirme antes de
-     que se sobreescriba algo que ya tenia configurado. -->
-<div id="modal-impact" class="modal-overlay hidden">
+<!-- MODAL TURNO -->
+<div id="modal-turno" class="modal-overlay hidden">
   <div class="modal-card glass">
-    <h3>Confirmar cambios</h3>
-    <p id="modal-impact-summary" class="modal-summary">Calculando impacto...</p>
-    <div class="modal-actions">
-      <button type="button" class="btn btn-primary" id="modal-impact-confirm">Sobrescribir y guardar</button>
-      <button type="button" id="modal-impact-cancel" class="btn btn-ghost">Cancelar</button>
+    <h3>Viaja en que turno?</h3>
+    <p id="modal-turno-summary" class="modal-summary">-</p>
+    <div class="modal-turno-options">
+      <button type="button" class="btn btn-ghost" data-turno="manana">Manana</button>
+      <button type="button" class="btn btn-ghost" data-turno="tarde">Tarde</button>
+      <button type="button" class="btn btn-primary" data-turno="ambos">Ambos</button>
+      <button type="button" id="modal-turno-cancel" class="btn btn-ghost">Cancelar</button>
     </div>
   </div>
 </div>
@@ -729,19 +703,12 @@
     calendarByDate: {},
     selected: new Set(),
     viajaChoice: true,
-    turnoChoice: "ambos",
     recurrenceChoice: "none",
     suppressRecurrence: false,
     extentType: "weeks",
     extentValue: 4,
     pendingDates: [],
-    panelState: "mid",
-
-    // Caché en memoria por mes ("YYYY-MM" -> datos). Calendario e Historial
-    // comparten el mismo dato subyacente (rpc_calendario_mes), asi que un
-    // solo mes descargado sirve para ambas pantallas. Se invalida cuando el
-    // usuario guarda cambios en ese mes, o cuando pide "refrescar".
-    monthCache: {},
+    panelCollapsed: false,
 
     historialYear: null,
     historialMonth: null,
@@ -780,6 +747,19 @@
     el.className = "show" + (kind ? " " + kind : "");
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => { el.className = ""; }, 2600);
+  }
+
+  // La opcion de repetir queda escondida dentro del panel hasta que se elige
+  // al menos un dia, asi que muchos usuarios nunca la descubren. Se avisa
+  // una unica vez (queda guardado en el dispositivo) la primera vez que
+  // arman una seleccion.
+  const REPEAT_HINT_KEY = "charterti_pasajero_repeat_hint_shown";
+  function maybeShowRepeatHint() {
+    try {
+      if (localStorage.getItem(REPEAT_HINT_KEY)) return;
+      localStorage.setItem(REPEAT_HINT_KEY, "1");
+    } catch (e) { return; }
+    setTimeout(() => toast("Tip: podes repetir esta seleccion cada semana o mes", "ok"), 700);
   }
 
   const STORAGE_KEY = "charterti_pasajero_profile";
@@ -825,34 +805,35 @@
     }
   });
 
-  document.getElementById("btn-refresh").addEventListener("click", async () => {
-    const btn = document.getElementById("btn-refresh");
-    if (!state.profile || btn.disabled) return;
-    btn.disabled = true;
-    btn.classList.add("spinning");
-    try {
-      if (state.activeTab === "historial") {
-        delete state.monthCache[monthCacheKey(state.historialYear, state.historialMonth)];
-        await loadHistorial();
-      } else if (state.activeTab === "calendario") {
-        delete state.monthCache[monthCacheKey(state.viewYear, state.viewMonth)];
-        await loadCalendar();
-      } else {
-        const t = new Date();
-        delete state.monthCache[monthCacheKey(t.getFullYear(), t.getMonth() + 1)];
-        await loadHomeStatus();
-      }
-      toast("Actualizado", "ok");
-    } finally {
-      btn.disabled = false;
-      btn.classList.remove("spinning");
-    }
-  });
-
   document.getElementById("btn-logout").addEventListener("click", () => {
     clearProfile();
     stopMapPolling();
+
+    // El panel de seleccion (#action-panel) esta fuera de #screen-app, asi
+    // que ocultar la pantalla de la app no lo ocultaba a el: quedaba
+    // flotando abierto, con las fechas del usuario anterior, encima de la
+    // pantalla de login. clearSelection() lo cierra y vacia.
+    clearSelection();
+    document.getElementById("action-panel").classList.remove("open", "collapsed");
+
+    if (state.mapMarker) {
+      try { state.map.removeLayer(state.mapMarker); } catch (e) {}
+      state.mapMarker = null;
+    }
+    document.getElementById("map-info").classList.add("hidden");
+    document.getElementById("map-unavailable-box").classList.add("hidden");
+
     state.profile = null;
+    state.calendarByDate = {};
+    state.historialByDate = {};
+    state.historialYear = null;
+    state.historialMonth = null;
+    state.activeTab = "inicio";
+    document.querySelectorAll(".nav-btn").forEach((b) => b.classList.toggle("active", b.dataset.tab === "inicio"));
+    ["inicio", "calendario", "mapa", "historial"].forEach((id) => {
+      document.getElementById("tab-" + id).classList.toggle("hidden", id !== "inicio");
+    });
+
     document.getElementById("screen-app").classList.add("hidden");
     document.getElementById("screen-login").classList.remove("hidden");
     document.getElementById("input-dni").value = "";
@@ -882,6 +863,16 @@
     ["inicio", "calendario", "mapa", "historial"].forEach((id) => {
       document.getElementById("tab-" + id).classList.toggle("hidden", id !== tab);
     });
+
+    // El panel de seleccion (bottom sheet) vive fuera de las pestañas, asi
+    // que si el usuario deja una seleccion sin guardar y se va a Inicio o al
+    // Mapa, antes quedaba flotando encima de esas pantallas. Se repliega al
+    // salir de Calendario/Historial y se vuelve a abrir si hay algo
+    // seleccionado al volver a entrar.
+    if (state.selected.size > 0) {
+      state.panelCollapsed = !(tab === "calendario" || tab === "historial");
+      renderActionPanel();
+    }
 
     if (tab === "mapa") {
       setTimeout(() => {
@@ -917,8 +908,6 @@
     return { status: "unmarked" };
   }
 
-  function monthCacheKey(year, month) { return `${year}-${pad2(month)}`; }
-
   async function fetchMonthData(year, month) {
     const { data, error } = await supabase.rpc("rpc_calendario_mes", {
       p_dni: state.profile.dni,
@@ -933,26 +922,6 @@
       map[key][row.turno] = { viaja: row.viaja, origen: row.origen };
     });
     return map;
-  }
-
-  // Envoltorio con caché: si el mes ya se descargó, lo devuelve al instante
-  // sin volver a pedirle nada a Supabase. Cambio de pestaña o de mes ya
-  // visitado = cero latencia.
-  async function fetchMonthDataCached(year, month, forceRefresh) {
-    const key = monthCacheKey(year, month);
-    if (!forceRefresh && state.monthCache[key]) {
-      return state.monthCache[key];
-    }
-    const data = await fetchMonthData(year, month);
-    state.monthCache[key] = data;
-    return data;
-  }
-
-  // Se llama despues de guardar cambios: los meses tocados ya no son
-  // validos en caché, para que la proxima vez se traigan frescos.
-  function invalidateMonthCache(dates) {
-    const keys = new Set(dates.map((iso) => iso.slice(0, 7)));
-    keys.forEach((k) => delete state.monthCache[k]);
   }
 
   function buildWeeks(year, month) {
@@ -979,12 +948,12 @@
       return;
     }
     try {
-      const map = await fetchMonthDataCached(t.getFullYear(), t.getMonth() + 1);
+      const map = await fetchMonthData(t.getFullYear(), t.getMonth() + 1);
       const info = map[todayISO()] || {};
       const c = classifyDay(info);
       if (c.status === "viaja") {
         const parts = [];
-        if (c.mViaja) parts.push("mañana");
+        if (c.mViaja) parts.push("manana");
         if (c.tViaja) parts.push("tarde");
         statusEl.textContent = `Viajas hoy - ${parts.join(" y ")}`;
       } else if (c.status === "no") {
@@ -1026,7 +995,7 @@
     const body = document.getElementById("cal-body");
     body.innerHTML = `<div style="padding:24px;text-align:center;color:var(--text-faint);font-size:0.85rem;">Cargando...</div>`;
     try {
-      state.calendarByDate = await fetchMonthDataCached(state.viewYear, state.viewMonth);
+      state.calendarByDate = await fetchMonthData(state.viewYear, state.viewMonth);
       renderCalendar();
     } catch (e) {
       console.error(e);
@@ -1128,16 +1097,16 @@
   });
 
   // Decide si, tras un toque en el calendario, el panel de acción debe
-  // "despertar" a media altura (primera selección: mostramos Viajo/No viajo
-  // y turno) o quedar replegado (el panel ya estaba abierto y el usuario
-  // sigue eligiendo días — se corre solito para no tapar el calendario).
-  function updatePanelStateAfterCalendarTap(wasEmpty) {
+  // quedar expandido (primera selección: mostramos las opciones) o
+  // replegado (el panel ya estaba abierto y el usuario sigue eligiendo
+  // días — se corre solito para no tapar el calendario).
+  function updatePanelCollapseAfterCalendarTap(wasEmpty) {
     if (state.selected.size === 0) {
-      state.panelState = "mid";
+      state.panelCollapsed = false;
     } else if (wasEmpty) {
-      state.panelState = "mid";
+      state.panelCollapsed = false;
     } else {
-      state.panelState = "collapsed";
+      state.panelCollapsed = true;
     }
   }
 
@@ -1150,9 +1119,10 @@
     }
     state.recurrenceChoice = "none";
     state.suppressRecurrence = !!suppressRecurrence;
-    updatePanelStateAfterCalendarTap(wasEmpty);
+    updatePanelCollapseAfterCalendarTap(wasEmpty);
     renderCalendar();
     renderActionPanel();
+    if (wasEmpty && state.selected.size > 0 && !suppressRecurrence) maybeShowRepeatHint();
   }
 
   function toggleWeekdaySelection(weekdayIdx) {
@@ -1172,9 +1142,10 @@
       dates.forEach(d => state.selected.add(d));
     }
     state.recurrenceChoice = "none";
-    updatePanelStateAfterCalendarTap(wasEmpty);
+    updatePanelCollapseAfterCalendarTap(wasEmpty);
     renderCalendar();
     renderActionPanel();
+    if (wasEmpty && state.selected.size > 0) maybeShowRepeatHint();
   }
 
   function toggleWeekSelection(week, weekIdx) {
@@ -1190,16 +1161,17 @@
       dates.forEach(d => state.selected.add(d));
     }
     state.recurrenceChoice = "none";
-    updatePanelStateAfterCalendarTap(wasEmpty);
+    updatePanelCollapseAfterCalendarTap(wasEmpty);
     renderCalendar();
     renderActionPanel();
+    if (wasEmpty && state.selected.size > 0) maybeShowRepeatHint();
   }
 
   function clearSelection() {
     state.selected.clear();
     state.recurrenceChoice = "none";
     state.suppressRecurrence = false;
-    state.panelState = "mid";
+    state.panelCollapsed = false;
     renderActionPanel();
   }
 
@@ -1227,17 +1199,10 @@
     }
   }
 
-  document.querySelectorAll("#viaja-toggle .seg-btn").forEach((btn) => {
+  document.querySelectorAll(".seg-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
       state.viajaChoice = btn.dataset.viaja === "1";
-      document.querySelectorAll("#viaja-toggle .seg-btn").forEach((b) => b.classList.toggle("active", b === btn));
-    });
-  });
-
-  document.querySelectorAll("#turno-toggle .seg-btn").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      state.turnoChoice = btn.dataset.turno;
-      document.querySelectorAll("#turno-toggle .seg-btn").forEach((b) => b.classList.toggle("active", b === btn));
+      document.querySelectorAll(".seg-btn").forEach((b) => b.classList.toggle("active", b === btn));
     });
   });
 
@@ -1342,143 +1307,58 @@
     return Array.from(out).sort();
   }
 
-  function isDesktopPanel() {
-    return window.matchMedia("(min-width: 768px)").matches;
-  }
-
-  // Mide, con el contenido real ya renderizado, hasta dónde hay que dejar
-  // ver el panel en cada estado: state-collapsed corta justo debajo del
-  // conteo; state-mid corta justo debajo del selector de turno. Se
-  // recalcula en cada render porque el contenido (repeticion visible o no)
-  // cambia la altura.
-  function updatePanelMetrics() {
-    const panel = document.getElementById("action-panel");
-    const countRow = document.getElementById("action-panel-count-row");
-    const guardarBtn = document.getElementById("btn-guardar");
-    if (!countRow || !guardarBtn) return;
-    const collapsedPx = Math.round(countRow.offsetTop + countRow.offsetHeight + 12);
-    const midPx = Math.round(guardarBtn.offsetTop + guardarBtn.offsetHeight + 16);
-    panel.style.setProperty("--collapsed-px", collapsedPx + "px");
-    panel.style.setProperty("--mid-px", midPx + "px");
-  }
-
-  function setPanelState(name) {
-    state.panelState = name;
-    applyPanelState();
-  }
-
-  function applyPanelState() {
+  function renderActionPanel() {
     const panel = document.getElementById("action-panel");
     const n = state.selected.size;
     panel.classList.toggle("open", n > 0);
-    panel.classList.remove("state-collapsed", "state-mid", "state-expanded");
-    if (n > 0) panel.classList.add("state-" + state.panelState);
-  }
-
-  function renderActionPanel() {
-    const n = state.selected.size;
+    panel.classList.toggle("collapsed", state.panelCollapsed && n > 0);
     document.getElementById("action-count").textContent =
       n === 1 ? "1 dia seleccionado" : `${n} dias seleccionados`;
     document.getElementById("btn-guardar").disabled = n === 0;
     renderRecurrenceOptions();
-    updatePanelMetrics();
-    applyPanelState();
   }
 
-  window.addEventListener("resize", () => {
-    if (document.getElementById("action-panel").classList.contains("open")) {
-      updatePanelMetrics();
-    }
+  document.getElementById("action-panel-handle").addEventListener("click", () => {
+    state.panelCollapsed = !state.panelCollapsed;
+    renderActionPanel();
   });
-
-  // --- Arrastre del handle (mobile): un toque corto alterna
-  // collapsed <-> mid; arrastrar hacia arriba pasa por mid y, si sigue
-  // subiendo, llega a expanded (formulario de repeticion completo).
-  const panelEl = document.getElementById("action-panel");
-  const handleEl = document.getElementById("action-panel-handle");
-  let dragState = null;
-
-  function getPanelTranslateY(panel) {
-    const t = window.getComputedStyle(panel).transform;
-    if (!t || t === "none") return 0;
-    if (t.startsWith("matrix3d")) {
-      return parseFloat(t.split(",")[13]) || 0;
-    }
-    const parts = t.match(/matrix\((.+)\)/);
-    if (!parts) return 0;
-    return parseFloat(parts[1].split(",")[5]) || 0;
-  }
-
-  handleEl.addEventListener("pointerdown", (e) => {
-    if (isDesktopPanel() || !panelEl.classList.contains("open")) return;
-    handleEl.setPointerCapture(e.pointerId);
-    dragState = {
-      pointerId: e.pointerId,
-      startY: e.clientY,
-      startTy: getPanelTranslateY(panelEl),
-      panelHeight: panelEl.offsetHeight,
-      currentTy: getPanelTranslateY(panelEl),
-      moved: false,
-    };
-    panelEl.classList.add("dragging");
-  });
-
-  handleEl.addEventListener("pointermove", (e) => {
-    if (!dragState || e.pointerId !== dragState.pointerId) return;
-    const delta = e.clientY - dragState.startY;
-    if (Math.abs(delta) > 4) dragState.moved = true;
-    const ty = Math.max(0, Math.min(dragState.panelHeight, dragState.startTy + delta));
-    dragState.currentTy = ty;
-    panelEl.style.transform = `translateY(${ty}px)`;
-  });
-
-  function finishDrag() {
-    if (!dragState) return;
-    const { moved, currentTy, panelHeight } = dragState;
-    panelEl.classList.remove("dragging");
-    panelEl.style.transform = "";
-    dragState = null;
-
-    if (!moved) {
-      setPanelState(state.panelState === "collapsed" ? "mid" : "collapsed");
-      return;
-    }
-
-    const collapsedPx = parseFloat(panelEl.style.getPropertyValue("--collapsed-px")) || 78;
-    const midPx = parseFloat(panelEl.style.getPropertyValue("--mid-px")) || 210;
-    const candidates = [
-      { name: "expanded", ty: 0 },
-      { name: "mid", ty: Math.max(0, panelHeight - midPx) },
-      { name: "collapsed", ty: Math.max(0, panelHeight - collapsedPx) },
-    ];
-    let best = candidates[0];
-    candidates.forEach((c) => {
-      if (Math.abs(c.ty - currentTy) < Math.abs(best.ty - currentTy)) best = c;
-    });
-    setPanelState(best.name);
-  }
-
-  handleEl.addEventListener("pointerup", finishDrag);
-  handleEl.addEventListener("pointercancel", finishDrag);
 
   // Tocar en cualquier parte visible del panel mientras está replegado
   // (la franja con el conteo, ya que el resto del cuerpo no es interactivo
-  // en ese estado) lo vuelve a media altura.
-  panelEl.addEventListener("click", (e) => {
-    if (!panelEl.classList.contains("open") || !panelEl.classList.contains("state-collapsed")) return;
+  // en ese estado) lo vuelve a expandir.
+  document.getElementById("action-panel").addEventListener("click", (e) => {
+    const panel = document.getElementById("action-panel");
+    if (!panel.classList.contains("open") || !panel.classList.contains("collapsed")) return;
     if (e.target.closest("#action-clear")) return;
-    setPanelState("mid");
+    state.panelCollapsed = false;
+    renderActionPanel();
   });
 
   // Tocar afuera del panel (topbar, dock de navegación, fondo) también lo
   // repliega. Los toques dentro del calendario y de Historial ya deciden
-  // esto por su cuenta en updatePanelStateAfterCalendarTap, así que se
+  // esto por su cuenta en updatePanelCollapseAfterCalendarTap, así que se
   // excluyen acá para no pisar esa lógica.
+  //
+  // Importante: usamos composedPath() en vez de panel.contains(e.target).
+  // Varios botones de adentro del panel (por ejemplo los de "Repeticion")
+  // reconstruyen su propio contenedor con innerHTML al tocarlos, lo que deja
+  // e.target desconectado del documento antes de que este listener corra.
+  // panel.contains(e.target) da entonces un falso "esta afuera" y el panel
+  // se colapsaba por completo apenas se elegia una repeticion. composedPath()
+  // queda fijo al momento del click, asi que no se ve afectado por esos
+  // cambios en el DOM.
   document.addEventListener("click", (e) => {
-    if (!panelEl.classList.contains("open") || panelEl.classList.contains("state-collapsed")) return;
-    if (panelEl.contains(e.target)) return;
-    if (e.target.closest(".day-cell, .week-num, .cal-head-cell, .hist-row")) return;
-    setPanelState("collapsed");
+    const panel = document.getElementById("action-panel");
+    if (!panel.classList.contains("open") || panel.classList.contains("collapsed")) return;
+    const path = typeof e.composedPath === "function" ? e.composedPath() : null;
+    const isInsidePanel = path ? path.includes(panel) : panel.contains(e.target);
+    if (isInsidePanel) return;
+    const isExcluded = path
+      ? path.some((el) => el.classList && (el.classList.contains("day-cell") || el.classList.contains("week-num") || el.classList.contains("cal-head-cell") || el.classList.contains("hist-row")))
+      : !!e.target.closest(".day-cell, .week-num, .cal-head-cell, .hist-row");
+    if (isExcluded) return;
+    state.panelCollapsed = true;
+    renderActionPanel();
   });
 
   function renderRecurrenceOptions() {
@@ -1537,7 +1417,8 @@
       btn.type = "button";
       btn.className = "recurrence-opt" + (state.recurrenceChoice === o.id ? " active" : "");
       btn.textContent = o.label;
-      btn.addEventListener("click", () => {
+      btn.addEventListener("click", (ev) => {
+        ev.stopPropagation();
         state.recurrenceChoice = o.id;
         renderRecurrenceOptions();
         if (state.recurrenceChoice !== "none") {
@@ -1561,72 +1442,32 @@
     renderRecurrenceOptions();
   });
 
-  // Guardar: si la seleccion es tal cual (sin repeticion, o repeticion que
-  // no agrego fechas nuevas) se guarda directo. Si la repeticion expandio
-  // la seleccion original a mas fechas, primero se calcula el impacto real
-  // contra lo que ya existe en la base y se pide confirmacion.
-  document.getElementById("btn-guardar").addEventListener("click", async () => {
+  document.getElementById("btn-guardar").addEventListener("click", () => {
     if (state.selected.size === 0) return;
     const dates = computeRecurrenceDates(state.recurrenceChoice, state.extentType, state.extentValue);
     state.pendingDates = dates;
-    const isExpanded = state.recurrenceChoice !== "none" && dates.length > state.selected.size;
-    if (isExpanded) {
-      await openImpactModal(dates);
-    } else {
-      await persistSelection(state.turnoChoice);
-    }
+    openTurnoModal();
   });
 
-  async function openImpactModal(dates) {
-    const modal = document.getElementById("modal-impact");
-    const summary = document.getElementById("modal-impact-summary");
-    modal.classList.remove("hidden");
-    summary.textContent = "Calculando impacto...";
-    setImpactSaving(true);
-    try {
-      const months = Array.from(new Set(dates.map((d) => d.slice(0, 7))));
-      const results = await Promise.all(
-        months.map((ym) => {
-          const [y, m] = ym.split("-").map(Number);
-          return fetchMonthDataCached(y, m);
-        })
-      );
-      const merged = {};
-      results.forEach((data) => Object.assign(merged, data));
-      let withConfig = 0;
-      dates.forEach((iso) => {
-        const info = merged[iso];
-        if (info && (info.manana || info.tarde)) withConfig++;
-      });
-      summary.textContent = withConfig > 0
-        ? `Vas a modificar ${dates.length} dias, de los cuales ${withConfig} ya tenian una configuracion manual. ¿Deseas sobreescribirlos?`
-        : `Vas a modificar ${dates.length} dias. Ninguno tenia una configuracion previa.`;
-    } catch (e) {
-      console.error(e);
-      summary.textContent =
-        `Vas a modificar ${dates.length} dias. No pudimos verificar si alguno ya tenia una configuracion previa.`;
-    } finally {
-      setImpactSaving(false);
-    }
+  function openTurnoModal() {
+    const n = state.pendingDates.length;
+    document.getElementById("modal-turno-summary").textContent =
+      `Se aplicara a ${n} fecha${n === 1 ? "" : "s"} - ${state.viajaChoice ? "Viajo" : "No viajo"}`;
+    document.getElementById("modal-turno").classList.remove("hidden");
   }
 
-  function closeImpactModal() {
-    document.getElementById("modal-impact").classList.add("hidden");
+  function closeTurnoModal() {
+    document.getElementById("modal-turno").classList.add("hidden");
   }
 
-  document.getElementById("modal-impact-cancel").addEventListener("click", closeImpactModal);
-  document.getElementById("modal-impact-confirm").addEventListener("click", () => {
-    closeImpactModal();
-    persistSelection(state.turnoChoice);
+  document.getElementById("modal-turno-cancel").addEventListener("click", closeTurnoModal);
+  document.querySelectorAll("#modal-turno [data-turno]").forEach((btn) => {
+    btn.addEventListener("click", () => persistSelection(btn.dataset.turno));
   });
-
-  function setImpactSaving(isSaving) {
-    document.querySelectorAll("#modal-impact button").forEach((b) => (b.disabled = isSaving));
-  }
 
   function setSaving(isSaving) {
     document.getElementById("btn-guardar").disabled = isSaving || state.selected.size === 0;
-    setImpactSaving(isSaving);
+    document.querySelectorAll("#modal-turno button").forEach((b) => (b.disabled = isSaving));
   }
 
   async function persistSelection(turnoChoice) {
@@ -1636,7 +1477,7 @@
     const turnos = turnoChoice === "ambos" ? ["manana", "tarde"] : [turnoChoice];
     const CHUNK = 200;
 
-    closeImpactModal();
+    closeTurnoModal();
     setSaving(true);
     try {
       for (const turno of turnos) {
@@ -1652,14 +1493,10 @@
         }
       }
       toast(`Guardado (${dates.length} fecha${dates.length === 1 ? "" : "s"})`, "ok");
-      invalidateMonthCache(dates);
       clearSelection();
       await loadCalendar();
       if (state.activeTab === "historial") {
         await loadHistorial();
-      }
-      if (dates.includes(todayISO())) {
-        loadHomeStatus();
       }
     } catch (e) {
       console.error(e);
@@ -1692,7 +1529,7 @@
     const list = document.getElementById("hist-list");
     list.innerHTML = `<div style="padding:24px;text-align:center;color:var(--text-faint);font-size:0.85rem;">Cargando...</div>`;
     try {
-      state.historialByDate = await fetchMonthDataCached(state.historialYear, state.historialMonth);
+      state.historialByDate = await fetchMonthData(state.historialYear, state.historialMonth);
       renderHistorial();
     } catch (e) {
       console.error(e);
@@ -1758,7 +1595,7 @@
       const chips = document.createElement("div");
       chips.className = "hist-chips";
       if (r.status.status === "viaja") {
-        if (r.status.mViaja) chips.appendChild(makeChip("am", "Mañana"));
+        if (r.status.mViaja) chips.appendChild(makeChip("am", "Manana"));
         if (r.status.tViaja) chips.appendChild(makeChip("pm", "Tarde"));
       } else if (r.status.status === "no") {
         chips.appendChild(makeChip("no", "No viaja"));
@@ -1787,10 +1624,9 @@
         center: [-34.9011, -56.1645],
         zoom: 12
       });
-      L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
-        subdomains: "abcd",
-        maxZoom: 20,
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        maxZoom: 19,
       }).addTo(state.map);
     } catch (e) {
       console.error("Error al inicializar el mapa:", e);
