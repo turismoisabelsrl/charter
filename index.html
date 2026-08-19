@@ -6,15 +6,6 @@
 <meta name="theme-color" content="#071020" />
 <title>Charter TI · Pasajero</title>
 <link rel="manifest" href="/manifest.json" />
-
-<!-- [FIX 19] Favicon inline (evita el 404 silencioso) -->
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%233a8fd1'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%23071020'/%3E%3C/svg%3E" />
-
-<!-- [FIX 22] Meta tags PWA iOS -->
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="apple-mobile-web-app-title" content="Charter TI" />
-
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
@@ -22,7 +13,6 @@
 
 <style>
   :root {
-    color-scheme: dark; /* [FIX 3] select/input nativos en tema oscuro */
     --navy: #071020;
     --navy-2: #0c1a2e;
     --navy-3: #10233c;
@@ -33,7 +23,7 @@
     --red: #e04444;
     --text: #e8eef7;
     --text-dim: #9fb0c3;
-    --text-faint: #7d92ab; /* [FIX 14] antes #5c7189 — contraste AA sobre navy */
+    --text-faint: #5c7189;
     --glass-bg: rgba(255, 255, 255, 0.055);
     --glass-bg-strong: rgba(255, 255, 255, 0.09);
     --glass-border: rgba(255, 255, 255, 0.12);
@@ -45,9 +35,6 @@
   }
 
   * { box-sizing: border-box; }
-
-  /* [FIX 13] elimina el delay de doble-tap en iOS */
-  button, .day-cell, .week-num, .cal-head-cell, .seg-btn, a { touch-action: manipulation; }
 
   html, body {
     margin: 0;
@@ -86,32 +73,6 @@
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
     border-radius: var(--radius);
-  }
-
-  /* [FIX 21] Skeleton loaders */
-  .skeleton {
-    position: relative; overflow: hidden;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 8px; color: transparent !important;
-    min-height: 1em;
-  }
-  .skeleton::after {
-    content: ""; position: absolute; inset: 0;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.07), transparent);
-    animation: shimmer 1.4s infinite;
-  }
-  @keyframes shimmer {
-    from { transform: translateX(-100%); }
-    to { transform: translateX(100%); }
-  }
-
-  /* [FIX 11] respetar preferencias de motion reducido */
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
-    }
   }
 
   /* LOGIN */
@@ -204,9 +165,6 @@
   .home-wrap { max-width: 560px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; padding-top: 4px; }
 
   .home-banner { display: flex; gap: 12px; padding: 16px 18px; align-items: flex-start; }
-  /* [FIX 20] banner "en camino" clicable → mapa */
-  .home-banner.live { cursor: pointer; transition: background 0.15s ease; }
-  .home-banner.live:hover { background: var(--glass-bg-strong); }
   .home-banner-dot {
     width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 5px;
     background: var(--text-faint); transition: background 0.2s ease;
@@ -306,8 +264,12 @@
          repetición (select compacto) + Guardar, fijo abajo del panel.
        - panelMode "readonly": fecha < hoy -> tarjeta de solo lectura con lo
          que realmente pasó ese día (viene de rpc_detalle_dia).
-     Altura: 46vh por defecto, crece a 72vh cuando la repetición revela el
-     bloque de alcance ("tall"). El handle alterna con "peek" (solo conteo).
+     La altura ya no se maneja arrastrando el panel a mano por varias
+     posiciones: se restringe a un 46vh por defecto (dentro del 40-50%
+     pedido) y crece a 72vh con una transición CSS cuando la repetición
+     elegida revela el bloque de alcance ("tall"). Un toque en el handle
+     alterna entre esa altura y un estado "peek" (apenas el conteo), para
+     poder ver la grilla mientras se sigue seleccionando días.
   ---------------------------------------------------------------------- */
   #action-panel {
     position: fixed; left: 0; right: 0; bottom: 0;
@@ -389,7 +351,7 @@
   .chip.pm { background: rgba(85, 179, 245, 0.18); color: #bfe3fc; }
   .chip.no { background: rgba(224, 68, 68, 0.16); color: #ffb3b3; }
 
-  /* ---------------- DOCK DE NAVEGACIÓN INFERIOR (3 pestañas) ---------------- */
+  /* ---------------- DOCK DE NAVEGACION INFERIOR (3 pestañas) ---------------- */
   .bottom-nav {
     position: fixed; left: 50%; transform: translateX(-50%);
     bottom: calc(14px + var(--safe-b));
@@ -470,11 +432,10 @@
     <form id="form-login" autocomplete="off">
       <div class="field">
         <label for="input-dni">Documento (DNI)</label>
-        <!-- [FIX 6] maxlength agregado -->
-        <input id="input-dni" name="dni" inputmode="numeric" pattern="[0-9]{6,9}" maxlength="9" placeholder="Ej: 12345678" required />
+        <input id="input-dni" name="dni" inputmode="numeric" pattern="[0-9]{6,9}" placeholder="Ej: 12345678" required />
       </div>
       <button type="submit" id="btn-login" class="btn btn-primary">Ingresar</button>
-      <div id="login-error" class="login-error" role="alert"></div>
+      <div id="login-error" class="login-error"></div>
     </form>
   </div>
 </section>
@@ -493,8 +454,7 @@
           <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
         </svg>
       </button>
-      <!-- [FIX 4] "Cerrar sesión" con tilde -->
-      <button id="btn-logout" class="icon-btn" title="Cerrar sesión" aria-label="Cerrar sesión">
+      <button id="btn-logout" class="icon-btn" title="Cerrar sesion" aria-label="Cerrar sesion">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
           <polyline points="16 17 21 12 16 7"></polyline>
@@ -505,25 +465,31 @@
   </header>
 
   <main>
-    <!-- INICIO — dashboard operativo -->
+    <!-- ============================================================
+         INICIO — dashboard operativo (banner en vivo + próximo viaje)
+    ============================================================ -->
     <section id="tab-inicio" class="tab-panel">
       <div class="home-wrap">
         <div id="home-banner" class="home-banner glass off">
           <div class="home-banner-dot" id="home-banner-dot"></div>
           <div>
-            <div class="home-banner-title" id="home-banner-title">Cargando…</div>
+            <div class="home-banner-title" id="home-banner-title">Cargando...</div>
             <div class="home-banner-desc" id="home-banner-desc"></div>
           </div>
         </div>
 
         <div class="next-trip-card glass">
           <div class="next-trip-label">Próximo viaje</div>
-          <div id="next-trip-body">Cargando…</div>
+          <div id="next-trip-body">Cargando...</div>
         </div>
       </div>
     </section>
 
-    <!-- CALENDARIO — también hace de historial -->
+    <!-- ============================================================
+         CALENDARIO — también hace de historial: los días pasados se
+         tocan igual que los futuros, pero abren la tarjeta de solo
+         lectura en vez del formulario.
+    ============================================================ -->
     <section id="tab-calendario" class="tab-panel hidden">
       <div class="calendar-layout">
         <div>
@@ -546,12 +512,12 @@
           <div class="cal-grid glass">
             <div class="cal-row head">
               <div class="cal-head-cell">Sem</div>
-              <div class="cal-head-cell clickable" data-weekday="0" title="Seleccionar todos los lunes">L</div>
-              <div class="cal-head-cell clickable" data-weekday="1" title="Seleccionar todos los martes">M</div>
-              <div class="cal-head-cell clickable" data-weekday="2" title="Seleccionar todos los miércoles">M</div>
-              <div class="cal-head-cell clickable" data-weekday="3" title="Seleccionar todos los jueves">J</div>
-              <div class="cal-head-cell clickable" data-weekday="4" title="Seleccionar todos los viernes">V</div>
-              <div class="cal-head-cell weekend-head" title="Sábado (sin viajes)">S</div>
+              <div class="cal-head-cell clickable" data-weekday="0">L</div>
+              <div class="cal-head-cell clickable" data-weekday="1">M</div>
+              <div class="cal-head-cell clickable" data-weekday="2" title="Miercoles">M</div>
+              <div class="cal-head-cell clickable" data-weekday="3">J</div>
+              <div class="cal-head-cell clickable" data-weekday="4">V</div>
+              <div class="cal-head-cell weekend-head" title="Sabado (sin viajes)">S</div>
               <div class="cal-head-cell weekend-head" title="Domingo (sin viajes)">D</div>
             </div>
             <div id="cal-body"></div>
@@ -568,17 +534,19 @@
         <div class="tips-col">
           <div class="tips-card glass">
             <ul>
-              <li>Toca un día futuro para marcarlo</li>
-              <li>Toca un día pasado para ver qué pasó ese día</li>
+              <li>Toca un dia futuro para marcarlo</li>
+              <li>Toca un dia pasado para ver que paso ese dia</li>
               <li>Toca una letra (L-V) para seleccionar la columna</li>
-              <li>Toca el número de semana para la fila completa</li>
+              <li>Toca el numero de semana para la fila completa</li>
             </ul>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- MAPA -->
+    <!-- ============================================================
+         MAPA
+    ============================================================ -->
     <section id="tab-mapa" class="tab-panel hidden">
       <div id="map"></div>
       <div class="map-overlay-top glass hidden" id="map-info">
@@ -597,8 +565,8 @@
     </section>
   </main>
 
-  <!-- DOCK DE NAVEGACIÓN: 3 pestañas -->
-  <nav class="bottom-nav glass" aria-label="Navegación principal">
+  <!-- DOCK DE NAVEGACION: 3 pestañas -->
+  <nav class="bottom-nav glass" aria-label="Navegacion principal">
     <button type="button" class="nav-btn active" data-tab="inicio">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M3 11l9-8 9 8"></path>
@@ -625,15 +593,15 @@
   </nav>
 </section>
 
-<!-- BOTTOM SHEET / PANEL DE ACCIÓN Y DE HISTORIAL -->
-<div id="action-panel" role="dialog" aria-label="Panel de edición de asistencia">
+<!-- BOTTOM SHEET / PANEL DE ACCION Y DE HISTORIAL -->
+<div id="action-panel">
   <button type="button" class="action-panel-handle" id="action-panel-handle" aria-label="Expandir o colapsar">
     <span class="bar"></span>
   </button>
 
   <div class="action-panel-scroll">
     <div class="count" id="action-panel-count-row">
-      <span id="action-count">0 días seleccionados</span>
+      <span id="action-count">0 dias seleccionados</span>
       <a href="#" id="action-clear">Cancelar</a>
     </div>
 
@@ -653,6 +621,10 @@
         </div>
       </div>
 
+      <!-- Repeticion: ahora es un selector compacto, y va antes de Guardar
+           (que quedo fijo en el pie del panel). Elegir cualquier opcion
+           que no sea "Solo esta fecha" revela el bloque de alcance y
+           el panel crece de 46vh a 72vh con una transicion suave. -->
       <div id="recurrence-box" class="recurrence-box hidden">
         <label for="recurrence-select" class="recurrence-title">Repetición</label>
         <select id="recurrence-select" class="recurrence-select"></select>
@@ -664,7 +636,7 @@
               <option value="months">Próximos meses</option>
               <option value="year">Resto del año</option>
             </select>
-            <input id="extent-number" type="number" min="1" max="52" value="4" inputmode="numeric" />
+            <input id="extent-number" type="number" min="1" max="52" value="4" />
           </div>
         </div>
       </div>
@@ -683,23 +655,21 @@
 </div>
 
 <!-- MODAL DE IMPACTO -->
-<div id="modal-impact" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-impact-title">
+<div id="modal-impact" class="modal-overlay hidden">
   <div class="modal-card glass">
-    <h3 id="modal-impact-title">Confirmar cambios</h3>
-    <p id="modal-impact-summary" class="modal-summary">Calculando impacto…</p>
+    <h3>Confirmar cambios</h3>
+    <p id="modal-impact-summary" class="modal-summary">Calculando impacto...</p>
     <div class="modal-actions">
       <button type="button" class="btn btn-primary" id="modal-impact-confirm">Sobrescribir y guardar</button>
-      <button type="button" class="btn btn-ghost" id="modal-impact-cancel">Cancelar</button>
+      <button type="button" id="modal-impact-cancel" class="btn btn-ghost">Cancelar</button>
     </div>
   </div>
 </div>
 
-<!-- [FIX 10] toast anunciado a lectores de pantalla -->
-<div id="toast" role="status" aria-live="polite"></div>
+<div id="toast"></div>
 
-<!-- [FIX 5] versión pineada. Recomendado: agregar hash SRI desde jsdelivr.com -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 
 <script>
 (function () {
@@ -710,31 +680,42 @@
   const EASYTRACK_FN_URL = SUPABASE_URL + "/functions/v1/easytrack-gps";
   const POLL_MS = 15000;
   const HOME_POLL_MS = 20000;
-  const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000; // [FIX 8] sesión expira a los 30 días
-
-  // ⚠️ AJUSTAR: nombres/firmas de los RPC. Validar contra tu backend.
-  const RPC_LOGIN = "rpc_login_pasajero";
-  const RPC_CALENDARIO_MES = "rpc_calendario_mes";
-  const RPC_DETALLE_DIA = "rpc_detalle_dia";
-  const RPC_GUARDAR = "rpc_guardar_asistencia"; // firma asumida: (p_dni, p_fechas[], p_turno, p_viaja, p_sobrescribir)
 
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  const WEEKDAY_LABELS = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
+  // -------------------------------------------------------------------------
+  // NUEVO — esta pantalla asume una función RPC `rpc_detalle_dia(p_dni,
+  // p_fecha)` que todavía no existía en el backend, necesaria para dos
+  // piezas nuevas de este rediseño:
+  //   1) La tarjeta de solo lectura al tocar un día pasado en el calendario
+  //      (vehículo/interno, chofer, novedades).
+  //   2) El campo "Vehículo" del widget "Próximo viaje" en Inicio.
+  // Se espera un array con una fila por turno con datos ese día:
+  //   { turno, viaja, chofer_nombre, interno, patente, novedades }
+  // (cruzando asistencias + despacho por fecha/turno, similar a como lo
+  // hace el panel admin). Si la función no existe todavía, el fetch falla
+  // en silencio y la UI sigue funcionando con lo que ya trae
+  // rpc_calendario_mes — solo no se muestra vehículo/chofer/novedades
+  // hasta que se implemente del lado del backend.
+  // -------------------------------------------------------------------------
+
+  const WEEKDAY_LABELS = ["Lun", "Mar", "Mie", "Jue", "Vie", "Sab", "Dom"];
   const MONTH_LABELS = [
     "enero", "febrero", "marzo", "abril", "mayo", "junio",
     "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre",
   ];
-  const FULL_WEEKDAY_LOWER = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"];
-  const ORDINAL_MONTH_MASC = ["primer", "segundo", "tercer", "cuarto", "quinto"];
+  const FULL_WEEKDAY_LOWER = ["lunes", "martes", "miercoles", "jueves", "viernes", "sabado", "domingo"];
+  const ORDINAL_WEEK_FEM = ["primeras", "segundas", "terceras", "cuartas", "quintas"];
   const TURNO_LABELS = { manana: "Mañana", tarde: "Tarde" };
-  const TURNO_ORDER = ["manana", "tarde"];
 
+  // Colores por estado de un turno en un día — usados tanto para el fondo
+  // de la celda (mezclados en diagonal si mañana y tarde difieren) como
+  // para el puntito debajo del número.
   const CELL_TINT = {
-    done: "rgba(44, 184, 122, 0.30)",
-    scheduled: "rgba(85, 179, 245, 0.30)",
-    no: "rgba(224, 68, 68, 0.20)",
-    absent: "rgba(255, 255, 255, 0.03)",
+    done: "rgba(44, 184, 122, 0.30)",       // verde — realizado (pasado, viajo=true)
+    scheduled: "rgba(85, 179, 245, 0.30)",  // azul — programado (futuro, viajo=true)
+    no: "rgba(224, 68, 68, 0.20)",          // rojo — marco "no viajo"
+    absent: "rgba(255, 255, 255, 0.03)",    // gris — sin registro (pasado: falta; futuro: sin marcar)
   };
 
   const state = {
@@ -743,12 +724,12 @@
 
     viewYear: new Date().getFullYear(),
     viewMonth: new Date().getMonth() + 1,
-    calendarByDate: {},        // datos del mes en vista (resueltos)
+    calendarByDate: {},
 
-    selected: new Set(),
-    inspectingDate: null,
-    panelMode: "edit",
-    sheetPeek: false,
+    selected: new Set(),          // fechas futuras/hoy elegidas para editar
+    inspectingDate: null,         // fecha pasada que se esta mostrando en modo lectura
+    panelMode: "edit",            // "edit" | "readonly"
+    sheetPeek: false,             // panel replegado a solo el conteo
 
     viajaChoice: true,
     turnoChoice: "ambos",
@@ -757,8 +738,11 @@
     extentValue: 4,
     pendingDates: [],
 
-    monthCache: {},            // "YYYY-MM" -> PROMESA (evita RPC duplicados en vuelo)
-    detalleDiaCache: new Map(),
+    // Cache en memoria por mes ("YYYY-MM" -> datos). Un solo mes descargado
+    // sirve para Calendario, Inicio (banner + proximo viaje) y la tarjeta
+    // de lectura, ya que todas leen del mismo rpc_calendario_mes.
+    monthCache: {},
+    detalleDiaCache: new Map(),   // iso -> {turno: {...}} (rpc_detalle_dia)
 
     map: null,
     mapMarker: null,
@@ -766,9 +750,6 @@
     homePollTimer: null,
   };
 
-  // =====================================================================
-  // Helpers básicos
-  // =====================================================================
   function pad2(n) { return String(n).padStart(2, "0"); }
   function toISODate(y, m, d) { return `${y}-${pad2(m)}-${pad2(d)}`; }
   function todayISO() {
@@ -791,21 +772,6 @@
   }
   function capitalize(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
 
-  // [FIX 9] escape de HTML para todo lo interpolado con innerHTML
-  function esc(s) {
-    const d = document.createElement("div");
-    d.textContent = s == null ? "" : String(s);
-    return d.innerHTML;
-  }
-
-  // [FIX 18] fetch con timeout (AbortController)
-  async function fetchWithTimeout(url, ms) {
-    const ctrl = new AbortController();
-    const t = setTimeout(() => ctrl.abort(), ms);
-    try { return await fetch(url, { signal: ctrl.signal }); }
-    finally { clearTimeout(t); }
-  }
-
   let toastTimer = null;
   function toast(msg, kind) {
     const el = document.getElementById("toast");
@@ -815,137 +781,46 @@
     toastTimer = setTimeout(() => { el.className = ""; }, 2600);
   }
 
-  // =====================================================================
-  // [FIX 8] Storage con TTL
-  // =====================================================================
   const STORAGE_KEY = "charterti_pasajero_profile";
-  function saveProfile(p) {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ p, ts: Date.now() })); } catch (e) {}
-  }
+  function saveProfile(p) { localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); }
   function loadProfile() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return null;
-      const { p, ts } = JSON.parse(raw);
-      if (!p || !p.dni || !ts || Date.now() - ts > SESSION_TTL_MS) {
-        clearProfile();
-        return null;
-      }
-      return p;
+      return raw ? JSON.parse(raw) : null;
     } catch (e) { return null; }
   }
-  function clearProfile() { try { localStorage.removeItem(STORAGE_KEY); } catch (e) {} }
+  function clearProfile() { localStorage.removeItem(STORAGE_KEY); }
 
-  // =====================================================================
-  // LOGIN — [FIX 7bis] throttle client-side (el rate limiting real va en el backend)
-  // TODO backend: agregar OTP o PIN. Con solo el DNI, cualquiera que lo
-  // conozca puede entrar y editar asistencias ajenas.
-  // =====================================================================
   const formLogin = document.getElementById("form-login");
   const btnLogin = document.getElementById("btn-login");
   const loginError = document.getElementById("login-error");
-  let failedLogins = 0;
-  let loginLockedUntil = 0;
 
   formLogin.addEventListener("submit", async (ev) => {
     ev.preventDefault();
-    if (Date.now() < loginLockedUntil) {
-      const secs = Math.ceil((loginLockedUntil - Date.now()) / 1000);
-      loginError.textContent = `Demasiados intentos fallidos. Esperá ${secs}s y probá de nuevo.`;
-      return;
-    }
     const dni = document.getElementById("input-dni").value.trim();
     loginError.textContent = "";
     if (!/^[0-9]{6,9}$/.test(dni)) {
-      loginError.textContent = "Ingresá un DNI válido (solo números).";
+      loginError.textContent = "Ingresa un DNI valido (solo numeros).";
       return;
     }
     btnLogin.disabled = true;
-    btnLogin.textContent = "Verificando…";
+    btnLogin.textContent = "Verificando...";
     try {
-      const { data, error } = await supabase.rpc(RPC_LOGIN, { p_dni: dni });
+      const { data, error } = await supabase.rpc("rpc_login_pasajero", { p_dni: dni });
       if (error) throw error;
       const row = Array.isArray(data) ? data[0] : data;
       if (!row) {
-        failedLogins++;
-        if (failedLogins >= 5) {
-          loginLockedUntil = Date.now() + 30000;
-          failedLogins = 0;
-          loginError.textContent = "Demasiados intentos fallidos. Esperá 30 segundos.";
-        } else {
-          loginError.textContent = "DNI no encontrado o no es abonado. Consultá con administración.";
-        }
+        loginError.textContent = "DNI no encontrado o no es abonado. Consulta con administracion.";
         return;
       }
-      failedLogins = 0;
       saveProfile(row);
       enterApp(row);
     } catch (e) {
       console.error(e);
-      loginError.textContent = "No pudimos verificar tu DNI. Probá de nuevo en unos segundos.";
+      loginError.textContent = "No pudimos verificar tu DNI. Proba de nuevo en unos segundos.";
     } finally {
       btnLogin.disabled = false;
       btnLogin.textContent = "Ingresar";
-    }
-  });
-
-  // =====================================================================
-  // APP SHELL
-  // =====================================================================
-  function enterApp(profile) {
-    state.profile = profile;
-    document.getElementById("topbar-name").textContent = profile.nombre || "Pasajero";
-    document.getElementById("screen-login").classList.add("hidden");
-    document.getElementById("screen-app").classList.remove("hidden");
-    renderMonthLabel();
-    updateTodayBtnVisibility();
-    loadCalendar();      // carga el mes en vista
-    switchTab("inicio"); // [FIX 2] el banner reutiliza la MISMA promesa en cache
-  }
-
-  function switchTab(tab) {
-    state.activeTab = tab;
-    document.querySelectorAll(".nav-btn").forEach((b) => b.classList.toggle("active", b.dataset.tab === tab));
-    ["inicio", "calendario", "mapa"].forEach((id) => {
-      document.getElementById("tab-" + id).classList.toggle("hidden", id !== tab);
-    });
-
-    if (tab === "mapa") {
-      stopHomePolling();
-      setTimeout(() => {
-        // [FIX 1] verificar que seguimos en mapa (evita polling huérfano si
-        // el usuario sale antes de que corra el timeout)
-        if (state.activeTab !== "mapa" || !state.profile) return;
-        initMapIfNeeded();
-        startMapPolling();
-      }, 100);
-    } else if (tab === "inicio") {
-      stopMapPolling();
-      loadHomeWidgets();
-      startHomePolling();
-    } else {
-      stopMapPolling();
-      stopHomePolling();
-    }
-  }
-
-  document.querySelectorAll(".nav-btn").forEach((btn) => {
-    btn.addEventListener("click", () => switchTab(btn.dataset.tab));
-  });
-  document.getElementById("btn-map-volver").addEventListener("click", () => switchTab("inicio"));
-
-  // [FIX 20] banner "en camino" → mapa
-  document.getElementById("home-banner").addEventListener("click", () => {
-    if (document.getElementById("home-banner").classList.contains("live")) switchTab("mapa");
-  });
-
-  // [FIX 17] pausar todo cuando la pestaña no está visible
-  document.addEventListener("visibilitychange", () => {
-    if (document.hidden) {
-      stopMapPolling();
-      stopHomePolling();
-    } else if (state.profile) {
-      switchTab(state.activeTab);
     }
   });
 
@@ -965,7 +840,6 @@
         delete state.monthCache[monthCacheKey(t.getFullYear(), t.getMonth() + 1)];
         state.detalleDiaCache.clear();
         await loadHomeWidgets();
-        updateHomeBanner();
       }
       toast("Actualizado", "ok");
     } finally {
@@ -978,22 +852,50 @@
     clearProfile();
     stopMapPolling();
     stopHomePolling();
-    // limpiar todo el estado sensible
     state.profile = null;
-    state.monthCache = {};
-    state.detalleDiaCache.clear();
-    state.selected.clear();
-    state.inspectingDate = null;
-    closeModal();
-    closePanel();
     document.getElementById("screen-app").classList.add("hidden");
     document.getElementById("screen-login").classList.remove("hidden");
     document.getElementById("input-dni").value = "";
   });
 
-  // =====================================================================
-  // Clasificación de días
-  // =====================================================================
+  function enterApp(profile) {
+    state.profile = profile;
+    document.getElementById("topbar-name").textContent = profile.nombre || "Pasajero";
+    document.getElementById("screen-login").classList.add("hidden");
+    document.getElementById("screen-app").classList.remove("hidden");
+    renderMonthLabel();
+    loadCalendar();
+    switchTab("inicio");
+  }
+
+  document.querySelectorAll(".nav-btn").forEach((btn) => {
+    btn.addEventListener("click", () => switchTab(btn.dataset.tab));
+  });
+  document.getElementById("btn-map-volver").addEventListener("click", () => switchTab("inicio"));
+
+  function switchTab(tab) {
+    state.activeTab = tab;
+    document.querySelectorAll(".nav-btn").forEach((b) => b.classList.toggle("active", b.dataset.tab === tab));
+    ["inicio", "calendario", "mapa"].forEach((id) => {
+      document.getElementById("tab-" + id).classList.toggle("hidden", id !== tab);
+    });
+
+    if (tab === "mapa") {
+      stopHomePolling();
+      setTimeout(() => {
+        initMapIfNeeded();
+        startMapPolling();
+      }, 100);
+    } else if (tab === "inicio") {
+      stopMapPolling();
+      loadHomeWidgets();
+      startHomePolling();
+    } else {
+      stopMapPolling();
+      stopHomePolling();
+    }
+  }
+
   function classifyDay(info) {
     const m = info.manana, t = info.tarde;
     const mViaja = !!(m && m.viaja);
@@ -1005,19 +907,19 @@
     return { status: "unmarked" };
   }
 
+  // Estado visual de un turno puntual: cruza si viajo (o no, o no hay
+  // dato) con si la fecha ya paso, que es lo que decide entre verde
+  // (realizado) y azul (programado).
   function turnoState(turnoInfo, isPast) {
     if (turnoInfo && turnoInfo.viaja === true) return isPast ? "done" : "scheduled";
     if (turnoInfo && turnoInfo.viaja === false) return "no";
     return "absent";
   }
 
-  // =====================================================================
-  // Fetch de datos
-  // =====================================================================
   function monthCacheKey(year, month) { return `${year}-${pad2(month)}`; }
 
   async function fetchMonthData(year, month) {
-    const { data, error } = await supabase.rpc(RPC_CALENDARIO_MES, {
+    const { data, error } = await supabase.rpc("rpc_calendario_mes", {
       p_dni: state.profile.dni,
       p_anio: year,
       p_mes: month,
@@ -1032,17 +934,14 @@
     return map;
   }
 
-  // [FIX 2] se cachea la PROMESA: llamadas simultáneas al mismo mes
-  // disparan un único RPC. Los errores no quedan cacheados.
-  function fetchMonthDataCached(year, month) {
+  async function fetchMonthDataCached(year, month, forceRefresh) {
     const key = monthCacheKey(year, month);
-    if (state.monthCache[key]) return state.monthCache[key];
-    const promise = fetchMonthData(year, month).catch((e) => {
-      delete state.monthCache[key];
-      throw e;
-    });
-    state.monthCache[key] = promise;
-    return promise;
+    if (!forceRefresh && state.monthCache[key]) {
+      return state.monthCache[key];
+    }
+    const data = await fetchMonthData(year, month);
+    state.monthCache[key] = data;
+    return data;
   }
 
   function invalidateMonthCache(dates) {
@@ -1050,20 +949,27 @@
     keys.forEach((k) => delete state.monthCache[k]);
   }
 
-  // Detalle puntual de un día (vehículo/chofer/novedades).
-  // [FIX 15] el fallback vacío NO se cachea: cuando implementes el RPC,
-  // aparece sin necesidad de recargar.
+  // Detalle puntual de un dia (vehiculo/chofer/novedades). Se pide una
+  // sola vez por fecha y se guarda en memoria — ver nota de
+  // rpc_detalle_dia mas arriba.
   async function fetchDetalleDia(iso) {
     if (state.detalleDiaCache.has(iso)) return state.detalleDiaCache.get(iso);
-    const { data, error } = await supabase.rpc(RPC_DETALLE_DIA, {
-      p_dni: state.profile.dni,
-      p_fecha: iso,
-    });
-    if (error) throw error;
-    const map = {};
-    (data || []).forEach((row) => { map[row.turno] = row; });
-    state.detalleDiaCache.set(iso, map);
-    return map;
+    try {
+      const { data, error } = await supabase.rpc("rpc_detalle_dia", {
+        p_dni: state.profile.dni,
+        p_fecha: iso,
+      });
+      if (error) throw error;
+      const map = {};
+      (data || []).forEach((row) => { map[row.turno] = row; });
+      state.detalleDiaCache.set(iso, map);
+      return map;
+    } catch (e) {
+      console.warn("rpc_detalle_dia no disponible todavia, se muestra info basica", e);
+      const fallback = {};
+      state.detalleDiaCache.set(iso, fallback);
+      return fallback;
+    }
   }
 
   function buildWeeks(year, month) {
@@ -1079,577 +985,9 @@
     return weeks;
   }
 
-  function isoWeekNumber(d) {
-    const t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-    const day = t.getUTCDay() || 7;
-    t.setUTCDate(t.getUTCDate() + 4 - day);
-    const yearStart = new Date(Date.UTC(t.getUTCFullYear(), 0, 1));
-    return Math.ceil((((t - yearStart) / 86400000) + 1) / 7);
-  }
-
-  // =====================================================================
-  // CALENDARIO — render
-  // =====================================================================
-  function renderMonthLabel() {
-    document.getElementById("month-label").textContent =
-      `${MONTH_LABELS[state.viewMonth - 1]} ${state.viewYear}`;
-  }
-
-  function updateTodayBtnVisibility() {
-    const t = new Date();
-    const isCurrent = state.viewYear === t.getFullYear() && state.viewMonth === t.getMonth() + 1;
-    document.getElementById("btn-today-header").classList.toggle("hidden", isCurrent);
-  }
-
-  async function loadCalendar() {
-    renderMonthLabel();
-    updateTodayBtnVisibility();
-    try {
-      const map = await fetchMonthDataCached(state.viewYear, state.viewMonth);
-      state.calendarByDate = map;
-      renderCalendar();
-    } catch (e) {
-      console.error(e);
-      document.getElementById("cal-body").innerHTML =
-        `<div class="empty-note">No se pudo cargar el calendario.<br>Revisá tu conexión y tocá refrescar.</div>`;
-    }
-  }
-
-  function renderCalendar() {
-    const y = state.viewYear, m = state.viewMonth;
-    const weeks = buildWeeks(y, m);
-    const map = state.calendarByDate || {};
-    const today = todayISO();
-    const body = document.getElementById("cal-body");
-    body.innerHTML = "";
-
-    weeks.forEach((week) => {
-      const row = document.createElement("div");
-      row.className = "cal-row";
-
-      // número de semana + isos seleccionables de la fila
-      const weekCell = document.createElement("div");
-      weekCell.className = "week-num";
-      const weekIsos = [];
-      week.forEach((d) => {
-        if (d == null) return;
-        const iso = toISODate(y, m, d);
-        const wd = isoWeekdayMonFirst(parseISO(iso));
-        if (wd < 5 && iso >= today) weekIsos.push(iso);
-      });
-      const firstReal = week.find((d) => d != null);
-      if (firstReal != null) {
-        weekCell.textContent = isoWeekNumber(new Date(y, m - 1, firstReal));
-        weekCell.dataset.isos = JSON.stringify(weekIsos);
-      }
-      row.appendChild(weekCell);
-
-      week.forEach((d) => {
-        if (d == null) {
-          const empty = document.createElement("div");
-          empty.className = "day-cell empty";
-          row.appendChild(empty);
-          return;
-        }
-        const iso = toISODate(y, m, d);
-        const info = map[iso] || {};
-        const isPast = iso < today;
-        const wd = isoWeekdayMonFirst(parseISO(iso));
-        const isWeekend = wd >= 5;
-
-        const ms = turnoState(info.manana, isPast);
-        const ts = turnoState(info.tarde, isPast);
-        const bg = ms === ts
-          ? CELL_TINT[ms]
-          : `linear-gradient(135deg, ${CELL_TINT[ms]} 50%, ${CELL_TINT[ts]} 50%)`;
-
-        const cell = document.createElement("div");
-        cell.className = "day-cell"
-          + (isWeekend ? " weekend" : "")
-          + (iso === today ? " today" : "")
-          + (state.selected.has(iso) ? " selected" : "")
-          + (state.inspectingDate === iso ? " inspecting" : "");
-        cell.style.background = isWeekend ? "" : bg;
-        cell.dataset.iso = iso;
-        cell.innerHTML =
-          `<span class="num">${d}</span>` +
-          `<span class="dots">` +
-          `<i class="dot dot-${ms}"></i><i class="dot dot-${ts}"></i>` +
-          `</span>`;
-        row.appendChild(cell);
-      });
-      body.appendChild(row);
-    });
-
-    updateSelectionHighlights();
-  }
-
-  // Marca activos los headers de columna y week-nums cuando todo su
-  // contenido seleccionable ya está en la selección.
-  function updateSelectionHighlights() {
-    const y = state.viewYear, m = state.viewMonth;
-    const daysInMonth = new Date(y, m, 0).getDate();
-    const today = todayISO();
-    document.querySelectorAll(".cal-head-cell.clickable").forEach((h) => {
-      const wd = Number(h.dataset.weekday);
-      const dates = [];
-      for (let d = 1; d <= daysInMonth; d++) {
-        const iso = toISODate(y, m, d);
-        if (isoWeekdayMonFirst(parseISO(iso)) === wd && iso >= today) dates.push(iso);
-      }
-      h.classList.toggle("active", dates.length > 0 && dates.every((iso) => state.selected.has(iso)));
-    });
-    document.querySelectorAll(".week-num[data-isos]").forEach((w) => {
-      const isos = JSON.parse(w.dataset.isos || "[]");
-      w.classList.toggle("active", isos.length > 0 && isos.every((iso) => state.selected.has(iso)));
-    });
-  }
-
-  // =====================================================================
-  // CALENDARIO — interacción
-  // =====================================================================
-  function toggleDates(dates) {
-    const valid = dates.filter((iso) => {
-      const wd = isoWeekdayMonFirst(parseISO(iso));
-      return wd < 5 && iso >= todayISO();
-    });
-    if (!valid.length) return false;
-    const allSelected = valid.every((iso) => state.selected.has(iso));
-    valid.forEach((iso) => allSelected ? state.selected.delete(iso) : state.selected.add(iso));
-    return true;
-  }
-
-  function refreshAfterSelectionChange() {
-    renderCalendar();
-    if (state.selected.size > 0) {
-      openPanel("edit");
-    } else {
-      closePanel();
-    }
-  }
-
-  document.getElementById("cal-body").addEventListener("click", (e) => {
-    const weekCell = e.target.closest(".week-num");
-    if (weekCell && weekCell.dataset.isos) {
-      if (toggleDates(JSON.parse(weekCell.dataset.isos))) refreshAfterSelectionChange();
-      return;
-    }
-    const cell = e.target.closest(".day-cell");
-    if (!cell || cell.classList.contains("empty") || cell.classList.contains("weekend")) return;
-    const iso = cell.dataset.iso;
-    const today = todayISO();
-
-    if (iso < today) {
-      // día pasado → panel de solo lectura
-      state.inspectingDate = iso;
-      state.selected.clear();
-      renderCalendar();
-      openPanel("readonly", iso);
-    } else {
-      state.inspectingDate = null;
-      if (state.selected.has(iso)) state.selected.delete(iso);
-      else state.selected.add(iso);
-      refreshAfterSelectionChange();
-    }
-  });
-
-  document.querySelectorAll(".cal-head-cell.clickable").forEach((h) => {
-    h.addEventListener("click", () => {
-      const wd = Number(h.dataset.weekday);
-      const y = state.viewYear, m = state.viewMonth;
-      const daysInMonth = new Date(y, m, 0).getDate();
-      const dates = [];
-      for (let d = 1; d <= daysInMonth; d++) {
-        const iso = toISODate(y, m, d);
-        if (isoWeekdayMonFirst(parseISO(iso)) === wd) dates.push(iso);
-      }
-      if (toggleDates(dates)) refreshAfterSelectionChange();
-    });
-  });
-
-  function shiftMonth(delta) {
-    let y = state.viewYear, m = state.viewMonth + delta;
-    if (m < 1) { m = 12; y--; }
-    if (m > 12) { m = 1; y++; }
-    state.viewYear = y;
-    state.viewMonth = m;
-    loadCalendar();
-  }
-  document.getElementById("btn-prev-month").addEventListener("click", () => shiftMonth(-1));
-  document.getElementById("btn-next-month").addEventListener("click", () => shiftMonth(1));
-  document.getElementById("btn-today-header").addEventListener("click", () => {
-    const t = new Date();
-    state.viewYear = t.getFullYear();
-    state.viewMonth = t.getMonth() + 1;
-    loadCalendar();
-  });
-
-  // =====================================================================
-  // PANEL DE ACCIÓN (bottom sheet)
-  // =====================================================================
-  const panelEl = document.getElementById("action-panel");
-
-  function openPanel(mode, iso) {
-    state.panelMode = mode;
-    state.sheetPeek = false;
-    panelEl.classList.remove("peek", "tall");
-    panelEl.classList.add("open");
-
-    const isEdit = mode === "edit";
-    document.getElementById("panel-edit-block").classList.toggle("hidden", !isEdit);
-    document.getElementById("panel-readonly-block").classList.toggle("hidden", isEdit);
-    document.getElementById("btn-guardar").classList.toggle("hidden", !isEdit);
-    document.getElementById("btn-cerrar-readonly").classList.toggle("hidden", isEdit);
-    document.getElementById("action-clear").textContent = isEdit ? "Cancelar" : "Cerrar";
-
-    if (isEdit) {
-      buildRecurrenceOptions();
-      updatePanelUI();
-    } else {
-      renderReadonlyPanel(iso);
-    }
-  }
-
-  function closePanel() {
-    panelEl.classList.remove("open", "tall", "peek");
-    state.sheetPeek = false;
-    if (state.inspectingDate) {
-      state.inspectingDate = null;
-      renderCalendar();
-    }
-  }
-
-  document.getElementById("action-panel-handle").addEventListener("click", () => {
-    if (!panelEl.classList.contains("open")) return;
-    state.sheetPeek = !state.sheetPeek;
-    panelEl.classList.toggle("peek", state.sheetPeek);
-  });
-
-  document.getElementById("action-clear").addEventListener("click", (e) => {
-    e.preventDefault();
-    if (state.panelMode === "edit") {
-      state.selected.clear();
-      renderCalendar();
-    }
-    closePanel();
-  });
-
-  document.getElementById("btn-cerrar-readonly").addEventListener("click", closePanel);
-
-  function updatePanelUI() {
-    const n = state.selected.size;
-    document.getElementById("action-count").textContent =
-      `${n} ${n === 1 ? "día seleccionado" : "días seleccionados"}`;
-
-    document.getElementById("opt-viajo").classList.toggle("active", state.viajaChoice);
-    document.getElementById("opt-noviajo").classList.toggle("active", !state.viajaChoice);
-
-    document.querySelectorAll("#turno-toggle .seg-btn").forEach((b) => {
-      b.classList.toggle("active", b.dataset.turno === state.turnoChoice);
-    });
-
-    const showRecurrence = n > 0;
-    document.getElementById("recurrence-box").classList.toggle("hidden", !showRecurrence);
-    const showExtent = showRecurrence && state.recurrenceChoice !== "none";
-    document.getElementById("recurrence-extent").classList.toggle("hidden", !showExtent);
-    panelEl.classList.toggle("tall", showExtent);
-
-    document.getElementById("btn-guardar").disabled = n === 0;
-  }
-
-  // Opciones de repetición generadas según el día base seleccionado.
-  function buildRecurrenceOptions() {
-    const first = [...state.selected].sort()[0];
-    const sel = document.getElementById("recurrence-select");
-    if (!first) { sel.innerHTML = ""; return; }
-    const d = parseISO(first);
-    const wdName = FULL_WEEKDAY_LOWER[isoWeekdayMonFirst(d)];
-    const nth = Math.min(Math.floor((d.getDate() - 1) / 7), 4);
-    const opts = [
-      { value: "none", label: "Solo esta fecha" },
-      { value: "weekly", label: `Todos los ${wdName}s` },
-      { value: "monthly", label: `El ${ORDINAL_MONTH_MASC[nth]} ${wdName} de cada mes` },
-      { value: "weekdays", label: "Todos los días hábiles" },
-    ];
-    sel.innerHTML = opts.map((o) => `<option value="${o.value}">${o.label}</option>`).join("");
-    sel.value = state.recurrenceChoice;
-  }
-
-  document.getElementById("opt-viajo").addEventListener("click", () => { state.viajaChoice = true; updatePanelUI(); });
-  document.getElementById("opt-noviajo").addEventListener("click", () => { state.viajaChoice = false; updatePanelUI(); });
-
-  document.querySelectorAll("#turno-toggle .seg-btn").forEach((b) => {
-    b.addEventListener("click", () => { state.turnoChoice = b.dataset.turno; updatePanelUI(); });
-  });
-
-  document.getElementById("recurrence-select").addEventListener("change", (e) => {
-    state.recurrenceChoice = e.target.value;
-    updatePanelUI();
-  });
-
-  document.getElementById("extent-select").addEventListener("change", (e) => {
-    state.extentType = e.target.value;
-    document.getElementById("extent-number").disabled = state.extentType === "year";
-    updatePanelUI();
-  });
-
-  document.getElementById("extent-number").addEventListener("input", (e) => {
-    const v = Math.max(1, Math.min(52, Number(e.target.value) || 1));
-    state.extentValue = v;
-  });
-
-  // =====================================================================
-  // GUARDADO — cálculo de fechas afectadas + modal de impacto
-  // =====================================================================
-  function extentLimitDate(base) {
-    if (state.extentType === "weeks") return addDays(base, 7 * state.extentValue);
-    if (state.extentType === "months") return addMonthsKeepDay(base, state.extentValue);
-    return new Date(base.getFullYear(), 11, 31); // resto del año
-  }
-
-  // n-ésimo día de semana (0=Lun) de un mes, o null si no existe.
-  function nthWeekdayOfMonth(year, month, weekday, n) {
-    let found = 0;
-    for (let d = 1; d <= 31; d++) {
-      const date = new Date(year, month - 1, d);
-      if (date.getMonth() !== month - 1) return null;
-      if (isoWeekdayMonFirst(date) === weekday) {
-        found++;
-        if (found === n) return date;
-      }
-    }
-    return null;
-  }
-
-  function nextNthWeekdayOfMonth(base) {
-    const wd = isoWeekdayMonFirst(base);
-    const n = Math.floor((base.getDate() - 1) / 7) + 1;
-    let y = base.getFullYear();
-    let m = base.getMonth() + 1;
-    for (let i = 0; i < 24; i++) {
-      m++;
-      if (m > 12) { m = 1; y++; }
-      const candidate = nthWeekdayOfMonth(y, m, wd, n);
-      if (candidate) return candidate;
-    }
-    return null;
-  }
-
-  function computeAffectedDates() {
-    const bases = [...state.selected].sort();
-    const all = new Set();
-    const today = todayISO();
-
-    bases.forEach((baseISO) => {
-      const base = parseISO(baseISO);
-      if (state.recurrenceChoice === "none") {
-        all.add(baseISO);
-        return;
-      }
-      const limit = extentLimitDate(base);
-      let cursor = new Date(base);
-      let guard = 0;
-      while (cursor && cursor <= limit && guard < 800) {
-        guard++;
-        const wd = cursor.getDay();
-        if (wd !== 0 && wd !== 6) all.add(isoFromDate(cursor));
-        if (state.recurrenceChoice === "weekdays") cursor = addDays(cursor, 1);
-        else if (state.recurrenceChoice === "weekly") cursor = addDays(cursor, 7);
-        else if (state.recurrenceChoice === "monthly") cursor = nextNthWeekdayOfMonth(cursor);
-        else cursor = null;
-      }
-    });
-
-    return [...all].filter((iso) => iso >= today).sort();
-  }
-
-  // Un día "tiene registro" si ya existe marca en alguno de los turnos objetivo.
-  function hasRegistration(info) {
-    const turnos = state.turnoChoice === "ambos" ? TURNO_ORDER : [state.turnoChoice];
-    return turnos.some((t) => info && info[t]);
-  }
-
-  async function findConflicts(dates) {
-    let conflicts = 0;
-    const months = new Set(dates.map((iso) => {
-      const d = parseISO(iso);
-      return monthCacheKey(d.getFullYear(), d.getMonth() + 1);
-    }));
-    const maps = {};
-    for (const key of months) {
-      const [y, m] = key.split("-").map(Number);
-      maps[key] = await fetchMonthDataCached(y, m);
-    }
-    dates.forEach((iso) => {
-      const map = maps[iso.slice(0, 7)] || {};
-      if (hasRegistration(map[iso])) conflicts++;
-    });
-    return conflicts;
-  }
-
-  function guardarAccionLabel() {
-    const turnoTxt = state.turnoChoice === "ambos"
-      ? "mañana y tarde"
-      : TURNO_LABELS[state.turnoChoice].toLowerCase();
-    return `${state.viajaChoice ? "Viajo" : "No viajo"} · ${turnoTxt}`;
-  }
-
-  function openModal(summary) {
-    document.getElementById("modal-impact-summary").textContent = summary;
-    document.getElementById("modal-impact").classList.remove("hidden");
-    document.getElementById("modal-impact-cancel").focus(); // foco accesible
-  }
-  function closeModal() {
-    document.getElementById("modal-impact").classList.add("hidden");
-  }
-
-  // [FIX 12] cerrar modal con Escape y con click en el overlay
-  document.getElementById("modal-impact").addEventListener("click", (e) => {
-    if (e.target === e.currentTarget) closeModal();
-  });
-  document.getElementById("modal-impact-cancel").addEventListener("click", closeModal);
-  document.addEventListener("keydown", (e) => {
-    if (e.key !== "Escape") return;
-    const modal = document.getElementById("modal-impact");
-    if (!modal.classList.contains("hidden")) { closeModal(); return; }
-    if (panelEl.classList.contains("open")) closePanel();
-  });
-
-  document.getElementById("btn-guardar").addEventListener("click", async () => {
-    const btn = document.getElementById("btn-guardar");
-    if (btn.disabled || !state.selected.size) return;
-
-    const dates = computeAffectedDates();
-    if (!dates.length) {
-      toast("No hay días futuros para guardar", "err");
-      return;
-    }
-    state.pendingDates = dates;
-
-    btn.disabled = true;
-    btn.textContent = "Calculando…";
-    let conflicts = 0;
-    try {
-      conflicts = await findConflicts(dates);
-    } catch (e) {
-      console.warn("No se pudieron verificar conflictos, se guarda directo", e);
-    }
-    btn.disabled = false;
-    btn.textContent = "Guardar";
-
-    if (conflicts > 0) {
-      const n = dates.length;
-      openModal(
-        `Se guardarán ${n} ${n === 1 ? "día" : "días"} con «${guardarAccionLabel()}». ` +
-        `${conflicts} ${conflicts === 1 ? "día ya tenía registro y será sobrescrito" : "días ya tenían registro y serán sobrescritos"}.`
-      );
-      return;
-    }
-    doSave(dates);
-  });
-
-  document.getElementById("modal-impact-confirm").addEventListener("click", () => {
-    closeModal();
-    doSave(state.pendingDates);
-  });
-
-  async function doSave(dates) {
-    if (!dates || !dates.length) return;
-    const btn = document.getElementById("btn-guardar");
-    btn.disabled = true;
-    btn.textContent = "Guardando…";
-    try {
-      // ⚠️ AJUSTAR firma a tu backend
-      const { error } = await supabase.rpc(RPC_GUARDAR, {
-        p_dni: state.profile.dni,
-        p_fechas: dates,
-        p_turno: state.turnoChoice,
-        p_viaja: state.viajaChoice,
-        p_sobrescribir: true,
-      });
-      if (error) throw error;
-
-      invalidateMonthCache(dates);
-      state.detalleDiaCache.clear();
-      state.selected.clear();
-      closePanel();
-      await loadCalendar();
-      loadHomeWidgets();
-      updateHomeBanner();
-      toast("Guardado", "ok");
-    } catch (e) {
-      console.error(e);
-      toast("No se pudo guardar. Probá de nuevo.", "err");
-    } finally {
-      btn.disabled = false;
-      btn.textContent = "Guardar";
-      updatePanelUI();
-    }
-  }
-
-  // =====================================================================
-  // PANEL READONLY (día pasado)
-  // =====================================================================
-  async function renderReadonlyPanel(iso) {
-    const holder = document.getElementById("readonly-turnos");
-    const date = parseISO(iso);
-    document.getElementById("action-count").textContent =
-      `${FULL_WEEKDAY_LOWER[isoWeekdayMonFirst(date)]} ${date.getDate()} de ${MONTH_LABELS[date.getMonth()]}`;
-    holder.innerHTML = `<div class="empty-note skeleton">&nbsp;</div><div class="empty-note skeleton">&nbsp;</div>`;
-
-    let info = {};
-    let detalle = {};
-    try {
-      const map = await fetchMonthDataCached(date.getFullYear(), date.getMonth() + 1);
-      info = map[iso] || {};
-    } catch (e) { console.warn(e); }
-    try {
-      detalle = await fetchDetalleDia(iso);
-    } catch (e) {
-      console.warn("rpc_detalle_dia no disponible todavía, se muestra info básica", e);
-    }
-
-    if (state.panelMode !== "readonly" || state.inspectingDate !== iso) return; // el usuario ya cerró/cambió
-
-    const html = TURNO_ORDER.map((t) => {
-      const reg = info[t];
-      const det = detalle[t] || {};
-      if (!reg) {
-        return `<div class="readonly-turno">
-          <div class="readonly-turno-head">
-            <span class="chip no">Sin registro</span>
-            <span class="readonly-estado">${TURNO_LABELS[t]}</span>
-          </div>
-        </div>`;
-      }
-      if (!reg.viaja) {
-        return `<div class="readonly-turno">
-          <div class="readonly-turno-head">
-            <span class="chip no">No viajaste</span>
-            <span class="readonly-estado">${TURNO_LABELS[t]}</span>
-          </div>
-        </div>`;
-      }
-      const lines = [];
-      if (det.interno) lines.push(`Vehículo: interno ${esc(det.interno)}${det.patente ? " · " + esc(det.patente) : ""}`);
-      if (det.chofer_nombre) lines.push(`Chofer: ${esc(det.chofer_nombre)}`);
-      const novedades = det.novedades ? `<div class="readonly-novedades">${esc(det.novedades)}</div>` : "";
-      return `<div class="readonly-turno">
-        <div class="readonly-turno-head">
-          <span class="chip ${t === "manana" ? "am" : "pm"}">Viajaste</span>
-          <span class="readonly-estado">${TURNO_LABELS[t]}</span>
-        </div>
-        ${lines.map((l) => `<div class="readonly-line">${l}</div>`).join("")}
-        ${novedades}
-      </div>`;
-    }).join("");
-
-    holder.innerHTML = html || `<div class="empty-note">Sin información para este día.</div>`;
-  }
-
-  // =====================================================================
-  // INICIO — banner en vivo + widget de próximo viaje
-  // =====================================================================
+  // =========================================================================
+  // INICIO — banner en vivo + widget de proximo viaje
+  // =========================================================================
   function setBanner(kind, title, desc) {
     const el = document.getElementById("home-banner");
     el.className = "home-banner glass " + kind;
@@ -1659,8 +997,7 @@
 
   async function checkServicioEnVivo() {
     try {
-      // [FIX 18] timeout de 9s
-      const res = await fetchWithTimeout(`${EASYTRACK_FN_URL}?dni=${encodeURIComponent(state.profile.dni)}`, 9000);
+      const res = await fetch(`${EASYTRACK_FN_URL}?dni=${encodeURIComponent(state.profile.dni)}`);
       if (!res.ok) return { activo: false };
       const json = await res.json();
       const positions = json.data || json;
@@ -1684,7 +1021,7 @@
       map = await fetchMonthDataCached(t.getFullYear(), t.getMonth() + 1);
     } catch (e) {
       console.error(e);
-      setBanner("off", "No se pudo verificar", "Revisá tu conexión e intentá de nuevo.");
+      setBanner("off", "No se pudo verificar", "Revisa tu conexion e intenta de nuevo.");
       return;
     }
     if (state.activeTab !== "inicio") return;
@@ -1693,37 +1030,35 @@
     if (c.status !== "viaja") {
       setBanner(
         "off",
-        c.status === "no" ? "No viajás hoy" : "Todavía no marcaste hoy",
+        c.status === "no" ? "No viajas hoy" : "Todavia no marcaste hoy",
         "No hay ninguna unidad en camino para vos en este momento."
       );
       return;
     }
-    setBanner("scheduled", "Verificando tu unidad…", "");
+    setBanner("scheduled", "Verificando tu unidad...", "");
     const live = await checkServicioEnVivo();
     if (state.activeTab !== "inicio") return;
     if (live && live.activo) {
-      setBanner("live", "Tu unidad está en camino", live.address || "Seguí el recorrido en el mapa.");
+      setBanner("live", "Tu unidad esta en camino", live.address || "Segui el recorrido en el mapa.");
     } else {
       const partes = [];
       if (c.mViaja) partes.push("mañana");
       if (c.tViaja) partes.push("tarde");
-      setBanner("scheduled", `Viaje de ${partes.join(" y ")} programado`, "La unidad todavía no salió.");
+      setBanner("scheduled", `Viaje de ${partes.join(" y ")} programado`, "La unidad todavia no salio.");
     }
   }
 
   function startHomePolling() {
     stopHomePolling();
-    state.homePollTimer = setInterval(() => {
-      if (!document.hidden) updateHomeBanner();
-    }, HOME_POLL_MS);
+    state.homePollTimer = setInterval(updateHomeBanner, HOME_POLL_MS);
   }
   function stopHomePolling() {
     if (state.homePollTimer) { clearInterval(state.homePollTimer); state.homePollTimer = null; }
   }
 
-  // Busca, desde hoy hacia adelante (máximo 60 días), el próximo día hábil
-  // con un viaje ya confirmado. Si no encuentra ninguno, sugiere el primer
-  // día hábil sin marcar.
+  // Busca, desde hoy hacia adelante (maximo 60 dias), el proximo dia habil
+  // con un viaje ya confirmado. Si no encuentra ninguno, devuelve el
+  // primer dia habil sin marcar para sugerir que lo confirme.
   async function computeNextTripDescriptor() {
     const t0 = new Date();
     let cursor = new Date(t0.getFullYear(), t0.getMonth(), t0.getDate());
@@ -1752,7 +1087,7 @@
     const body = document.getElementById("next-trip-body");
     if (descriptor.mode === "none") {
       body.innerHTML =
-        `<div class="next-trip-empty">No tenés viajes programados próximamente.</div>
+        `<div class="next-trip-empty">No tenes viajes programados proximamente.</div>
          <button type="button" class="btn btn-ghost btn-sm" id="btn-ir-calendario">Ir al calendario</button>`;
       document.getElementById("btn-ir-calendario").addEventListener("click", () => switchTab("calendario"));
       return;
@@ -1765,151 +1100,839 @@
     if (isSuggest) {
       body.innerHTML = `
         <div class="next-trip-date">${fechaTxt}</div>
-        <div class="next-trip-empty">Todavía no marcaste si viajás ese día.</div>
+        <div class="next-trip-empty">Todavia no marcaste si viajas ese dia.</div>
         <button type="button" class="btn btn-primary btn-sm" id="btn-next-trip-action">Confirmar asistencia</button>
       `;
       document.getElementById("btn-next-trip-action").addEventListener("click", () => {
-        selectDateAndOpenPanel(descriptor.iso);
+        quickSetAsistencia(descriptor.iso, "ambos", true);
       });
       return;
     }
 
-    // programado
-    const turnos = [];
-    if (descriptor.mViaja) turnos.push("mañana");
-    if (descriptor.tViaja) turnos.push("tarde");
-    const det = (detalle && (detalle.manana || detalle.tarde)) || {};
-    const veh = det.interno ? `Interno ${esc(det.interno)}${det.patente ? " · " + esc(det.patente) : ""}` : "";
+    const turnoTxt = descriptor.mViaja && descriptor.tViaja ? "Mañana y tarde" : (descriptor.mViaja ? "Mañana" : "Tarde");
+    const turnoParaVehiculo = descriptor.mViaja ? "manana" : "tarde";
+    const det = (detalle && detalle[turnoParaVehiculo]) || {};
+    const vehiculoTxt = det.interno ? `Interno ${det.interno}${det.patente ? " · " + det.patente : ""}` : "A confirmar";
 
     body.innerHTML = `
       <div class="next-trip-date">${fechaTxt}</div>
-      <div class="next-trip-row"><span class="label">Turnos</span><span>${turnos.join(" y ")}</span></div>
-      ${veh ? `<div class="next-trip-row"><span class="label">Vehículo</span><span>${veh}</span></div>` : ""}
-      <button type="button" class="btn btn-primary btn-sm" id="btn-next-trip-map" style="margin-top:12px;">Ver en el mapa</button>
+      <div class="next-trip-row"><span class="label">Turno</span><span>${turnoTxt}</span></div>
+      <div class="next-trip-row"><span class="label">Vehiculo</span><span>${vehiculoTxt}</span></div>
+      ${det.chofer_nombre ? `<div class="next-trip-row"><span class="label">Chofer</span><span>${det.chofer_nombre}</span></div>` : ""}
+      <button type="button" class="btn btn-ghost btn-sm" id="btn-next-trip-action" style="margin-top:12px;">Cancelar viaje</button>
     `;
-    document.getElementById("btn-next-trip-map").addEventListener("click", () => switchTab("mapa"));
-  }
-
-  // Usado por "Confirmar asistencia" en Inicio: salta al calendario,
-  // deja el día seleccionado y abre el panel de edición.
-  function selectDateAndOpenPanel(iso) {
-    const d = parseISO(iso);
-    state.viewYear = d.getFullYear();
-    state.viewMonth = d.getMonth() + 1;
-    switchTab("calendario");
-    loadCalendar().then(() => {
-      state.inspectingDate = null;
-      state.selected = new Set([iso]);
-      renderCalendar();
-      openPanel("edit");
+    document.getElementById("btn-next-trip-action").addEventListener("click", () => {
+      if (!confirm(`¿Cancelar tu viaje del ${fechaTxt}?`)) return;
+      const turnoCancel = descriptor.mViaja && descriptor.tViaja ? "ambos" : turnoParaVehiculo;
+      quickSetAsistencia(descriptor.iso, turnoCancel, false);
     });
   }
 
   async function loadHomeWidgets() {
-    updateHomeBanner(); // independiente, con sus propios guards
+    updateHomeBanner();
     const body = document.getElementById("next-trip-body");
-    // [FIX 21] skeleton mientras carga
-    body.innerHTML =
-      `<div class="next-trip-date skeleton">cargando fecha</div>
-       <div class="next-trip-row"><span class="label skeleton">turno</span><span class="skeleton">turno</span></div>`;
+    body.textContent = "Cargando...";
     try {
       const descriptor = await computeNextTripDescriptor();
-      let detalle = null;
+      let detalle = {};
       if (descriptor.mode === "scheduled") {
-        try { detalle = await fetchDetalleDia(descriptor.iso); } catch (e) {}
+        detalle = await fetchDetalleDia(descriptor.iso);
       }
-      if (state.activeTab !== "inicio") return;
-      renderNextTripBody(descriptor, detalle);
+      if (state.activeTab === "inicio") renderNextTripBody(descriptor, detalle);
     } catch (e) {
       console.error(e);
-      if (state.activeTab !== "inicio") return;
-      body.innerHTML =
-        `<div class="next-trip-empty">No se pudo cargar el próximo viaje. Revisá tu conexión.</div>`;
+      if (state.activeTab === "inicio") {
+        body.innerHTML = `<div class="next-trip-empty">No se pudo cargar tu proximo viaje.</div>`;
+      }
     }
   }
 
-  // =====================================================================
+  // Accion rapida (confirmar/cancelar) desde el widget de Inicio: usa el
+  // mismo RPC que el panel de edicion, pero para una sola fecha.
+  async function quickSetAsistencia(iso, turno, viaja) {
+    try {
+      const turnos = turno === "ambos" ? ["manana", "tarde"] : [turno];
+      for (const t of turnos) {
+        const { error } = await supabase.rpc("rpc_set_asistencia_masivo", {
+          p_dni: state.profile.dni,
+          p_fechas: [iso],
+          p_turno: t,
+          p_viaja: viaja,
+        });
+        if (error) throw error;
+      }
+      invalidateMonthCache([iso]);
+      state.detalleDiaCache.delete(iso);
+      toast(viaja ? "Asistencia confirmada" : "Viaje cancelado", "ok");
+      await loadHomeWidgets();
+      if (state.activeTab === "calendario" || monthCacheKey(state.viewYear, state.viewMonth) === iso.slice(0, 7)) {
+        await loadCalendar();
+      }
+    } catch (e) {
+      console.error(e);
+      toast("No se pudo actualizar. Reintenta.", "err");
+    }
+  }
+
+  // =========================================================================
+  // CALENDARIO
+  // =========================================================================
+  document.getElementById("btn-prev-month").addEventListener("click", () => shiftMonth(-1));
+  document.getElementById("btn-next-month").addEventListener("click", () => shiftMonth(1));
+  document.getElementById("btn-today-header").addEventListener("click", goToToday);
+
+  function shiftMonth(delta) {
+    let m = state.viewMonth + delta;
+    let y = state.viewYear;
+    if (m < 1) { m = 12; y -= 1; }
+    if (m > 12) { m = 1; y += 1; }
+    state.viewMonth = m;
+    state.viewYear = y;
+    closeActionPanel();
+    renderMonthLabel();
+    loadCalendar();
+  }
+
+  function renderMonthLabel() {
+    document.getElementById("month-label").textContent =
+      `${MONTH_LABELS[state.viewMonth - 1]} ${state.viewYear}`;
+    const t = new Date();
+    const isCurrent = state.viewYear === t.getFullYear() && state.viewMonth === t.getMonth() + 1;
+    document.getElementById("btn-today-header").classList.toggle("hidden", isCurrent);
+  }
+
+  async function loadCalendar() {
+    const body = document.getElementById("cal-body");
+    body.innerHTML = `<div style="padding:24px;text-align:center;color:var(--text-faint);font-size:0.85rem;">Cargando...</div>`;
+    try {
+      state.calendarByDate = await fetchMonthDataCached(state.viewYear, state.viewMonth);
+      renderCalendar();
+    } catch (e) {
+      console.error(e);
+      body.innerHTML = `<div style="padding:24px;text-align:center;color:var(--red);font-size:0.85rem;">No se pudo cargar el calendario.</div>`;
+    }
+  }
+
+  function renderCalendar() {
+    const body = document.getElementById("cal-body");
+    body.innerHTML = "";
+    const weeks = buildWeeks(state.viewYear, state.viewMonth);
+    const today = todayISO();
+
+    // El resaltado de columna/fila completa solo considera fechas
+    // editables (>= hoy): un dia pasado nunca puede estar en
+    // state.selected, asi que no debe contar para el "todo seleccionado".
+    const weekdaysFullySelected = new Set();
+    for (let wd = 0; wd < 5; wd++) {
+      const editableDates = [];
+      weeks.forEach(week => {
+        const day = week[wd];
+        if (day !== null) {
+          const iso = toISODate(state.viewYear, state.viewMonth, day);
+          if (iso >= today) editableDates.push(iso);
+        }
+      });
+      if (editableDates.length > 0 && editableDates.every(d => state.selected.has(d))) {
+        weekdaysFullySelected.add(wd);
+      }
+    }
+    document.querySelectorAll(".cal-head-cell.clickable").forEach(el => {
+      const wd = Number(el.dataset.weekday);
+      el.classList.toggle("active", weekdaysFullySelected.has(wd));
+    });
+
+    weeks.forEach((week, weekIdx) => {
+      const row = document.createElement("div");
+      row.className = "cal-row";
+
+      const editableWeekDates = week
+        .map((day, wd) => (day !== null && wd < 5 ? toISODate(state.viewYear, state.viewMonth, day) : null))
+        .filter(Boolean)
+        .filter(iso => iso >= today);
+      const weekFullySelected = editableWeekDates.length > 0 && editableWeekDates.every(d => state.selected.has(d));
+
+      const weekNumCell = document.createElement("div");
+      weekNumCell.className = "week-num" + (weekFullySelected ? " active" : "");
+      weekNumCell.textContent = weekIdx + 1;
+      weekNumCell.addEventListener("click", () => toggleWeekSelection(week));
+      row.appendChild(weekNumCell);
+
+      week.forEach((day, weekdayIdx) => {
+        const cell = document.createElement("div");
+        if (day === null) {
+          cell.className = "day-cell empty";
+          row.appendChild(cell);
+          return;
+        }
+        const iso = toISODate(state.viewYear, state.viewMonth, day);
+        const isWeekend = weekdayIdx >= 5;
+        const isPast = iso < today;
+        const info = state.calendarByDate[iso] || {};
+
+        cell.className = "day-cell";
+        cell.dataset.date = iso;
+
+        if (isWeekend) {
+          cell.classList.add("weekend");
+        } else {
+          const stAM = turnoState(info.manana, isPast);
+          const stPM = turnoState(info.tarde, isPast);
+          const colorAM = CELL_TINT[stAM];
+          const colorPM = CELL_TINT[stPM];
+          cell.style.background = colorAM === colorPM
+            ? colorAM
+            : `linear-gradient(135deg, ${colorAM} 50%, ${colorPM} 50%)`;
+          if (stAM === "absent" && stPM === "absent") cell.classList.add("dim-text");
+
+          const num = document.createElement("span");
+          num.className = "num";
+          num.textContent = day;
+          cell.appendChild(num);
+
+          const dots = document.createElement("span");
+          dots.className = "dots";
+          const amDot = document.createElement("i");
+          amDot.className = "dot dot-" + stAM;
+          const pmDot = document.createElement("i");
+          pmDot.className = "dot dot-" + stPM;
+          dots.appendChild(amDot);
+          dots.appendChild(pmDot);
+          cell.appendChild(dots);
+
+          cell.addEventListener("click", () => {
+            if (isPast) openReadonly(iso);
+            else toggleDateSelection(iso);
+          });
+        }
+
+        if (!isWeekend) {
+          const num2 = cell.querySelector(".num");
+          if (!num2) {
+            const num = document.createElement("span");
+            num.className = "num";
+            num.textContent = day;
+            cell.appendChild(num);
+          }
+        } else {
+          const num = document.createElement("span");
+          num.className = "num";
+          num.textContent = day;
+          cell.appendChild(num);
+        }
+
+        if (iso === today) cell.classList.add("today");
+        if (state.selected.has(iso)) cell.classList.add("selected");
+        if (state.inspectingDate === iso) cell.classList.add("inspecting");
+
+        row.appendChild(cell);
+      });
+
+      body.appendChild(row);
+    });
+  }
+
+  document.querySelectorAll(".cal-head-cell.clickable").forEach((el) => {
+    el.addEventListener("click", () => toggleWeekdaySelection(Number(el.dataset.weekday)));
+  });
+
+  // Al tocar otro dia con el panel ya abierto, lo replegamos a "peek" para
+  // no tapar la grilla mientras se sigue seleccionando; la primera
+  // seleccion (o quedar en 0) abre el panel completo.
+  function updatePeekAfterCalendarTap(wasEmpty) {
+    state.sheetPeek = state.selected.size > 0 && !wasEmpty;
+  }
+
+  function toggleDateSelection(iso) {
+    const wasEmpty = state.selected.size === 0;
+    state.inspectingDate = null;
+    state.panelMode = "edit";
+    if (state.selected.has(iso)) state.selected.delete(iso);
+    else state.selected.add(iso);
+    state.recurrenceChoice = "none";
+    updatePeekAfterCalendarTap(wasEmpty);
+    renderCalendar();
+    renderActionPanel();
+  }
+
+  function toggleWeekdaySelection(weekdayIdx) {
+    if (weekdayIdx >= 5) return;
+    const wasEmpty = state.selected.size === 0;
+    const today = todayISO();
+    state.inspectingDate = null;
+    state.panelMode = "edit";
+    const weeks = buildWeeks(state.viewYear, state.viewMonth);
+    const dates = [];
+    weeks.forEach((week) => {
+      const day = week[weekdayIdx];
+      if (day !== null) {
+        const iso = toISODate(state.viewYear, state.viewMonth, day);
+        if (iso >= today) dates.push(iso);
+      }
+    });
+    if (!dates.length) return;
+    const allSelected = dates.every(d => state.selected.has(d));
+    if (allSelected) dates.forEach(d => state.selected.delete(d));
+    else dates.forEach(d => state.selected.add(d));
+    state.recurrenceChoice = "none";
+    updatePeekAfterCalendarTap(wasEmpty);
+    renderCalendar();
+    renderActionPanel();
+  }
+
+  function toggleWeekSelection(week) {
+    const wasEmpty = state.selected.size === 0;
+    const today = todayISO();
+    state.inspectingDate = null;
+    state.panelMode = "edit";
+    const dates = week
+      .map((day, wd) => (day !== null && wd < 5 ? toISODate(state.viewYear, state.viewMonth, day) : null))
+      .filter(Boolean)
+      .filter(iso => iso >= today);
+    if (!dates.length) return;
+    const allSelected = dates.every(d => state.selected.has(d));
+    if (allSelected) dates.forEach(d => state.selected.delete(d));
+    else dates.forEach(d => state.selected.add(d));
+    state.recurrenceChoice = "none";
+    updatePeekAfterCalendarTap(wasEmpty);
+    renderCalendar();
+    renderActionPanel();
+  }
+
+  async function openReadonly(iso) {
+    state.selected.clear();
+    state.inspectingDate = iso;
+    state.panelMode = "readonly";
+    state.sheetPeek = false;
+    renderCalendar();
+    renderActionPanel();
+    document.getElementById("readonly-turnos").innerHTML = `<div class="empty-note">Cargando...</div>`;
+    const detalle = await fetchDetalleDia(iso);
+    if (state.inspectingDate !== iso) return; // el usuario ya toco otra cosa
+    renderReadonlyCard(iso, detalle);
+  }
+
+  function renderReadonlyCard(iso, detalle) {
+    const info = state.calendarByDate[iso] || {};
+    const wrap = document.getElementById("readonly-turnos");
+    const turnosConDato = ["manana", "tarde"].filter(t => info[t]);
+    if (!turnosConDato.length) {
+      wrap.innerHTML = `<div class="empty-note">No hay registro de asistencia para este dia.</div>`;
+      return;
+    }
+    wrap.innerHTML = turnosConDato.map((t) => {
+      const base = info[t];
+      const det = detalle[t] || {};
+      const viajo = !!base.viaja;
+      const vehiculoLinea = viajo && (det.interno || det.chofer_nombre)
+        ? `<div class="readonly-line">${det.interno ? "Interno " + det.interno : ""}${det.patente ? " · " + det.patente : ""}${det.chofer_nombre ? " · " + det.chofer_nombre : ""}</div>`
+        : "";
+      const novedadesLinea = det.novedades
+        ? `<div class="readonly-novedades">Novedades: ${det.novedades}</div>`
+        : "";
+      return `
+        <div class="readonly-turno">
+          <div class="readonly-turno-head">
+            <span class="chip ${viajo ? "am" : "no"}">${TURNO_LABELS[t]}</span>
+            <span class="readonly-estado">${viajo ? "Viajo" : "No viajo"}</span>
+          </div>
+          ${vehiculoLinea}
+          ${novedadesLinea}
+        </div>`;
+    }).join("");
+  }
+
+  function closeActionPanel() {
+    state.selected.clear();
+    state.inspectingDate = null;
+    state.panelMode = "edit";
+    state.recurrenceChoice = "none";
+    state.sheetPeek = false;
+    renderActionPanel();
+    renderCalendar();
+  }
+
+  document.getElementById("action-clear").addEventListener("click", (ev) => {
+    ev.preventDefault();
+    closeActionPanel();
+  });
+
+  function goToToday() {
+    const t = new Date();
+    const changed = state.viewYear !== t.getFullYear() || state.viewMonth !== t.getMonth() + 1;
+    state.viewYear = t.getFullYear();
+    state.viewMonth = t.getMonth() + 1;
+    closeActionPanel();
+    renderMonthLabel();
+    if (changed) loadCalendar();
+    else renderCalendar();
+  }
+
+  document.querySelectorAll("#viaja-toggle .seg-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      state.viajaChoice = btn.dataset.viaja === "1";
+      document.querySelectorAll("#viaja-toggle .seg-btn").forEach((b) => b.classList.toggle("active", b === btn));
+    });
+  });
+
+  document.querySelectorAll("#turno-toggle .seg-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      state.turnoChoice = btn.dataset.turno;
+      document.querySelectorAll("#turno-toggle .seg-btn").forEach((b) => b.classList.toggle("active", b === btn));
+    });
+  });
+
+  const MAX_RECURRENCE_DATES = 366;
+
+  function endOfExtent(fromDate, extentType, extentValue) {
+    if (extentType === "year") return new Date(fromDate.getFullYear(), 11, 31);
+    if (extentType === "months") return addMonthsKeepDay(fromDate, extentValue);
+    return addDays(fromDate, extentValue * 7);
+  }
+
+  function nthWeekOfMonth(year, month, n) {
+    const weeks = buildWeeks(year, month);
+    const week = weeks[n - 1];
+    if (!week) return [];
+    return week.map((day) => (day === null ? null : new Date(year, month - 1, day)));
+  }
+
+  function analyzeSelectionPattern() {
+    const dates = Array.from(state.selected).sort();
+    if (dates.length === 0) return null;
+    const weekdays = new Set();
+    const weeksOfMonth = new Set();
+    dates.forEach(iso => {
+      const d = parseISO(iso);
+      weekdays.add(isoWeekdayMonFirst(d));
+      const firstDay = new Date(d.getFullYear(), d.getMonth(), 1);
+      const firstMondayOffset = (firstDay.getDay() + 6) % 7;
+      const dayOfMonth = d.getDate() + firstMondayOffset;
+      const weekNum = Math.ceil(dayOfMonth / 7);
+      weeksOfMonth.add(weekNum);
+    });
+    return {
+      weekdays: Array.from(weekdays).sort(),
+      weeksOfMonth: Array.from(weeksOfMonth).sort(),
+      totalDates: dates.length,
+      firstDate: dates[0],
+      lastDate: dates[dates.length - 1],
+    };
+  }
+
+  function computeRecurrenceDates(recurrenceId, extentType, extentValue) {
+    const baseDates = Array.from(state.selected).sort();
+    if (recurrenceId === "none" || baseDates.length === 0) return baseDates;
+    const pattern = analyzeSelectionPattern();
+    if (!pattern) return baseDates;
+    const fromDate = parseISO(pattern.firstDate);
+    const until = endOfExtent(fromDate, extentType, extentValue);
+    const out = new Set(baseDates);
+    let count = out.size;
+
+    if (recurrenceId === "weekdays-weekly") {
+      const selectedWeekdays = pattern.weekdays.filter(wd => wd < 5);
+      if (selectedWeekdays.length === 0) return baseDates;
+      let d = new Date(fromDate);
+      while (d <= until && count < MAX_RECURRENCE_DATES) {
+        const currentWeekday = isoWeekdayMonFirst(d);
+        if (selectedWeekdays.includes(currentWeekday)) {
+          out.add(isoFromDate(d));
+          count++;
+        }
+        d = addDays(d, 1);
+      }
+    } else if (recurrenceId === "monthdays-monthly") {
+      const selectedDays = new Set();
+      baseDates.forEach(iso => selectedDays.add(parseISO(iso).getDate()));
+      let cursor = new Date(fromDate.getFullYear(), fromDate.getMonth(), 1);
+      while (cursor <= until && count < MAX_RECURRENCE_DATES) {
+        const lastDay = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 0).getDate();
+        selectedDays.forEach(day => {
+          if (day <= lastDay) {
+            const d = new Date(cursor.getFullYear(), cursor.getMonth(), day);
+            if (d >= fromDate && d <= until && count < MAX_RECURRENCE_DATES) {
+              out.add(isoFromDate(d));
+              count++;
+            }
+          }
+        });
+        cursor = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1);
+      }
+    } else if (recurrenceId === "weeks-monthly") {
+      const selectedWeeks = pattern.weeksOfMonth;
+      const selectedWeekdays = pattern.weekdays;
+      let cursorY = fromDate.getFullYear();
+      let cursorM = fromDate.getMonth();
+      while (count < MAX_RECURRENCE_DATES) {
+        const monthStart = new Date(cursorY, cursorM, 1);
+        if (monthStart > until) break;
+        selectedWeeks.forEach(weekNum => {
+          const weekDates = nthWeekOfMonth(cursorY, cursorM + 1, weekNum);
+          weekDates.forEach((d, wd) => {
+            if (d && wd < 5 && selectedWeekdays.includes(wd) && d >= fromDate && d <= until && count < MAX_RECURRENCE_DATES) {
+              out.add(isoFromDate(d));
+              count++;
+            }
+          });
+        });
+        cursorM += 1;
+        if (cursorM > 11) { cursorM = 0; cursorY += 1; }
+      }
+    }
+    return Array.from(out).sort();
+  }
+
+  // -------------------------------------------------------------------------
+  // PANEL DE ACCION — un solo panel que alterna entre modo edicion y modo
+  // solo-lectura. La altura ya no se mide del contenido: esta fija en 46vh
+  // (modo por defecto, dentro del 40-50% pedido) y sube a 72vh con una
+  // transicion CSS cuando la repeticion elegida revela el bloque de
+  // alcance ("tall"). El handle solo alterna entre esa altura y "peek"
+  // (66px, apenas el conteo) para poder ver la grilla sin cerrar el panel.
+  // -------------------------------------------------------------------------
+  function applyPanelVisibility() {
+    const panel = document.getElementById("action-panel");
+    const isOpen = state.selected.size > 0 || !!state.inspectingDate;
+    const isTall = state.panelMode === "edit" && state.recurrenceChoice !== "none";
+    panel.classList.toggle("open", isOpen);
+    panel.classList.toggle("peek", isOpen && state.sheetPeek);
+    panel.classList.toggle("tall", isOpen && isTall);
+    document.getElementById("panel-edit-block").classList.toggle("hidden", state.panelMode !== "edit");
+    document.getElementById("panel-readonly-block").classList.toggle("hidden", state.panelMode !== "readonly");
+    document.getElementById("btn-guardar").classList.toggle("hidden", state.panelMode !== "edit");
+    document.getElementById("btn-cerrar-readonly").classList.toggle("hidden", state.panelMode !== "readonly");
+  }
+
+  function renderCountRow() {
+    const countEl = document.getElementById("action-count");
+    const clearLink = document.getElementById("action-clear");
+    if (state.panelMode === "readonly" && state.inspectingDate) {
+      const d = parseISO(state.inspectingDate);
+      countEl.textContent = capitalize(`${FULL_WEEKDAY_LOWER[isoWeekdayMonFirst(d)]} ${d.getDate()} de ${MONTH_LABELS[d.getMonth()]}`);
+      clearLink.textContent = "Cerrar";
+    } else {
+      const n = state.selected.size;
+      countEl.textContent = n === 1 ? "1 dia seleccionado" : `${n} dias seleccionados`;
+      clearLink.textContent = "Cancelar";
+    }
+  }
+
+  function renderActionPanel() {
+    renderCountRow();
+    if (state.panelMode === "edit") {
+      document.getElementById("btn-guardar").disabled = state.selected.size === 0;
+      renderRecurrenceOptions();
+    }
+    applyPanelVisibility();
+  }
+
+  document.getElementById("btn-cerrar-readonly").addEventListener("click", closeActionPanel);
+
+  const panelEl = document.getElementById("action-panel");
+  const handleEl = document.getElementById("action-panel-handle");
+
+  handleEl.addEventListener("click", () => {
+    if (!panelEl.classList.contains("open")) return;
+    state.sheetPeek = !state.sheetPeek;
+    applyPanelVisibility();
+  });
+
+  // Tocar afuera del panel lo repliega a "peek" (no lo cierra: la
+  // seleccion/inspeccion se mantiene). Los toques dentro del calendario ya
+  // deciden esto por su cuenta.
+  document.addEventListener("click", (e) => {
+    if (!panelEl.classList.contains("open") || panelEl.classList.contains("peek")) return;
+    if (panelEl.contains(e.target)) return;
+    if (e.target.closest(".day-cell, .week-num, .cal-head-cell")) return;
+    state.sheetPeek = true;
+    applyPanelVisibility();
+  });
+
+  function renderRecurrenceOptions() {
+    const box = document.getElementById("recurrence-box");
+    const select = document.getElementById("recurrence-select");
+    const extentWrap = document.getElementById("recurrence-extent");
+
+    if (state.selected.size === 0) {
+      box.classList.add("hidden");
+      return;
+    }
+    box.classList.remove("hidden");
+
+    const pattern = analyzeSelectionPattern();
+    const opts = [{ id: "none", label: "Solo esta fecha" }];
+
+    if (pattern) {
+      if (pattern.weekdays.some(wd => wd < 5)) {
+        const weekdaysNames = pattern.weekdays.filter(wd => wd < 5).sort().map(wd => FULL_WEEKDAY_LOWER[wd]);
+        if (weekdaysNames.length === 1) {
+          opts.push({ id: "weekdays-weekly", label: `Todos los ${weekdaysNames[0]}, cada semana` });
+        } else if (weekdaysNames.length > 1) {
+          const label = weekdaysNames.length === 2
+            ? `${capitalize(weekdaysNames[0])} y ${weekdaysNames[1]}, cada semana`
+            : `${weekdaysNames.slice(0, -1).map(capitalize).join(", ")} y ${weekdaysNames[weekdaysNames.length - 1]}, cada semana`;
+          opts.push({ id: "weekdays-weekly", label });
+        }
+      }
+
+      const daysOfMonth = new Set();
+      state.selected.forEach(iso => daysOfMonth.add(parseISO(iso).getDate()));
+      if (daysOfMonth.size > 0 && daysOfMonth.size <= 5) {
+        const daysList = Array.from(daysOfMonth).sort((a, b) => a - b);
+        opts.push({
+          id: "monthdays-monthly",
+          label: daysList.length === 1
+            ? `Dia ${daysList[0]} de cada mes`
+            : `Dias ${daysList.join(", ")} de cada mes`,
+        });
+      }
+
+      if (pattern.weeksOfMonth.length > 0 && pattern.weekdays.length >= 3) {
+        const weeksNames = pattern.weeksOfMonth.map(w => ORDINAL_WEEK_FEM[w - 1] || `${w}a`);
+        opts.push({
+          id: "weeks-monthly",
+          label: weeksNames.length === 1
+            ? `${capitalize(weeksNames[0])} semana de cada mes`
+            : `Semanas ${weeksNames.join(", ")} de cada mes`,
+        });
+      }
+    }
+
+    if (!opts.find((o) => o.id === state.recurrenceChoice)) state.recurrenceChoice = "none";
+
+    select.innerHTML = opts.map(o =>
+      `<option value="${o.id}"${o.id === state.recurrenceChoice ? " selected" : ""}>${o.label}</option>`
+    ).join("");
+    extentWrap.classList.toggle("hidden", state.recurrenceChoice === "none");
+  }
+
+  document.getElementById("recurrence-select").addEventListener("change", (e) => {
+    state.recurrenceChoice = e.target.value;
+    document.getElementById("recurrence-extent").classList.toggle("hidden", state.recurrenceChoice === "none");
+    applyPanelVisibility();
+    if (state.recurrenceChoice !== "none") {
+      const previewDates = computeRecurrenceDates(state.recurrenceChoice, state.extentType, state.extentValue);
+      toast(`Se aplicara a ${previewDates.length} fechas`);
+    }
+  });
+
+  document.getElementById("extent-select").addEventListener("change", (e) => {
+    state.extentType = e.target.value;
+  });
+  document.getElementById("extent-number").addEventListener("input", (e) => {
+    state.extentValue = Math.max(1, Math.min(52, Number(e.target.value) || 1));
+  });
+
+  document.getElementById("btn-guardar").addEventListener("click", async () => {
+    if (state.selected.size === 0) return;
+    const dates = computeRecurrenceDates(state.recurrenceChoice, state.extentType, state.extentValue);
+    state.pendingDates = dates;
+    const isExpanded = state.recurrenceChoice !== "none" && dates.length > state.selected.size;
+    if (isExpanded) await openImpactModal(dates);
+    else await persistSelection(state.turnoChoice);
+  });
+
+  async function openImpactModal(dates) {
+    const modal = document.getElementById("modal-impact");
+    const summary = document.getElementById("modal-impact-summary");
+    modal.classList.remove("hidden");
+    summary.textContent = "Calculando impacto...";
+    setImpactSaving(true);
+    try {
+      const months = Array.from(new Set(dates.map((d) => d.slice(0, 7))));
+      const results = await Promise.all(
+        months.map((ym) => {
+          const [y, m] = ym.split("-").map(Number);
+          return fetchMonthDataCached(y, m);
+        })
+      );
+      const merged = {};
+      results.forEach((data) => Object.assign(merged, data));
+      let withConfig = 0;
+      dates.forEach((iso) => {
+        const info = merged[iso];
+        if (info && (info.manana || info.tarde)) withConfig++;
+      });
+      summary.textContent = withConfig > 0
+        ? `Vas a modificar ${dates.length} dias, de los cuales ${withConfig} ya tenian una configuracion manual. ¿Deseas sobreescribirlos?`
+        : `Vas a modificar ${dates.length} dias. Ninguno tenia una configuracion previa.`;
+    } catch (e) {
+      console.error(e);
+      summary.textContent =
+        `Vas a modificar ${dates.length} dias. No pudimos verificar si alguno ya tenia una configuracion previa.`;
+    } finally {
+      setImpactSaving(false);
+    }
+  }
+
+  function closeImpactModal() {
+    document.getElementById("modal-impact").classList.add("hidden");
+  }
+
+  document.getElementById("modal-impact-cancel").addEventListener("click", closeImpactModal);
+  document.getElementById("modal-impact-confirm").addEventListener("click", () => {
+    closeImpactModal();
+    persistSelection(state.turnoChoice);
+  });
+
+  function setImpactSaving(isSaving) {
+    document.querySelectorAll("#modal-impact button").forEach((b) => (b.disabled = isSaving));
+  }
+
+  function setSaving(isSaving) {
+    document.getElementById("btn-guardar").disabled = isSaving || state.selected.size === 0;
+    setImpactSaving(isSaving);
+  }
+
+  async function persistSelection(turnoChoice) {
+    const dates = state.pendingDates || [];
+    if (dates.length === 0) return;
+    const viaja = state.viajaChoice;
+    const turnos = turnoChoice === "ambos" ? ["manana", "tarde"] : [turnoChoice];
+    const CHUNK = 200;
+
+    closeImpactModal();
+    setSaving(true);
+    try {
+      for (const turno of turnos) {
+        for (let i = 0; i < dates.length; i += CHUNK) {
+          const chunk = dates.slice(i, i + CHUNK);
+          const { error } = await supabase.rpc("rpc_set_asistencia_masivo", {
+            p_dni: state.profile.dni,
+            p_fechas: chunk,
+            p_turno: turno,
+            p_viaja: viaja,
+          });
+          if (error) throw error;
+        }
+      }
+      toast(`Guardado (${dates.length} fecha${dates.length === 1 ? "" : "s"})`, "ok");
+      invalidateMonthCache(dates);
+      dates.forEach((d) => state.detalleDiaCache.delete(d));
+      closeActionPanel();
+      await loadCalendar();
+      if (dates.includes(todayISO())) updateHomeBanner();
+    } catch (e) {
+      console.error(e);
+      toast("No se pudo guardar. Reintenta.", "err");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  // =========================================================================
   // MAPA
-  // =====================================================================
+  // =========================================================================
   function initMapIfNeeded() {
-    if (state.map) return;
-    state.map = L.map("map", { zoomControl: true }).setView([-34.6037, -58.3816], 12);
-    L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
-      maxZoom: 19,
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
-    }).addTo(state.map);
+    if (state.map) {
+      setTimeout(() => state.map.invalidateSize(), 100);
+      return;
+    }
+    try {
+      state.map = L.map("map", {
+        zoomControl: true,
+        attributionControl: true,
+        center: [-34.9011, -56.1645],
+        zoom: 12
+      });
+      L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        subdomains: "abcd",
+        maxZoom: 20,
+      }).addTo(state.map);
+    } catch (e) {
+      console.error("Error al inicializar el mapa:", e);
+    }
+  }
+
+  function formatUpdatedTime(ts) {
+    if (!ts) return "-";
+    let iso = String(ts).trim().replace(" ", "T");
+    if (/[+-]\d{2}$/.test(iso)) iso += ":00";
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return String(ts);
+    return d.toLocaleTimeString("es-UY", { hour: "2-digit", minute: "2-digit" });
+  }
+
+  function showMapUnavailable(text) {
+    document.getElementById("map-info").classList.add("hidden");
+    document.getElementById("map-unavailable-text").textContent =
+      text || "No hay una unidad en vivo para mostrarte en este turno.";
+    document.getElementById("map-unavailable-box").classList.remove("hidden");
+  }
+
+  function hideMapUnavailable() {
+    document.getElementById("map-unavailable-box").classList.add("hidden");
+    document.getElementById("map-info").classList.remove("hidden");
+  }
+
+  function updateMapPosition(payload) {
+    const positions = payload.data || payload;
+    const unidad = payload.unidad || {};
+    const pos = Array.isArray(positions) ? positions[0] : positions;
+    if (!pos || pos.lat == null || pos.lon == null) {
+      showMapUnavailable("Todavia no hay una posicion reciente para tu unidad.");
+      return;
+    }
+    hideMapUnavailable();
+    document.getElementById("map-chofer").textContent = unidad.chofer || pos.driver || "Chofer";
+    document.getElementById("map-unidad").textContent =
+      `Interno ${unidad.interno || "-"} - ${unidad.patente || pos.domain || ""}`;
+    document.getElementById("map-address").textContent = pos.position || "Ubicacion no disponible";
+    document.getElementById("map-updated").textContent = "Actualizado " + formatUpdatedTime(pos.ts);
+
+    const latlng = [pos.lat, pos.lon];
+    if (!state.mapMarker) {
+      const icon = L.divIcon({ className: "", html: '<div class="marker-pulse"></div>', iconSize: [16, 16] });
+      state.mapMarker = L.marker(latlng, { icon }).addTo(state.map);
+      state.map.setView(latlng, 14);
+    } else {
+      state.mapMarker.setLatLng(latlng);
+    }
   }
 
   async function pollPosition() {
-    const infoEl = document.getElementById("map-info");
-    const unavailEl = document.getElementById("map-unavailable-box");
+    if (!state.profile) return;
     try {
-      const res = await fetchWithTimeout(`${EASYTRACK_FN_URL}?dni=${encodeURIComponent(state.profile.dni)}`, 9000);
+      const res = await fetch(`${EASYTRACK_FN_URL}?dni=${encodeURIComponent(state.profile.dni)}`);
+      if (res.status === 403 || res.status === 404) {
+        const body = await res.json().catch(() => ({}));
+        showMapUnavailable(body.error || "Seguimiento no disponible para este turno.");
+        return;
+      }
       if (!res.ok) throw new Error("HTTP " + res.status);
       const json = await res.json();
-      const positions = json.data || json;
-      const pos = Array.isArray(positions) ? positions[0] : positions;
-      const lat = pos && pos.lat;
-      const lng = pos && (pos.lng ?? pos.lon ?? pos.longitud);
-      if (lat == null || lng == null) throw new Error("sin posición");
-
-      if (!state.mapMarker) {
-        state.mapMarker = L.marker([lat, lng], {
-          icon: L.divIcon({
-            className: "",
-            html: '<div class="marker-pulse"></div>',
-            iconSize: [22, 22],
-            iconAnchor: [11, 11],
-          }),
-        }).addTo(state.map);
-        state.map.setView([lat, lng], 15);
-      } else {
-        state.mapMarker.setLatLng([lat, lng]);
-      }
-
-      unavailEl.classList.add("hidden");
-      infoEl.classList.remove("hidden");
-      document.getElementById("map-chofer").textContent = pos.chofer || "Tu unidad";
-      document.getElementById("map-unidad").textContent =
-        pos.interno ? `Unidad ${pos.interno}${pos.patente ? " · " + pos.patente : ""}` : "";
-      document.getElementById("map-address").textContent = pos.position || "";
-      const upd = pos.fecha || pos.updated_at || pos.timestamp;
-      document.getElementById("map-updated").textContent = upd
-        ? `Actualizado: ${new Date(upd).toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" })}`
-        : "";
+      updateMapPosition(json);
     } catch (e) {
-      infoEl.classList.add("hidden");
-      unavailEl.classList.remove("hidden");
+      console.error("Error en pollPosition:", e);
+      showMapUnavailable("No pudimos conectar con el GPS. Reintentando...");
     }
   }
 
   function startMapPolling() {
-    stopMapPolling();
+    initMapIfNeeded();
     pollPosition();
-    state.pollTimer = setInterval(() => {
-      if (!document.hidden) pollPosition();
-    }, POLL_MS);
-  }
-  function stopMapPolling() {
-    if (state.pollTimer) { clearInterval(state.pollTimer); state.pollTimer = null; }
+    stopMapPolling();
+    state.pollTimer = setInterval(pollPosition, POLL_MS);
   }
 
-  // =====================================================================
-  // [FIX 16] Registro del Service Worker (crear /sw.js — ver nota)
-  // =====================================================================
-  if ("serviceWorker" in navigator && location.protocol === "https:") {
+  function stopMapPolling() {
+    if (state.pollTimer) {
+      clearInterval(state.pollTimer);
+      state.pollTimer = null;
+    }
+  }
+
+  const existing = loadProfile();
+  if (existing && existing.dni) {
+    enterApp(existing);
+  }
+
+  if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register("/sw.js").catch(() => {
-        // si no existe sw.js todavía, no pasa nada
-      });
+      navigator.serviceWorker.register("/sw.js").catch((e) => console.warn("[SW] registro fallo", e));
     });
   }
-
-  // =====================================================================
-  // INIT
-  // =====================================================================
-  const saved = loadProfile();
-  if (saved) enterApp(saved);
 })();
 </script>
 </body>
