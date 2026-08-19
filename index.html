@@ -258,19 +258,7 @@
   .tips-card { padding: 14px 16px; }
   .tips-card ul { margin: 0; padding-left: 16px; font-size: 0.78rem; color: var(--text-dim); line-height: 1.7; }
 
-  /* ---------------- BOTTOM SHEET (panel de acción / historial) ----------------
-     Un solo panel, dos contenidos posibles según la fecha tocada:
-       - panelMode "edit": fecha >= hoy -> formulario Viajo/No viajo + turno +
-         repetición (select compacto) + Guardar, fijo abajo del panel.
-       - panelMode "readonly": fecha < hoy -> tarjeta de solo lectura con lo
-         que realmente pasó ese día (viene de rpc_detalle_dia).
-     La altura ya no se maneja arrastrando el panel a mano por varias
-     posiciones: se restringe a un 46vh por defecto (dentro del 40-50%
-     pedido) y crece a 72vh con una transición CSS cuando la repetición
-     elegida revela el bloque de alcance ("tall"). Un toque en el handle
-     alterna entre esa altura y un estado "peek" (apenas el conteo), para
-     poder ver la grilla mientras se sigue seleccionando días.
-  ---------------------------------------------------------------------- */
+  /* ---------------- BOTTOM SHEET (panel de acción / historial) ---------------- */
   #action-panel {
     position: fixed; left: 0; right: 0; bottom: 0;
     display: flex; flex-direction: column;
@@ -428,11 +416,15 @@
   <div class="login-card glass">
     <div class="brand">Charter TI</div>
     <h1>Hola</h1>
-    <p>Ingresa tu documento para ver tu calendario de viajes, tu historial y el mapa en vivo de tu unidad.</p>
+    <p>Ingresa tu documento y contraseña para ver tu calendario de viajes, tu historial y el mapa en vivo de tu unidad.</p>
     <form id="form-login" autocomplete="off">
       <div class="field">
         <label for="input-dni">Documento (DNI)</label>
         <input id="input-dni" name="dni" inputmode="numeric" pattern="[0-9]{6,9}" placeholder="Ej: 12345678" required />
+      </div>
+      <div class="field">
+        <label for="input-pass">Contraseña</label>
+        <input id="input-pass" type="password" name="password" placeholder="Tu contraseña" required />
       </div>
       <button type="submit" id="btn-login" class="btn btn-primary">Ingresar</button>
       <div id="login-error" class="login-error"></div>
@@ -465,9 +457,6 @@
   </header>
 
   <main>
-    <!-- ============================================================
-         INICIO — dashboard operativo (banner en vivo + próximo viaje)
-    ============================================================ -->
     <section id="tab-inicio" class="tab-panel">
       <div class="home-wrap">
         <div id="home-banner" class="home-banner glass off">
@@ -485,11 +474,6 @@
       </div>
     </section>
 
-    <!-- ============================================================
-         CALENDARIO — también hace de historial: los días pasados se
-         tocan igual que los futuros, pero abren la tarjeta de solo
-         lectura en vez del formulario.
-    ============================================================ -->
     <section id="tab-calendario" class="tab-panel hidden">
       <div class="calendar-layout">
         <div>
@@ -544,9 +528,6 @@
       </div>
     </section>
 
-    <!-- ============================================================
-         MAPA
-    ============================================================ -->
     <section id="tab-mapa" class="tab-panel hidden">
       <div id="map"></div>
       <div class="map-overlay-top glass hidden" id="map-info">
@@ -565,7 +546,6 @@
     </section>
   </main>
 
-  <!-- DOCK DE NAVEGACION: 3 pestañas -->
   <nav class="bottom-nav glass" aria-label="Navegacion principal">
     <button type="button" class="nav-btn active" data-tab="inicio">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -621,10 +601,6 @@
         </div>
       </div>
 
-      <!-- Repeticion: ahora es un selector compacto, y va antes de Guardar
-           (que quedo fijo en el pie del panel). Elegir cualquier opcion
-           que no sea "Solo esta fecha" revela el bloque de alcance y
-           el panel crece de 46vh a 72vh con una transicion suave. -->
       <div id="recurrence-box" class="recurrence-box hidden">
         <label for="recurrence-select" class="recurrence-title">Repetición</label>
         <select id="recurrence-select" class="recurrence-select"></select>
@@ -683,22 +659,6 @@
 
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  // -------------------------------------------------------------------------
-  // NUEVO — esta pantalla asume una función RPC `rpc_detalle_dia(p_dni,
-  // p_fecha)` que todavía no existía en el backend, necesaria para dos
-  // piezas nuevas de este rediseño:
-  //   1) La tarjeta de solo lectura al tocar un día pasado en el calendario
-  //      (vehículo/interno, chofer, novedades).
-  //   2) El campo "Vehículo" del widget "Próximo viaje" en Inicio.
-  // Se espera un array con una fila por turno con datos ese día:
-  //   { turno, viaja, chofer_nombre, interno, patente, novedades }
-  // (cruzando asistencias + despacho por fecha/turno, similar a como lo
-  // hace el panel admin). Si la función no existe todavía, el fetch falla
-  // en silencio y la UI sigue funcionando con lo que ya trae
-  // rpc_calendario_mes — solo no se muestra vehículo/chofer/novedades
-  // hasta que se implemente del lado del backend.
-  // -------------------------------------------------------------------------
-
   const WEEKDAY_LABELS = ["Lun", "Mar", "Mie", "Jue", "Vie", "Sab", "Dom"];
   const MONTH_LABELS = [
     "enero", "febrero", "marzo", "abril", "mayo", "junio",
@@ -708,14 +668,11 @@
   const ORDINAL_WEEK_FEM = ["primeras", "segundas", "terceras", "cuartas", "quintas"];
   const TURNO_LABELS = { manana: "Mañana", tarde: "Tarde" };
 
-  // Colores por estado de un turno en un día — usados tanto para el fondo
-  // de la celda (mezclados en diagonal si mañana y tarde difieren) como
-  // para el puntito debajo del número.
   const CELL_TINT = {
-    done: "rgba(44, 184, 122, 0.30)",       // verde — realizado (pasado, viajo=true)
-    scheduled: "rgba(85, 179, 245, 0.30)",  // azul — programado (futuro, viajo=true)
-    no: "rgba(224, 68, 68, 0.20)",          // rojo — marco "no viajo"
-    absent: "rgba(255, 255, 255, 0.03)",    // gris — sin registro (pasado: falta; futuro: sin marcar)
+    done: "rgba(44, 184, 122, 0.30)",
+    scheduled: "rgba(85, 179, 245, 0.30)",
+    no: "rgba(224, 68, 68, 0.20)",
+    absent: "rgba(255, 255, 255, 0.03)",
   };
 
   const state = {
@@ -726,10 +683,10 @@
     viewMonth: new Date().getMonth() + 1,
     calendarByDate: {},
 
-    selected: new Set(),          // fechas futuras/hoy elegidas para editar
-    inspectingDate: null,         // fecha pasada que se esta mostrando en modo lectura
-    panelMode: "edit",            // "edit" | "readonly"
-    sheetPeek: false,             // panel replegado a solo el conteo
+    selected: new Set(),
+    inspectingDate: null,
+    panelMode: "edit",
+    sheetPeek: false,
 
     viajaChoice: true,
     turnoChoice: "ambos",
@@ -738,11 +695,8 @@
     extentValue: 4,
     pendingDates: [],
 
-    // Cache en memoria por mes ("YYYY-MM" -> datos). Un solo mes descargado
-    // sirve para Calendario, Inicio (banner + proximo viaje) y la tarjeta
-    // de lectura, ya que todas leen del mismo rpc_calendario_mes.
     monthCache: {},
-    detalleDiaCache: new Map(),   // iso -> {turno: {...}} (rpc_detalle_dia)
+    detalleDiaCache: new Map(),
 
     map: null,
     mapMarker: null,
@@ -781,46 +735,75 @@
     toastTimer = setTimeout(() => { el.className = ""; }, 2600);
   }
 
-  const STORAGE_KEY = "charterti_pasajero_profile";
-  function saveProfile(p) { localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); }
-  function loadProfile() {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? JSON.parse(raw) : null;
-    } catch (e) { return null; }
-  }
-  function clearProfile() { localStorage.removeItem(STORAGE_KEY); }
-
   const formLogin = document.getElementById("form-login");
   const btnLogin = document.getElementById("btn-login");
   const loginError = document.getElementById("login-error");
 
+  // =========================================================================
+  // NUEVO LOGIN (SUPABASE AUTH - OPCION A)
+  // =========================================================================
   formLogin.addEventListener("submit", async (ev) => {
     ev.preventDefault();
     const dni = document.getElementById("input-dni").value.trim();
+    const pass = document.getElementById("input-pass").value;
+    
     loginError.textContent = "";
     if (!/^[0-9]{6,9}$/.test(dni)) {
       loginError.textContent = "Ingresa un DNI valido (solo numeros).";
       return;
     }
+    
     btnLogin.disabled = true;
     btnLogin.textContent = "Verificando...";
+    
     try {
-      const { data, error } = await supabase.rpc("rpc_login_pasajero", { p_dni: dni });
-      if (error) throw error;
-      const row = Array.isArray(data) ? data[0] : data;
+      // 1. Armar email fantasma y loguear con Supabase Auth
+      const email = `${dni}@abonados.app`;
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: pass
+      });
+      
+      if (authError) throw authError;
+      
+      // 2. Si el login exitó, buscar el perfil del pasajero
+      const { data: profileData, error: rpcError } = await supabase.rpc("rpc_login_pasajero");
+      if (rpcError) throw rpcError;
+      
+      const row = Array.isArray(profileData) ? profileData[0] : profileData;
       if (!row) {
-        loginError.textContent = "DNI no encontrado o no es abonado. Consulta con administracion.";
-        return;
+        // Si no tiene perfil, cerramos la sesión para no dejarlo colgado
+        await supabase.auth.signOut();
+        throw new Error("DNI no encontrado o no es abonado. Consulta con administracion.");
       }
-      saveProfile(row);
+      
       enterApp(row);
     } catch (e) {
       console.error(e);
-      loginError.textContent = "No pudimos verificar tu DNI. Proba de nuevo en unos segundos.";
+      loginError.textContent = e.message.includes("Invalid login credentials")
+        ? "DNI o contraseña incorrectos."
+        : "No pudimos verificar tu acceso. Proba de nuevo en unos segundos.";
     } finally {
       btnLogin.disabled = false;
       btnLogin.textContent = "Ingresar";
+    }
+  });
+
+  // Manejo de cierre de sesión
+  document.getElementById("btn-logout").addEventListener("click", async () => {
+    await supabase.auth.signOut();
+  });
+
+  // Listener global de sesión (detecta logout, expiración, etc)
+  supabase.auth.onAuthStateChange((event, session) => {
+    if (event === 'SIGNED_OUT') {
+      stopMapPolling();
+      stopHomePolling();
+      state.profile = null;
+      document.getElementById("screen-app").classList.add("hidden");
+      document.getElementById("screen-login").classList.remove("hidden");
+      document.getElementById("input-dni").value = "";
+      document.getElementById("input-pass").value = "";
     }
   });
 
@@ -846,16 +829,6 @@
       btn.disabled = false;
       btn.classList.remove("spinning");
     }
-  });
-
-  document.getElementById("btn-logout").addEventListener("click", () => {
-    clearProfile();
-    stopMapPolling();
-    stopHomePolling();
-    state.profile = null;
-    document.getElementById("screen-app").classList.add("hidden");
-    document.getElementById("screen-login").classList.remove("hidden");
-    document.getElementById("input-dni").value = "";
   });
 
   function enterApp(profile) {
@@ -907,9 +880,6 @@
     return { status: "unmarked" };
   }
 
-  // Estado visual de un turno puntual: cruza si viajo (o no, o no hay
-  // dato) con si la fecha ya paso, que es lo que decide entre verde
-  // (realizado) y azul (programado).
   function turnoState(turnoInfo, isPast) {
     if (turnoInfo && turnoInfo.viaja === true) return isPast ? "done" : "scheduled";
     if (turnoInfo && turnoInfo.viaja === false) return "no";
@@ -918,9 +888,11 @@
 
   function monthCacheKey(year, month) { return `${year}-${pad2(month)}`; }
 
+  // =========================================================================
+  // RPCs SIN p_dni (usan auth.uid() internamente)
+  // =========================================================================
   async function fetchMonthData(year, month) {
     const { data, error } = await supabase.rpc("rpc_calendario_mes", {
-      p_dni: state.profile.dni,
       p_anio: year,
       p_mes: month,
     });
@@ -949,14 +921,10 @@
     keys.forEach((k) => delete state.monthCache[k]);
   }
 
-  // Detalle puntual de un dia (vehiculo/chofer/novedades). Se pide una
-  // sola vez por fecha y se guarda en memoria — ver nota de
-  // rpc_detalle_dia mas arriba.
   async function fetchDetalleDia(iso) {
     if (state.detalleDiaCache.has(iso)) return state.detalleDiaCache.get(iso);
     try {
       const { data, error } = await supabase.rpc("rpc_detalle_dia", {
-        p_dni: state.profile.dni,
         p_fecha: iso,
       });
       if (error) throw error;
@@ -986,7 +954,7 @@
   }
 
   // =========================================================================
-  // INICIO — banner en vivo + widget de proximo viaje
+  // INICIO
   // =========================================================================
   function setBanner(kind, title, desc) {
     const el = document.getElementById("home-banner");
@@ -1056,9 +1024,6 @@
     if (state.homePollTimer) { clearInterval(state.homePollTimer); state.homePollTimer = null; }
   }
 
-  // Busca, desde hoy hacia adelante (maximo 60 dias), el proximo dia habil
-  // con un viaje ya confirmado. Si no encuentra ninguno, devuelve el
-  // primer dia habil sin marcar para sugerir que lo confirme.
   async function computeNextTripDescriptor() {
     const t0 = new Date();
     let cursor = new Date(t0.getFullYear(), t0.getMonth(), t0.getDate());
@@ -1147,14 +1112,12 @@
     }
   }
 
-  // Accion rapida (confirmar/cancelar) desde el widget de Inicio: usa el
-  // mismo RPC que el panel de edicion, pero para una sola fecha.
+  // Sin p_dni en la llamada
   async function quickSetAsistencia(iso, turno, viaja) {
     try {
       const turnos = turno === "ambos" ? ["manana", "tarde"] : [turno];
       for (const t of turnos) {
         const { error } = await supabase.rpc("rpc_set_asistencia_masivo", {
-          p_dni: state.profile.dni,
           p_fechas: [iso],
           p_turno: t,
           p_viaja: viaja,
@@ -1219,9 +1182,6 @@
     const weeks = buildWeeks(state.viewYear, state.viewMonth);
     const today = todayISO();
 
-    // El resaltado de columna/fila completa solo considera fechas
-    // editables (>= hoy): un dia pasado nunca puede estar en
-    // state.selected, asi que no debe contar para el "todo seleccionado".
     const weekdaysFullySelected = new Set();
     for (let wd = 0; wd < 5; wd++) {
       const editableDates = [];
@@ -1335,9 +1295,6 @@
     el.addEventListener("click", () => toggleWeekdaySelection(Number(el.dataset.weekday)));
   });
 
-  // Al tocar otro dia con el panel ya abierto, lo replegamos a "peek" para
-  // no tapar la grilla mientras se sigue seleccionando; la primera
-  // seleccion (o quedar en 0) abre el panel completo.
   function updatePeekAfterCalendarTap(wasEmpty) {
     state.sheetPeek = state.selected.size > 0 && !wasEmpty;
   }
@@ -1407,7 +1364,7 @@
     renderActionPanel();
     document.getElementById("readonly-turnos").innerHTML = `<div class="empty-note">Cargando...</div>`;
     const detalle = await fetchDetalleDia(iso);
-    if (state.inspectingDate !== iso) return; // el usuario ya toco otra cosa
+    if (state.inspectingDate !== iso) return; 
     renderReadonlyCard(iso, detalle);
   }
 
@@ -1582,14 +1539,6 @@
     return Array.from(out).sort();
   }
 
-  // -------------------------------------------------------------------------
-  // PANEL DE ACCION — un solo panel que alterna entre modo edicion y modo
-  // solo-lectura. La altura ya no se mide del contenido: esta fija en 46vh
-  // (modo por defecto, dentro del 40-50% pedido) y sube a 72vh con una
-  // transicion CSS cuando la repeticion elegida revela el bloque de
-  // alcance ("tall"). El handle solo alterna entre esa altura y "peek"
-  // (66px, apenas el conteo) para poder ver la grilla sin cerrar el panel.
-  // -------------------------------------------------------------------------
   function applyPanelVisibility() {
     const panel = document.getElementById("action-panel");
     const isOpen = state.selected.size > 0 || !!state.inspectingDate;
@@ -1637,9 +1586,6 @@
     applyPanelVisibility();
   });
 
-  // Tocar afuera del panel lo repliega a "peek" (no lo cierra: la
-  // seleccion/inspeccion se mantiene). Los toques dentro del calendario ya
-  // deciden esto por su cuenta.
   document.addEventListener("click", (e) => {
     if (!panelEl.classList.contains("open") || panelEl.classList.contains("peek")) return;
     if (panelEl.contains(e.target)) return;
@@ -1784,6 +1730,7 @@
     setImpactSaving(isSaving);
   }
 
+  // Sin p_dni en la llamada masiva
   async function persistSelection(turnoChoice) {
     const dates = state.pendingDates || [];
     if (dates.length === 0) return;
@@ -1798,7 +1745,6 @@
         for (let i = 0; i < dates.length; i += CHUNK) {
           const chunk = dates.slice(i, i + CHUNK);
           const { error } = await supabase.rpc("rpc_set_asistencia_masivo", {
-            p_dni: state.profile.dni,
             p_fechas: chunk,
             p_turno: turno,
             p_viaja: viaja,
@@ -1923,10 +1869,24 @@
     }
   }
 
-  const existing = loadProfile();
-  if (existing && existing.dni) {
-    enterApp(existing);
-  }
+  // =========================================================================
+  // INICIALIZACIÓN DE SESIÓN
+  // =========================================================================
+  // Reviso si ya hay una sesión activa para saltar el login
+  (async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        const { data, error } = await supabase.rpc("rpc_login_pasajero");
+        if (!error && data) {
+          const row = Array.isArray(data) ? data[0] : data;
+          if (row) enterApp(row);
+        }
+      }
+    } catch (e) {
+      console.error("Error recuperando sesión inicial", e);
+    }
+  })();
 
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
