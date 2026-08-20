@@ -512,18 +512,51 @@
     <div class="brand">Charter TI · Admin</div>
     <h1>Panel de administración</h1>
     <p>Ingresá con tu cuenta de administrador para gestionar despacho, flota, pasajeros y manifiestos.</p>
-    <form id="form-login" autocomplete="on">
-      <div class="field">
-        <label for="input-email">Email</label>
-        <input id="input-email" name="email" type="email" autocomplete="username" required />
-      </div>
-      <div class="field">
-        <label for="input-password">Contraseña</label>
-        <input id="input-password" name="password" type="password" autocomplete="current-password" required />
-      </div>
-      <button type="submit" id="btn-login" class="btn btn-primary">Ingresar</button>
-      <div id="login-error" class="login-error"></div>
-    </form>
+          <form id="form-despacho" class="glass form-card">
+        <div class="field">
+          <label for="despacho-fecha">Fecha</label>
+          <input type="date" id="despacho-fecha" required />
+        </div>
+        <div class="field">
+          <label>Turno</label>
+          <div class="turno-switch" id="despacho-turno-switch">
+            <button type="button" data-turno="manana" class="active">Mañana</button>
+            <button type="button" data-turno="tarde">Tarde</button>
+          </div>
+        </div>
+        <div class="field">
+          <label for="despacho-unidad">Unidad</label>
+          <select id="despacho-unidad" required></select>
+        </div>
+        <div class="field" style="margin-bottom:14px;">
+          <label for="despacho-chofer">Chofer</label>
+          <input id="despacho-chofer" type="text" placeholder="Nombre del chofer" required />
+        </div>
+        
+        <!-- NUEVO: Plantillas de Horario -->
+        <div class="field">
+          <label>Plantilla de Horario GPS</label>
+          <div class="turno-switch" id="despacho-template-switch">
+            <button type="button" data-tpl="manana" class="active">Plantilla Mañana</button>
+            <button type="button" data-tpl="tarde">Plantilla Tarde</button>
+          </div>
+        </div>
+        
+        <!-- NUEVO: Horarios manuales -->
+        <div style="display:flex; gap:10px;">
+          <div class="field" style="flex:1; margin-bottom:0;">
+            <label for="despacho-gps-inicio">Inicio GPS</label>
+            <input type="time" id="despacho-gps-inicio" required />
+          </div>
+          <div class="field" style="flex:1; margin-bottom:0;">
+            <label for="despacho-gps-fin">Fin GPS</label>
+            <input type="time" id="despacho-gps-fin" required />
+          </div>
+        </div>
+        
+        <button type="submit" id="btn-guardar-despacho" class="btn btn-primary" style="margin-top:18px;">Guardar y activar GPS</button>
+        <div id="despacho-msg" class="form-msg"></div>
+      </form>
   </div>
 </section>
 
