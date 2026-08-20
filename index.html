@@ -676,6 +676,31 @@
   };
 
   const state = {
+      let canalPasajero = null;
+
+  // Función para empezar a escuchar cambios en la base de datos
+  function suscribirRealtimePasajero() {
+    if (canalPasajero) return;
+    canalPasajero = supabase.channel('pasajero-live')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'despacho' }, (payload) => {
+        // Si hay un cambio en despacho, actualizamos al instante
+        if (state.activeTab === 'inicio') updateHomeBanner();
+        if (state.activeTab === 'mapa') pollPosition();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'asistencias' }, (payload) => {
+        // Si hay un cambio en asistencias (ej: el pasajero marca viaje desde otro lado)
+        if (state.activeTab === 'inicio') loadHomeWidgets();
+      })
+      .subscribe();
+  }
+
+  // Función para dejar de escuchar (cuando cierra sesión)
+  function desuscribirRealtimePasajero() {
+    if (canalPasajero) {
+      supabase.removeChannel(canalPasajero);
+      canalPasajero = null;
+    }
+  }
     profile: null,
     activeTab: "inicio",
 
