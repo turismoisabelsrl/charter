@@ -1117,7 +1117,7 @@
     try {
       const turnos = turno === "ambos" ? ["manana", "tarde"] : [turno];
       for (const t of turnos) {
-        const { error } = await supabase.rpc("rpc_set_asistencia_masivo", {
+        const { error } = await supabase.rpc("rpc_guardar_asistencia", {
           p_fechas: [iso],
           p_turno: t,
           p_viaja: viaja,
@@ -1735,7 +1735,7 @@
       for (const turno of turnos) {
         for (let i = 0; i < dates.length; i += CHUNK) {
           const chunk = dates.slice(i, i + CHUNK);
-          const { error } = await supabase.rpc("rpc_set_asistencia_masivo", {
+          const { error } = await supabase.rpc("rpc_guardar_asistencia", {
             p_fechas: chunk,
             p_turno: turno,
             p_viaja: viaja,
