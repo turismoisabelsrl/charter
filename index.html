@@ -824,6 +824,7 @@
     if (event === 'SIGNED_OUT') {
       stopMapPolling();
       stopHomePolling();
+      desuscribirRealtimePasajero();
       state.profile = null;
       document.getElementById("screen-app").classList.add("hidden");
       document.getElementById("screen-login").classList.remove("hidden");
@@ -1940,6 +1941,13 @@
     });
   }
 })();
+    document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && state.profile) {
+      if (!canalPasajero) suscribirRealtimePasajero();
+      if (state.activeTab === 'inicio') loadHomeWidgets();
+      if (state.activeTab === 'mapa') pollPosition();
+    }
+  });
 </script>
 </body>
 </html>
