@@ -675,32 +675,30 @@
     absent: "rgba(255, 255, 255, 0.03)",
   };
 
-  const state = {
-      let canalPasajero = null;
+  // Variables para Realtime
+  let canalPasajero = null;
 
-  // Función para empezar a escuchar cambios en la base de datos
   function suscribirRealtimePasajero() {
     if (canalPasajero) return;
     canalPasajero = supabase.channel('pasajero-live')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'despacho' }, (payload) => {
-        // Si hay un cambio en despacho, actualizamos al instante
         if (state.activeTab === 'inicio') updateHomeBanner();
         if (state.activeTab === 'mapa') pollPosition();
       })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'asistencias' }, (payload) => {
-        // Si hay un cambio en asistencias (ej: el pasajero marca viaje desde otro lado)
         if (state.activeTab === 'inicio') loadHomeWidgets();
       })
       .subscribe();
   }
 
-  // Función para dejar de escuchar (cuando cierra sesión)
   function desuscribirRealtimePasajero() {
     if (canalPasajero) {
       supabase.removeChannel(canalPasajero);
       canalPasajero = null;
     }
   }
+
+  const state = {
     profile: null,
     activeTab: "inicio",
 
@@ -765,7 +763,7 @@
   const loginError = document.getElementById("login-error");
 
   // =========================================================================
-  // NUEVO LOGIN (SUPABASE AUTH - OPCION A)
+  // LOGIN (SUPABASE AUTH)
   // =========================================================================
   formLogin.addEventListener("submit", async (ev) => {
     ev.preventDefault();
@@ -782,7 +780,6 @@
     btnLogin.textContent = "Verificando...";
     
     try {
-      // 1. Armar email fantasma y loguear con Supabase Auth
       const email = `${dni}@abonados.app`;
       const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
         email: email,
@@ -791,13 +788,11 @@
       
       if (authError) throw authError;
       
-      // 2. Si el login exitó, buscar el perfil del pasajero
       const { data: profileData, error: rpcError } = await supabase.rpc("rpc_login_pasajero");
       if (rpcError) throw rpcError;
       
       const row = Array.isArray(profileData) ? profileData[0] : profileData;
       if (!row) {
-        // Si no tiene perfil, cerramos la sesión para no dejarlo colgado
         await supabase.auth.signOut();
         throw new Error("DNI no encontrado o no es abonado. Consulta con administracion.");
       }
@@ -814,12 +809,10 @@
     }
   });
 
-  // Manejo de cierre de sesión
   document.getElementById("btn-logout").addEventListener("click", async () => {
     await supabase.auth.signOut();
   });
 
-  // Listener global de sesión (detecta logout, expiración, etc)
   supabase.auth.onAuthStateChange((event, session) => {
     if (event === 'SIGNED_OUT') {
       stopMapPolling();
@@ -865,7 +858,7 @@
     renderMonthLabel();
     loadCalendar();
     switchTab("inicio");
-    suscribirRealtimePasajero();
+    suscribirRealtimePasajero(); // Iniciamos la escucha en tiempo real
   }
 
   document.querySelectorAll(".nav-btn").forEach((btn) => {
@@ -915,9 +908,6 @@
 
   function monthCacheKey(year, month) { return `${year}-${pad2(month)}`; }
 
-  // =========================================================================
-  // RPCs SIN p_dni (usan auth.uid() internamente)
-  // =========================================================================
   async function fetchMonthData(year, month) {
     const { data, error } = await supabase.rpc("rpc_calendario_mes", {
       p_anio: year,
@@ -1139,7 +1129,6 @@
     }
   }
 
-  // Sin p_dni en la llamada
   async function quickSetAsistencia(iso, turno, viaja) {
     try {
       const turnos = turno === "ambos" ? ["manana", "tarde"] : [turno];
@@ -1493,12 +1482,6 @@
     if (recurrenceId === "none" || baseDates.length === 0) return baseDates;
     const pattern = analyzeSelectionPattern();
     if (!pattern) return baseDates;
-    // El patron (que dia de semana / dia del mes / semana del mes) se lee
-    // de la seleccion completa, pero la extension ("proximas X semanas...")
-    // se cuenta a partir de la ULTIMA fecha ya elegida — si se cuenta desde
-    // la primera, seleccionar por ej. todo un mes de miercoles y despues
-    // pedir "4 semanas mas" puede terminar sin agregar casi nada nuevo,
-    // porque esas 4 semanas ya se solapan con lo que estaba elegido.
     const lastBase = parseISO(pattern.lastDate);
     const until = endOfExtent(lastBase, extentType, extentValue);
     const out = new Set(baseDates);
@@ -1633,7 +1616,7 @@
           opts.push({ id: "weekdays-weekly", label: `Todos los ${weekdaysNames[0]}, cada semana` });
         } else if (weekdaysNames.length > 1) {
           const label = weekdaysNames.length === 2
-            ? `${capitalize(weekdaysNames[0])} y ${weekdaysNames[1]}, cada semana`
+            ? `${capitalize(weekdaysNames[0])} y ${weekdaysNames[1]}, cada semana}`
             : `${weekdaysNames.slice(0, -1).map(capitalize).join(", ")} y ${weekdaysNames[weekdaysNames.length - 1]}, cada semana`;
           opts.push({ id: "weekdays-weekly", label });
         }
@@ -1748,7 +1731,6 @@
     setImpactSaving(isSaving);
   }
 
-  // Sin p_dni en la llamada masiva
   async function persistSelection(turnoChoice) {
     const dates = state.pendingDates || [];
     if (dates.length === 0) return;
@@ -1890,7 +1872,6 @@
   // =========================================================================
   // INICIALIZACIÓN DE SESIÓN
   // =========================================================================
-  // Reviso si ya hay una sesión activa para saltar el login
   (async () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
@@ -1905,6 +1886,15 @@
       console.error("Error recuperando sesión inicial", e);
     }
   })();
+
+  // Fix para iPhone: Volver a primer plano
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && state.profile) {
+      if (!canalPasajero) suscribirRealtimePasajero();
+      if (state.activeTab === 'inicio') loadHomeWidgets();
+      if (state.activeTab === 'mapa') pollPosition();
+    }
+  });
 
   // =========================================================================
   // SERVICE WORKER (Auto-Update para iOS/Android)
@@ -1941,13 +1931,6 @@
     });
   }
 })();
-    document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible' && state.profile) {
-      if (!canalPasajero) suscribirRealtimePasajero();
-      if (state.activeTab === 'inicio') loadHomeWidgets();
-      if (state.activeTab === 'mapa') pollPosition();
-    }
-  });
 </script>
 </body>
 </html>
