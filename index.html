@@ -1879,9 +1879,38 @@
     }
   })();
 
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-      navigator.serviceWorker.register("/sw.js").catch((e) => console.warn("[SW] registro fallo", e));
+  // =========================================================================
+  // SERVICE WORKER (Auto-Update para iOS/Android)
+  // =========================================================================
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').then((reg) => {
+        function activarSiHayNuevo(worker) {
+          if (!worker) return;
+          worker.postMessage({ type: 'SKIP_WAITING' });
+        }
+        activarSiHayNuevo(reg.waiting); 
+        reg.addEventListener('updatefound', () => {
+          const nuevoWorker = reg.installing;
+          if (!nuevoWorker) return;
+          nuevoWorker.addEventListener('statechange', () => {
+            if (nuevoWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              activarSiHayNuevo(nuevoWorker);
+            }
+          });
+        });
+        reg.update();
+        document.addEventListener('visibilitychange', () => {
+          if (document.visibilityState === 'visible') reg.update();
+        });
+      }).catch(err => console.log('SW no registrado:', err));
+
+      let recargandoPorActualizacion = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (recargandoPorActualizacion) return;
+        recargandoPorActualizacion = true;
+        window.location.reload();
+      });
     });
   }
 })();
