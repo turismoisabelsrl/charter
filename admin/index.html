@@ -512,51 +512,18 @@
     <div class="brand">Charter TI · Admin</div>
     <h1>Panel de administración</h1>
     <p>Ingresá con tu cuenta de administrador para gestionar despacho, flota, pasajeros y manifiestos.</p>
-          <form id="form-despacho" class="glass form-card">
-        <div class="field">
-          <label for="despacho-fecha">Fecha</label>
-          <input type="date" id="despacho-fecha" required />
-        </div>
-        <div class="field">
-          <label>Turno</label>
-          <div class="turno-switch" id="despacho-turno-switch">
-            <button type="button" data-turno="manana" class="active">Mañana</button>
-            <button type="button" data-turno="tarde">Tarde</button>
-          </div>
-        </div>
-        <div class="field">
-          <label for="despacho-unidad">Unidad</label>
-          <select id="despacho-unidad" required></select>
-        </div>
-        <div class="field" style="margin-bottom:14px;">
-          <label for="despacho-chofer">Chofer</label>
-          <input id="despacho-chofer" type="text" placeholder="Nombre del chofer" required />
-        </div>
-        
-        <!-- NUEVO: Plantillas de Horario -->
-        <div class="field">
-          <label>Plantilla de Horario GPS</label>
-          <div class="turno-switch" id="despacho-template-switch">
-            <button type="button" data-tpl="manana" class="active">Plantilla Mañana</button>
-            <button type="button" data-tpl="tarde">Plantilla Tarde</button>
-          </div>
-        </div>
-        
-        <!-- NUEVO: Horarios manuales -->
-        <div style="display:flex; gap:10px;">
-          <div class="field" style="flex:1; margin-bottom:0;">
-            <label for="despacho-gps-inicio">Inicio GPS</label>
-            <input type="time" id="despacho-gps-inicio" required />
-          </div>
-          <div class="field" style="flex:1; margin-bottom:0;">
-            <label for="despacho-gps-fin">Fin GPS</label>
-            <input type="time" id="despacho-gps-fin" required />
-          </div>
-        </div>
-        
-        <button type="submit" id="btn-guardar-despacho" class="btn btn-primary" style="margin-top:18px;">Guardar y activar GPS</button>
-        <div id="despacho-msg" class="form-msg"></div>
-      </form>
+    <form id="form-login" autocomplete="on">
+      <div class="field">
+        <label for="input-email">Email</label>
+        <input id="input-email" name="email" type="email" autocomplete="username" required />
+      </div>
+      <div class="field">
+        <label for="input-password">Contraseña</label>
+        <input id="input-password" name="password" type="password" autocomplete="current-password" required />
+      </div>
+      <button type="submit" id="btn-login" class="btn btn-primary">Ingresar</button>
+      <div id="login-error" class="login-error"></div>
+    </form>
   </div>
 </section>
 
@@ -1062,68 +1029,123 @@
   // =========================================================================
   // MÓDULO 1 — DESPACHO DIARIO + KILL SWITCH
   // =========================================================================
-    let despachoTurno = "manana";
-  
-  // --- NUEVO: Configuración de plantillas de horario ---
-  // Podés editar estos horarios por defecto acá:
-  const TPL_TIMES = {
-    manana: { inicio: "06:00", fin: "12:30" },
-    tarde: { inicio: "14:30", fin: "21:00" }
-  };
-
-  // Escucha el botón de Mañana/Tarde del formulario
+  let despachoTurno = "manana";
   document.querySelectorAll("#despacho-turno-switch button").forEach((btn) => {
     btn.addEventListener("click", () => {
       despachoTurno = btn.dataset.turno;
       document.querySelectorAll("#despacho-turno-switch button").forEach((b) => b.classList.toggle("active", b === btn));
       refreshDespachoWarning();
-      // Cuando cambiás de turno, se auto-aplica la plantilla de horario correspondiente
-      applyTemplate(despachoTurno);
     });
   });
+  document.getElementById("despacho-fecha").addEventListener("change", refreshDespachoWarning);
 
-  // Escucha los botones de plantilla y rellena los inputs de hora
-  document.querySelectorAll("#despacho-template-switch button").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      applyTemplate(btn.dataset.tpl);
-    });
-  });
-
-  function applyTemplate(tplName) {
-    const tpl = TPL_TIMES[tplName];
-    if (tpl) {
-      document.getElementById("despacho-gps-inicio").value = tpl.inicio;
-      document.getElementById("despacho-gps-fin").value = tpl.fin;
-      document.querySelectorAll("#despacho-template-switch button").forEach((b) => b.classList.toggle("active", b.dataset.tpl === tplName));
+  async function loadUnidades(silent) {
+    try {
+      const { data, error } = await supabase
+        .from(T.unidades)
+        .select("id, interno, patente, easytrack_domain, activa")
+        .order("interno");
+      if (error) throw error;
+      state.unidades = data || [];
+      state.unidadesById = new Map(state.unidades.map((u) => [String(u.id), u]));
+    } catch (e) {
+      console.error(e);
+      if (!silent) toast("No se pudieron cargar las unidades.", "err");
     }
   }
 
-  // Aplicar plantilla inicial al cargar la página
-  applyTemplate("manana");
+  function fillUnidadesSelect() {
+    const sel = document.getElementById("despacho-unidad");
+    const activas = state.unidades.filter((u) => u.activa !== false);
+    sel.innerHTML = activas
+      .map((u) => `<option value="${u.id}">Interno ${u.interno}${u.patente ? " · " + u.patente : ""}</option>`)
+      .join("") || `<option value="">Sin unidades activas</option>`;
+  }
 
-  document.getElementById("despacho-fecha").addEventListener("change", refreshDespachoWarning);
+  // --- Turnos activos (panel "kill switch") ---
+  async function loadTurnosActivos(silent) {
+    const listEl = document.getElementById("turnos-activos-list");
+    if (!silent) listEl.innerHTML = `<div class="activos-empty">Cargando turnos activos…</div>`;
+    try {
+      const { data, error } = await supabase
+        .from(T.despacho)
+        .select("id, fecha, turno, chofer_nombre, iniciado_at, " + T.unidades + "(interno, patente)")
+        .eq("activo", true)
+        .order("fecha", { ascending: false });
+      if (error) throw error;
+      state.turnosActivos = data || [];
+      renderTurnosActivos();
+      refreshDespachoWarning();
+    } catch (e) {
+      console.error(e);
+      if (!silent) listEl.innerHTML = `<div class="activos-empty">No se pudieron cargar los turnos activos.</div>`;
+    }
+  }
 
-  // (Acá va toda la lógica de loadUnidades, fillUnidadesSelect, loadTurnosActivos, etc. que ya tenías... ASEGURATE DE NO BORRARLAS)
-  // [...]
-  
-  // --- NUEVO: Submit actualizado para guardar los horarios ---
+  function renderTurnosActivos() {
+    const listEl = document.getElementById("turnos-activos-list");
+    if (!state.turnosActivos.length) {
+      listEl.innerHTML = `<div class="activos-empty">No hay turnos con GPS activo en este momento.</div>`;
+      return;
+    }
+    listEl.innerHTML = state.turnosActivos.map((d) => {
+      const unidad = d[T.unidades] || {};
+      const horaInicio = d.iniciado_at
+        ? new Date(d.iniciado_at).toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" })
+        : null;
+      return `
+        <div class="activo-row" data-id="${d.id}">
+          <div class="info">
+            <div class="line1"><span class="pulse-dot"></span>Interno ${unidad.interno || "—"} · ${TURNO_LABELS[d.turno] || d.turno}</div>
+            <div class="line2">${d.chofer_nombre || "Sin chofer"} · ${d.fecha}${horaInicio ? " · desde " + horaInicio : ""}</div>
+          </div>
+          <button class="btn btn-red-solid btn-sm" data-action="finalizar" data-id="${d.id}" type="button">Finalizar</button>
+        </div>`;
+    }).join("");
+
+    listEl.querySelectorAll('[data-action="finalizar"]').forEach((btn) => {
+      btn.addEventListener("click", () => finalizarDespachoPorId(btn.dataset.id));
+    });
+  }
+
+  async function finalizarDespachoPorId(id) {
+    try {
+      const { error } = await supabase.from(T.despacho).update({ activo: false }).eq("id", id);
+      if (error) throw error;
+      toast("Turno finalizado. GPS apagado.", "ok");
+      loadTurnosActivos();
+    } catch (e) {
+      console.error(e);
+      toast("No se pudo finalizar el turno.", "err");
+    }
+  }
+
+  function refreshDespachoWarning() {
+    const msg = document.getElementById("despacho-msg");
+    const fecha = document.getElementById("despacho-fecha").value || todayISO();
+    const existe = state.turnosActivos.find((d) => d.fecha === fecha && d.turno === despachoTurno);
+    if (existe) {
+      const unidad = existe[T.unidades] || {};
+      msg.textContent = `Ya hay un despacho activo para ${TURNO_LABELS[despachoTurno]} el ${fecha} (Interno ${unidad.interno || "—"}). Guardar lo reemplazará.`;
+      msg.className = "form-msg warn";
+    } else if (msg.className.indexOf("warn") !== -1) {
+      msg.textContent = "";
+      msg.className = "form-msg";
+    }
+  }
+
   document.getElementById("form-despacho").addEventListener("submit", async (ev) => {
     ev.preventDefault();
     const fecha = document.getElementById("despacho-fecha").value;
     const unidadId = document.getElementById("despacho-unidad").value;
     const chofer = document.getElementById("despacho-chofer").value.trim();
-    const gpsInicio = document.getElementById("despacho-gps-inicio").value;
-    const gpsFin = document.getElementById("despacho-gps-fin").value;
-    
     const msg = document.getElementById("despacho-msg");
     const btn = document.getElementById("btn-guardar-despacho");
-    
-    if (!fecha || !unidadId || !chofer || !gpsInicio || !gpsFin) {
-      msg.textContent = "Completá fecha, unidad, chofer y horarios GPS.";
+    if (!fecha || !unidadId || !chofer) {
+      msg.textContent = "Completá fecha, unidad y chofer.";
       msg.className = "form-msg err";
       return;
     }
-    
     btn.disabled = true;
     btn.textContent = "Guardando...";
     try {
@@ -1135,13 +1157,11 @@
           chofer_nombre: chofer,
           activo: true,
           iniciado_at: new Date().toISOString(),
-          gps_inicio: gpsInicio,  // <--- Se guarda el horario de inicio
-          gps_fin: gpsFin         // <--- Se guarda el horario de fin
         },
         { onConflict: DESPACHO_CONFLICT }
       );
       if (error) throw error;
-      msg.textContent = "Despacho guardado. GPS activado en la franja horaria seleccionada.";
+      msg.textContent = "Despacho guardado. GPS activado para ese turno.";
       msg.className = "form-msg ok";
       toast("Despacho guardado", "ok");
       document.getElementById("despacho-chofer").value = "";
@@ -1154,7 +1174,6 @@
       btn.disabled = false;
       btn.textContent = "Guardar y activar GPS";
     }
-  });
   });
 
   // =========================================================================
