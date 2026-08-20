@@ -2,9 +2,12 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Charter TI · Sin conexión</title>
   <style>
+    * {
+      -webkit-tap-highlight-color: transparent;
+    }
     body {
       margin: 0;
       min-height: 100vh;
@@ -16,8 +19,22 @@
       font-family: Inter, system-ui, sans-serif;
       text-align: center;
       padding: 24px;
+      box-sizing: border-box;
+      animation: fadeIn 0.3s ease-in;
     }
     .card { max-width: 360px; }
+    
+    /* Contenedor del logo */
+    .icon-offline {
+      margin-bottom: 24px;
+    }
+    .icon-offline img {
+      width: 90px;
+      height: auto;
+      opacity: 0.9;
+      border-radius: 18px; /* Bordes redondeados para que se vea como un ícono de app */
+    }
+
     h1 {
       font-family: Syne, Inter, sans-serif;
       color: #3a8fd1;
@@ -25,20 +42,38 @@
       margin-bottom: 8px;
     }
     p { color: #9fb0c3; line-height: 1.5; }
+    
     button {
-      margin-top: 16px;
+      margin-top: 24px;
       background: #3a8fd1;
       color: #071020;
       border: 0;
-      padding: 10px 20px;
+      padding: 12px 24px;
       border-radius: 8px;
       font-weight: 600;
       cursor: pointer;
+      width: 100%;
+      font-size: 1rem;
+      transition: background 0.2s ease, transform 0.1s ease;
+    }
+    button:hover {
+      background: #4a9fe1;
+    }
+    button:active {
+      transform: scale(0.98);
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
   </style>
 </head>
 <body>
   <div class="card">
+    <div class="icon-offline">
+      <img src="icons/icon-192.png" alt="Logo Charter TI" />
+    </div>
     <h1>Sin conexión</h1>
     <p>
       No pudimos conectarnos al servidor. El mapa en vivo, el calendario y el
