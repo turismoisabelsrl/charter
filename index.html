@@ -1232,6 +1232,11 @@
         cell.className = "day-cell";
         cell.dataset.date = iso;
 
+        const num = document.createElement("span");
+        num.className = "num";
+        num.textContent = day;
+        cell.appendChild(num);
+
         if (isWeekend) {
           cell.classList.add("weekend");
         } else {
@@ -1243,11 +1248,6 @@
             ? colorAM
             : `linear-gradient(135deg, ${colorAM} 50%, ${colorPM} 50%)`;
           if (stAM === "absent" && stPM === "absent") cell.classList.add("dim-text");
-
-          const num = document.createElement("span");
-          num.className = "num";
-          num.textContent = day;
-          cell.appendChild(num);
 
           const dots = document.createElement("span");
           dots.className = "dots";
@@ -1263,21 +1263,6 @@
             if (isPast) openReadonly(iso);
             else toggleDateSelection(iso);
           });
-        }
-
-        if (!isWeekend) {
-          const num2 = cell.querySelector(".num");
-          if (!num2) {
-            const num = document.createElement("span");
-            num.className = "num";
-            num.textContent = day;
-            cell.appendChild(num);
-          }
-        } else {
-          const num = document.createElement("span");
-          num.className = "num";
-          num.textContent = day;
-          cell.appendChild(num);
         }
 
         if (iso === today) cell.classList.add("today");
@@ -1481,15 +1466,21 @@
     if (recurrenceId === "none" || baseDates.length === 0) return baseDates;
     const pattern = analyzeSelectionPattern();
     if (!pattern) return baseDates;
-    const fromDate = parseISO(pattern.firstDate);
-    const until = endOfExtent(fromDate, extentType, extentValue);
+    // El patron (que dia de semana / dia del mes / semana del mes) se lee
+    // de la seleccion completa, pero la extension ("proximas X semanas...")
+    // se cuenta a partir de la ULTIMA fecha ya elegida — si se cuenta desde
+    // la primera, seleccionar por ej. todo un mes de miercoles y despues
+    // pedir "4 semanas mas" puede terminar sin agregar casi nada nuevo,
+    // porque esas 4 semanas ya se solapan con lo que estaba elegido.
+    const lastBase = parseISO(pattern.lastDate);
+    const until = endOfExtent(lastBase, extentType, extentValue);
     const out = new Set(baseDates);
     let count = out.size;
 
     if (recurrenceId === "weekdays-weekly") {
       const selectedWeekdays = pattern.weekdays.filter(wd => wd < 5);
       if (selectedWeekdays.length === 0) return baseDates;
-      let d = new Date(fromDate);
+      let d = addDays(lastBase, 1);
       while (d <= until && count < MAX_RECURRENCE_DATES) {
         const currentWeekday = isoWeekdayMonFirst(d);
         if (selectedWeekdays.includes(currentWeekday)) {
@@ -1501,13 +1492,13 @@
     } else if (recurrenceId === "monthdays-monthly") {
       const selectedDays = new Set();
       baseDates.forEach(iso => selectedDays.add(parseISO(iso).getDate()));
-      let cursor = new Date(fromDate.getFullYear(), fromDate.getMonth(), 1);
+      let cursor = new Date(lastBase.getFullYear(), lastBase.getMonth(), 1);
       while (cursor <= until && count < MAX_RECURRENCE_DATES) {
         const lastDay = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 0).getDate();
         selectedDays.forEach(day => {
           if (day <= lastDay) {
             const d = new Date(cursor.getFullYear(), cursor.getMonth(), day);
-            if (d >= fromDate && d <= until && count < MAX_RECURRENCE_DATES) {
+            if (d > lastBase && d <= until && count < MAX_RECURRENCE_DATES) {
               out.add(isoFromDate(d));
               count++;
             }
@@ -1518,22 +1509,22 @@
     } else if (recurrenceId === "weeks-monthly") {
       const selectedWeeks = pattern.weeksOfMonth;
       const selectedWeekdays = pattern.weekdays;
-      let cursorY = fromDate.getFullYear();
-      let cursorM = fromDate.getMonth();
+      let cursorY = lastBase.getFullYear();
+      let cursorM = lastBase.getMonth() + 1; // mes siguiente al de la ultima fecha base (0-indexado)
       while (count < MAX_RECURRENCE_DATES) {
+        if (cursorM > 11) { cursorM = 0; cursorY += 1; }
         const monthStart = new Date(cursorY, cursorM, 1);
         if (monthStart > until) break;
         selectedWeeks.forEach(weekNum => {
           const weekDates = nthWeekOfMonth(cursorY, cursorM + 1, weekNum);
           weekDates.forEach((d, wd) => {
-            if (d && wd < 5 && selectedWeekdays.includes(wd) && d >= fromDate && d <= until && count < MAX_RECURRENCE_DATES) {
+            if (d && wd < 5 && selectedWeekdays.includes(wd) && d <= until && count < MAX_RECURRENCE_DATES) {
               out.add(isoFromDate(d));
               count++;
             }
           });
         });
         cursorM += 1;
-        if (cursorM > 11) { cursorM = 0; cursorY += 1; }
       }
     }
     return Array.from(out).sort();
