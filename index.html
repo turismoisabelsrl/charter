@@ -13,176 +13,71 @@
 
 <style>
   :root {
-    --navy: #071020;
-    --navy-2: #0c1a2e;
-    --navy-3: #10233c;
-    --sky: #3a8fd1;
-    --sky-dim: #6fb0e0;
-    --sky-alt: #55b3f5;
-    --green: #2cb87a;
-    --red: #e04444;
-    --text: #e8eef7;
-    --text-dim: #9fb0c3;
-    --text-faint: #5c7189;
-    --glass-bg: rgba(255, 255, 255, 0.055);
-    --glass-bg-strong: rgba(255, 255, 255, 0.09);
-    --glass-border: rgba(255, 255, 255, 0.12);
-    --radius: 16px;
-    --radius-sm: 10px;
-    --safe-b: env(safe-area-inset-bottom, 0px);
-    --safe-t: env(safe-area-inset-top, 0px);
-    --navh: 84px;
+    --navy: #071020; --navy-2: #0c1a2e; --navy-3: #10233c; --sky: #3a8fd1; --sky-dim: #6fb0e0;
+    --sky-alt: #55b3f5; --green: #2cb87a; --red: #e04444; --text: #e8eef7; --text-dim: #9fb0c3; --text-faint: #5c7189;
+    --glass-bg: rgba(255, 255, 255, 0.055); --glass-bg-strong: rgba(255, 255, 255, 0.09); --glass-border: rgba(255, 255, 255, 0.12);
+    --radius: 16px; --radius-sm: 10px; --safe-b: env(safe-area-inset-bottom, 0px); --safe-t: env(safe-area-inset-top, 0px); --navh: 84px;
   }
-
   * { box-sizing: border-box; }
-
-  html, body {
-    margin: 0;
-    height: 100%;
-    background: var(--navy);
-    color: var(--text);
-    font-family: "Inter", system-ui, sans-serif;
-    -webkit-tap-highlight-color: transparent;
-    overscroll-behavior-y: contain;
-    overflow: hidden;
-  }
-
-  h1, h2, h3, .display {
-    font-family: "Syne", "Inter", sans-serif;
-    font-weight: 700;
-    letter-spacing: -0.01em;
-    margin: 0;
-  }
-
-  button {
-    font-family: "Syne", "Inter", sans-serif;
-    font-weight: 600;
-    border: 0;
-    cursor: pointer;
-    color: inherit;
-  }
-
+  html, body { margin: 0; height: 100%; background: var(--navy); color: var(--text); font-family: "Inter", system-ui, sans-serif; -webkit-tap-highlight-color: transparent; overscroll-behavior-y: contain; overflow: hidden; }
+  h1, h2, h3, .display { font-family: "Syne", "Inter", sans-serif; font-weight: 700; letter-spacing: -0.01em; margin: 0; }
+  button { font-family: "Syne", "Inter", sans-serif; font-weight: 600; border: 0; cursor: pointer; color: inherit; }
   input, select { font-family: "Inter", sans-serif; }
+  .screen { min-height: 100dvh; } .hidden { display: none !important; }
+  .glass { background: var(--glass-bg); border: 1px solid var(--glass-border); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border-radius: var(--radius); }
 
-  .screen { min-height: 100dvh; }
-  .hidden { display: none !important; }
-
-  .glass {
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-    border-radius: var(--radius);
-  }
-
-  /* LOGIN */
-  #screen-login {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-    min-height: 100vh;
-    background: radial-gradient(circle at 20% -10%, #0d2140 0%, var(--navy) 55%);
-  }
+  #screen-login { display: flex; align-items: center; justify-content: center; padding: 24px; min-height: 100vh; background: radial-gradient(circle at 20% -10%, #0d2140 0%, var(--navy) 55%); }
   .login-card { width: 100%; max-width: 420px; padding: 32px 28px; text-align: center; }
-  .login-card .brand {
-    font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase;
-    color: var(--sky-dim); margin-bottom: 6px;
-  }
+  .login-card .brand { font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--sky-dim); margin-bottom: 6px; }
   .login-card h1 { font-size: 1.6rem; color: var(--text); margin-bottom: 4px; }
   .login-card p { color: var(--text-dim); font-size: 0.9rem; line-height: 1.5; margin: 8px 0 22px; }
 
   .field { text-align: left; margin-bottom: 16px; }
   .field label { display: block; font-size: 0.78rem; color: var(--text-dim); margin-bottom: 6px; }
-  .field input {
-    width: 100%; padding: 13px 14px; border-radius: var(--radius-sm);
-    border: 1px solid var(--glass-border); background: rgba(255, 255, 255, 0.04);
-    color: var(--text); font-size: 1.05rem; letter-spacing: 0.02em;
-  }
-  .field input:focus {
-    outline: none; border-color: var(--sky);
-    box-shadow: 0 0 0 3px rgba(58, 143, 209, 0.25);
-  }
+  .field input { width: 100%; padding: 13px 14px; border-radius: var(--radius-sm); border: 1px solid var(--glass-border); background: rgba(255, 255, 255, 0.04); color: var(--text); font-size: 1.05rem; letter-spacing: 0.02em; }
+  .field input:focus { outline: none; border-color: var(--sky); box-shadow: 0 0 0 3px rgba(58, 143, 209, 0.25); }
 
-  .btn {
-    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-    width: 100%; padding: 14px 18px; border-radius: var(--radius-sm);
-    font-size: 0.98rem; transition: transform 0.12s ease, opacity 0.12s ease, filter 0.12s ease;
-  }
-  .btn:active { transform: scale(0.98); }
-  .btn:disabled { opacity: 0.55; pointer-events: none; }
-  .btn-primary { background: var(--sky); color: #071020; }
-  .btn-primary:hover { filter: brightness(1.08); }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 14px 18px; border-radius: var(--radius-sm); font-size: 0.98rem; transition: transform 0.12s ease, opacity 0.12s ease, filter 0.12s ease; }
+  .btn:active { transform: scale(0.98); } .btn:disabled { opacity: 0.55; pointer-events: none; }
+  .btn-primary { background: var(--sky); color: #071020; } .btn-primary:hover { filter: brightness(1.08); }
   .btn-ghost { background: transparent; color: var(--text-dim); border: 1px solid var(--glass-border); }
   .btn-sm { width: auto; padding: 9px 16px; font-size: 0.85rem; }
   .login-error { margin-top: 14px; font-size: 0.85rem; color: var(--red); min-height: 1.2em; }
 
-  /* APP SHELL */
-  #screen-app {
-    display: flex; flex-direction: column; height: 100dvh; position: relative;
-    background: radial-gradient(circle at 20% -10%, #0d2140 0%, var(--navy) 55%);
-  }
-
+  #screen-app { display: flex; flex-direction: column; height: 100dvh; position: relative; background: radial-gradient(circle at 20% -10%, #0d2140 0%, var(--navy) 55%); }
   .desktop-glow { display: none; }
-  @media (min-width: 900px) {
-    .desktop-glow {
-      display: block; position: fixed; inset: -15%; z-index: -1;
-      background: radial-gradient(ellipse 1500px 950px at 50% -5%, #16324f 0%, #0c1a2e 42%, var(--navy) 75%);
-      filter: blur(90px); pointer-events: none;
-    }
-  }
+  @media (min-width: 900px) { .desktop-glow { display: block; position: fixed; inset: -15%; z-index: -1; background: radial-gradient(ellipse 1500px 950px at 50% -5%, #16324f 0%, #0c1a2e 42%, var(--navy) 75%); filter: blur(90px); pointer-events: none; } }
 
-  .topbar {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: calc(14px + var(--safe-t)) 18px 12px;
-    flex-shrink: 0; max-width: 1200px; margin: 0 auto; width: 100%;
-  }
+  .topbar { display: flex; align-items: center; justify-content: space-between; padding: calc(14px + var(--safe-t)) 18px 12px; flex-shrink: 0; max-width: 1200px; margin: 0 auto; width: 100%; }
   .topbar .who { display: flex; flex-direction: column; }
   .topbar .who .hello { font-size: 0.72rem; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.1em; }
   .topbar .who .name { font-size: 1.05rem; font-family: "Syne", sans-serif; font-weight: 700; }
   .topbar-actions { display: flex; gap: 8px; align-items: center; }
 
-  .icon-btn {
-    width: 38px; height: 38px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    background: var(--glass-bg); border: 1px solid var(--glass-border);
-    color: var(--text-dim); font-size: 1rem; transition: all 0.2s ease;
-  }
+  .icon-btn { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text-dim); font-size: 1rem; transition: all 0.2s ease; }
   .icon-btn:hover:not(:disabled) { background: var(--glass-bg-strong); color: var(--text); }
   .icon-btn:disabled { opacity: 0.3; cursor: not-allowed; }
   .icon-btn.spinning svg { animation: spin 0.7s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  main {
-    flex: 1; overflow: hidden; position: relative;
-    max-width: 1200px; margin: 0 auto; width: 100%;
-  }
-
+  main { flex: 1; overflow: hidden; position: relative; max-width: 1200px; margin: 0 auto; width: 100%; }
   .tab-panel { height: 100%; overflow-y: auto; padding: 6px 18px calc(20px + var(--safe-b) + var(--navh)); }
   #tab-mapa.tab-panel { padding: 0; }
 
-  /* ---------------- INICIO (dashboard operativo) ---------------- */
   .home-wrap { max-width: 560px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; padding-top: 4px; }
-
   .home-banner { display: flex; gap: 12px; padding: 16px 18px; align-items: flex-start; }
-  .home-banner-dot {
-    width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 5px;
-    background: var(--text-faint); transition: background 0.2s ease;
-  }
-  .home-banner.live .home-banner-dot {
-    background: var(--sky);
-    box-shadow: 0 0 0 0 rgba(58, 143, 209, 0.55);
-    animation: bannerPulse 1.8s infinite;
-  }
+  .home-banner-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; background: var(--text-faint); transition: background 0.2s ease; }
+  .home-banner.live .home-banner-dot { background: var(--sky); box-shadow: 0 0 0 0 rgba(58, 143, 209, 0.55); animation: bannerPulse 1.8s infinite; }
   .home-banner.scheduled .home-banner-dot { background: var(--sky-dim); }
   .home-banner.off .home-banner-dot { background: var(--text-faint); }
-  @keyframes bannerPulse {
-    0% { box-shadow: 0 0 0 0 rgba(58, 143, 209, 0.55); }
-    70% { box-shadow: 0 0 0 9px rgba(58, 143, 209, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(58, 143, 209, 0); }
-  }
+  @keyframes bannerPulse { 0% { box-shadow: 0 0 0 0 rgba(58, 143, 209, 0.55); } 70% { box-shadow: 0 0 0 9px rgba(58, 143, 209, 0); } 100% { box-shadow: 0 0 0 0 rgba(58, 143, 209, 0); } }
   .home-banner-title { font-family: "Syne", sans-serif; font-weight: 700; font-size: 0.98rem; }
   .home-banner-desc { font-size: 0.8rem; color: var(--text-dim); margin-top: 3px; line-height: 1.4; }
+
+  .quick-actions { display: flex; gap: 10px; }
+  .quick-actions .btn { flex: 1; padding: 14px; font-size: 0.9rem; }
+  .btn-green { background: var(--green); color: #06251a; }
+  .btn-red { background: transparent; color: var(--red); border: 1px solid rgba(224, 68, 68, 0.5); }
 
   .next-trip-card { padding: 18px 20px 20px; }
   .next-trip-label { font-size: 0.72rem; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
@@ -193,25 +88,13 @@
   .next-trip-row span:last-child { text-align: right; }
   .next-trip-empty { color: var(--text-dim); font-size: 0.88rem; margin-bottom: 12px; line-height: 1.5; }
 
-  /* ---------------- CALENDARIO LAYOUT ---------------- */
   .calendar-layout { display: grid; grid-template-columns: 1fr; gap: 20px; max-width: 800px; margin: 0 auto; }
-  @media (min-width: 768px) {
-    .calendar-layout { grid-template-columns: 1fr 250px; align-items: start; }
-  }
+  @media (min-width: 768px) { .calendar-layout { grid-template-columns: 1fr 250px; align-items: start; } }
 
   .month-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; gap: 8px; }
   .month-nav .label { font-size: 1.05rem; text-transform: capitalize; }
-  .month-nav button {
-    width: 34px; height: 34px; border-radius: 50%;
-    background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text-dim);
-    flex-shrink: 0;
-  }
-  .btn-hoy {
-    display: inline-flex; align-items: center; gap: 6px;
-    width: auto !important; height: auto !important; border-radius: 999px !important;
-    padding: 8px 14px; font-size: 0.78rem; background: rgba(58, 143, 209, 0.16) !important;
-    border-color: rgba(58, 143, 209, 0.4) !important; color: var(--sky-dim) !important;
-  }
+  .month-nav button { width: 34px; height: 34px; border-radius: 50%; background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text-dim); flex-shrink: 0; }
+  .btn-hoy { display: inline-flex; align-items: center; gap: 6px; width: auto !important; height: auto !important; border-radius: 999px !important; padding: 8px 14px; font-size: 0.78rem; background: rgba(58, 143, 209, 0.16) !important; border-color: rgba(58, 143, 209, 0.4) !important; color: var(--sky-dim) !important; }
   .btn-hoy svg { width: 14px; height: 14px; }
   .btn-hoy.hidden { display: none !important; }
 
@@ -227,12 +110,7 @@
   .week-num:active { background: var(--glass-bg-strong); }
   .week-num.active { background: rgba(58, 143, 209, 0.2); color: var(--sky-dim); }
 
-  .day-cell {
-    aspect-ratio: 1 / 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-    border-radius: 10px; font-size: 0.86rem; position: relative; cursor: pointer;
-    background: rgba(255, 255, 255, 0.03); border: 1px solid transparent; color: var(--text);
-    transition: all 0.15s ease;
-  }
+  .day-cell { aspect-ratio: 1 / 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 10px; font-size: 0.86rem; position: relative; cursor: pointer; background: rgba(255, 255, 255, 0.03); border: 1px solid transparent; color: var(--text); transition: all 0.15s ease; }
   .day-cell:hover { filter: brightness(1.12); }
   .day-cell.empty { visibility: hidden; cursor: default; }
   .day-cell.dim-text { color: var(--text-faint); }
@@ -243,7 +121,6 @@
   .day-cell .dot.dot-scheduled { background: var(--sky-alt); }
   .day-cell .dot.dot-no { background: var(--red); }
   .day-cell .dot.dot-absent { background: rgba(255, 255, 255, 0.14); }
-
   .day-cell.weekend { background: rgba(255, 255, 255, 0.015) !important; color: var(--text-faint); opacity: 0.4; cursor: default; }
   .day-cell.today { border-color: var(--sky); }
   .day-cell.selected { outline: 2px solid var(--sky); outline-offset: -2px; }
@@ -258,27 +135,13 @@
   .tips-card { padding: 14px 16px; }
   .tips-card ul { margin: 0; padding-left: 16px; font-size: 0.78rem; color: var(--text-dim); line-height: 1.7; }
 
-  /* ---------------- BOTTOM SHEET (panel de acción / historial) ---------------- */
-  #action-panel {
-    position: fixed; left: 0; right: 0; bottom: 0;
-    display: flex; flex-direction: column;
-    max-height: 0; overflow: hidden;
-    border-radius: 20px 20px 0 0;
-    background: rgba(12, 26, 46, 0.98);
-    transition: max-height 0.32s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 65;
-    padding-bottom: var(--safe-b);
-  }
+  #action-panel { position: fixed; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; max-height: 0; overflow: hidden; border-radius: 20px 20px 0 0; background: rgba(12, 26, 46, 0.98); transition: max-height 0.32s cubic-bezier(0.4, 0, 0.2, 1); z-index: 65; padding-bottom: var(--safe-b); }
   #action-panel.open { max-height: 46vh; }
   #action-panel.open.tall { max-height: 72vh; }
   #action-panel.open.peek { max-height: 66px; }
-  #action-panel.peek .action-panel-scroll,
-  #action-panel.peek .action-panel-footer { visibility: hidden; pointer-events: none; }
+  #action-panel.peek .action-panel-scroll, #action-panel.peek .action-panel-footer { visibility: hidden; pointer-events: none; }
 
-  .action-panel-handle {
-    width: 100%; flex-shrink: 0; display: flex; justify-content: center;
-    padding: 8px 0 6px; cursor: pointer; background: transparent; border: 0;
-  }
+  .action-panel-handle { width: 100%; flex-shrink: 0; display: flex; justify-content: center; padding: 8px 0 6px; cursor: pointer; background: transparent; border: 0; }
   .action-panel-handle .bar { width: 36px; height: 4px; border-radius: 999px; background: var(--glass-border); }
 
   .action-panel-scroll { flex: 1 1 auto; overflow-y: auto; padding: 0 16px; }
@@ -288,17 +151,7 @@
   #action-panel .count span:first-child { text-transform: capitalize; }
   #action-panel .count a { color: var(--sky-dim); font-size: 0.8rem; text-decoration: none; flex-shrink: 0; }
 
-  @media (min-width: 768px) {
-    #action-panel {
-      left: auto; right: 20px; top: 80px; bottom: auto;
-      width: 320px; border-radius: var(--radius);
-      max-height: 0;
-    }
-    #action-panel.open,
-    #action-panel.open.tall,
-    #action-panel.open.peek { max-height: calc(100vh - 140px); }
-    .action-panel-handle { display: none; }
-  }
+  @media (min-width: 768px) { #action-panel { left: auto; right: 20px; top: 80px; bottom: auto; width: 320px; border-radius: var(--radius); max-height: 0; } #action-panel.open, #action-panel.open.tall, #action-panel.open.peek { max-height: calc(100vh - 140px); } .action-panel-handle { display: none; } }
 
   .viaja-toggle { display: flex; gap: 8px; margin-bottom: 4px; }
   .seg-btn { flex: 1; padding: 10px 0; border-radius: var(--radius-sm); font-size: 0.86rem; background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text-dim); }
@@ -310,22 +163,14 @@
   .recurrence-title { font-size: 0.72rem; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; display: block; }
 
   .recurrence-box { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--glass-border); }
-  .recurrence-select {
-    width: 100%; padding: 11px 12px; border-radius: var(--radius-sm);
-    background: rgba(255, 255, 255, 0.04); border: 1px solid var(--glass-border);
-    color: var(--text); font-size: 0.86rem;
-  }
+  .recurrence-select { width: 100%; padding: 11px 12px; border-radius: var(--radius-sm); background: rgba(255, 255, 255, 0.04); border: 1px solid var(--glass-border); color: var(--text); font-size: 0.86rem; }
   .recurrence-select:focus { outline: none; border-color: var(--sky); }
 
   .recurrence-extent { margin-top: 12px; }
   .recurrence-extent label { display: block; font-size: 0.76rem; color: var(--text-dim); margin-bottom: 6px; }
   .extent-row { display: flex; gap: 8px; }
-  .extent-row select, .extent-row input {
-    padding: 9px 10px; border-radius: var(--radius-sm); border: 1px solid var(--glass-border);
-    background: rgba(255, 255, 255, 0.04); color: var(--text); font-size: 0.84rem; flex: 1;
-  }
+  .extent-row select, .extent-row input { padding: 9px 10px; border-radius: var(--radius-sm); border: 1px solid var(--glass-border); background: rgba(255, 255, 255, 0.04); color: var(--text); font-size: 0.84rem; flex: 1; }
 
-  /* Tarjeta de solo lectura (día pasado) */
   .readonly-turno { padding: 12px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.06); }
   .readonly-turno:last-child { border-bottom: 0; }
   .readonly-turno-head { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
@@ -339,38 +184,18 @@
   .chip.pm { background: rgba(85, 179, 245, 0.18); color: #bfe3fc; }
   .chip.no { background: rgba(224, 68, 68, 0.16); color: #ffb3b3; }
 
-  /* ---------------- DOCK DE NAVEGACION INFERIOR (3 pestañas) ---------------- */
-  .bottom-nav {
-    position: fixed; left: 50%; transform: translateX(-50%);
-    bottom: calc(14px + var(--safe-b));
-    z-index: 60; display: flex; gap: 2px; padding: 6px;
-    border-radius: 22px; background: rgba(10, 22, 40, 0.86);
-    border: 1px solid var(--glass-border);
-    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
-    width: calc(100% - 28px); max-width: 340px;
-  }
-  .nav-btn {
-    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 3px; padding: 9px 4px 8px; border-radius: 16px; background: transparent;
-    color: var(--text-faint); font-size: 0.62rem; letter-spacing: 0.01em; transition: all 0.15s ease;
-  }
+  .bottom-nav { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(14px + var(--safe-b)); z-index: 60; display: flex; gap: 2px; padding: 6px; border-radius: 22px; background: rgba(10, 22, 40, 0.86); border: 1px solid var(--glass-border); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45); width: calc(100% - 28px); max-width: 380px; }
+  .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; padding: 9px 4px 8px; border-radius: 16px; background: transparent; color: var(--text-faint); font-size: 0.62rem; letter-spacing: 0.01em; transition: all 0.15s ease; }
   .nav-btn svg { width: 19px; height: 19px; }
   .nav-btn.active { background: var(--sky); color: #071020; }
 
-  /* MODAL */
-  .modal-overlay {
-    position: fixed; inset: 0; z-index: 800;
-    display: flex; align-items: center; justify-content: center;
-    background: rgba(4, 10, 20, 0.72); padding: 20px;
-  }
+  .modal-overlay { position: fixed; inset: 0; z-index: 800; display: flex; align-items: center; justify-content: center; background: rgba(4, 10, 20, 0.72); padding: 20px; }
   .modal-overlay.hidden { display: none; }
   .modal-card { width: 100%; max-width: 400px; padding: 26px 22px; text-align: center; max-height: calc(100vh - 40px); overflow-y: auto; }
   .modal-card h3 { font-size: 1.08rem; margin-bottom: 8px; }
   .modal-summary { color: var(--text-dim); font-size: 0.85rem; margin-bottom: 20px; line-height: 1.5; }
   .modal-actions { display: flex; flex-direction: column; gap: 10px; }
 
-  /* MAPA */
   #tab-mapa { position: relative; z-index: 0; }
   #map { width: 100%; height: 100%; min-height: 400px; background: var(--navy); }
   .leaflet-container { background: var(--navy) !important; font-family: "Inter", sans-serif; width: 100% !important; height: 100% !important; }
@@ -380,79 +205,49 @@
   .map-overlay-top .address { font-size: 0.74rem; color: var(--text-dim); margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--glass-border); }
   .map-overlay-top .updated { font-size: 0.68rem; color: var(--text-faint); margin-top: 4px; }
 
-  .map-unavailable {
-    position: absolute; inset: 0; z-index: 25; display: flex; align-items: center; justify-content: center;
-    padding: 24px; background: rgba(7, 16, 32, 0.95); text-align: center;
-  }
+  .map-unavailable { position: absolute; inset: 0; z-index: 25; display: flex; align-items: center; justify-content: center; padding: 24px; background: rgba(7, 16, 32, 0.95); text-align: center; }
   .map-unavailable .box { max-width: 300px; }
   .map-unavailable h3 { font-size: 1.05rem; margin-bottom: 8px; }
   .map-unavailable p { color: var(--text-dim); font-size: 0.85rem; line-height: 1.5; margin-bottom: 16px; }
   .map-unavailable .btn { max-width: 220px; margin: 0 auto; }
 
-  .marker-pulse {
-    width: 16px; height: 16px; border-radius: 50%; background: var(--sky);
-    border: 3px solid rgba(58, 143, 209, 0.35); box-shadow: 0 0 0 4px rgba(58, 143, 209, 0.18);
-  }
+  .marker-pulse { width: 16px; height: 16px; border-radius: 50%; background: var(--sky); border: 3px solid rgba(58, 143, 209, 0.35); box-shadow: 0 0 0 4px rgba(58, 143, 209, 0.18); }
 
-  /* TOAST */
-  #toast {
-    position: fixed; left: 50%; bottom: calc(var(--navh) + var(--safe-b) + 6px);
-    transform: translate(-50%, 12px); padding: 11px 18px; border-radius: 999px;
-    font-size: 0.85rem; z-index: 999; opacity: 0; pointer-events: none;
-    transition: opacity 0.2s ease, transform 0.2s ease;
-    background: var(--navy-3); border: 1px solid var(--glass-border); white-space: nowrap;
-  }
+  #toast { position: fixed; left: 50%; bottom: calc(var(--navh) + var(--safe-b) + 6px); transform: translate(-50%, 12px); padding: 11px 18px; border-radius: 999px; font-size: 0.85rem; z-index: 999; opacity: 0; pointer-events: none; transition: opacity 0.2s ease, transform 0.2s ease; background: var(--navy-3); border: 1px solid var(--glass-border); white-space: nowrap; }
   #toast.show { opacity: 1; transform: translate(-50%, 0); }
   #toast.err { border-color: rgba(224, 68, 68, 0.5); color: #ffb3b3; }
   #toast.ok { border-color: rgba(44, 184, 122, 0.5); color: #a8f0cf; }
+
+  .form-card { padding: 18px 18px 20px; margin-bottom: 18px; }
+  .form-msg { margin-top: 12px; font-size: 0.83rem; min-height: 1.2em; color: var(--text-dim); }
+  .form-msg.ok { color: var(--green); } .form-msg.err { color: var(--red); }
+  textarea { resize: vertical; background: rgba(255,255,255,0.04); border: 1px solid var(--glass-border); color: var(--text); border-radius: var(--radius-sm); padding: 11px 12px; font-family: "Inter", sans-serif; width: 100%; }
 </style>
 </head>
 <body>
 
 <div class="desktop-glow" aria-hidden="true"></div>
 
-<!-- LOGIN -->
 <section id="screen-login" class="screen">
   <div class="login-card glass">
     <div class="brand">Charter TI</div>
     <h1>Hola</h1>
     <p>Ingresa tu documento y contraseña para ver tu calendario de viajes, tu historial y el mapa en vivo de tu unidad.</p>
     <form id="form-login" autocomplete="off">
-      <div class="field">
-        <label for="input-dni">Documento (DNI)</label>
-        <input id="input-dni" name="dni" inputmode="numeric" pattern="[0-9]{6,9}" placeholder="Ej: 12345678" required />
-      </div>
-      <div class="field">
-        <label for="input-pass">Contraseña</label>
-        <input id="input-pass" type="password" name="password" placeholder="Tu contraseña" required />
-      </div>
+      <div class="field"><label for="input-dni">Documento (DNI)</label><input id="input-dni" name="dni" inputmode="numeric" pattern="[0-9]{6,9}" placeholder="Ej: 12345678" required /></div>
+      <div class="field"><label for="input-pass">Contraseña</label><input id="input-pass" type="password" name="password" placeholder="Tu contraseña" required /></div>
       <button type="submit" id="btn-login" class="btn btn-primary">Ingresar</button>
       <div id="login-error" class="login-error"></div>
     </form>
   </div>
 </section>
 
-<!-- APP PRINCIPAL -->
 <section id="screen-app" class="screen hidden">
   <header class="topbar">
-    <div class="who">
-      <span class="name" id="topbar-name">-</span>
-    </div>
+    <div class="who"><span class="name" id="topbar-name">-</span></div>
     <div class="topbar-actions">
-      <button id="btn-refresh" class="icon-btn" title="Refrescar datos" aria-label="Refrescar datos">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="23 4 23 10 17 10"></polyline>
-          <polyline points="1 20 1 14 7 14"></polyline>
-          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
-        </svg>
-      </button>
-      <button id="btn-logout" class="icon-btn" title="Cerrar sesion" aria-label="Cerrar sesion">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-          <polyline points="16 17 21 12 16 7"></polyline>
-          <line x1="21" y1="12" x2="9" y2="12"></line>
-        </svg>
-      </button>
+      <button id="btn-refresh" class="icon-btn" title="Refrescar datos"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg></button>
+      <button id="btn-logout" class="icon-btn" title="Cerrar sesion"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg></button>
     </div>
   </header>
 
@@ -461,10 +256,12 @@
       <div class="home-wrap">
         <div id="home-banner" class="home-banner glass off">
           <div class="home-banner-dot" id="home-banner-dot"></div>
-          <div>
-            <div class="home-banner-title" id="home-banner-title">Cargando...</div>
-            <div class="home-banner-desc" id="home-banner-desc"></div>
-          </div>
+          <div><div class="home-banner-title" id="home-banner-title">Cargando...</div><div class="home-banner-desc" id="home-banner-desc"></div></div>
+        </div>
+        
+        <div class="quick-actions">
+          <button type="button" class="btn btn-green" id="btn-viajo-hoy">✓ Viajo hoy</button>
+          <button type="button" class="btn btn-red" id="btn-no-viajo-hoy">✗ No viajo hoy</button>
         </div>
 
         <div class="next-trip-card glass">
@@ -481,165 +278,80 @@
             <button id="btn-prev-month" aria-label="Mes anterior">&#8249;</button>
             <div class="label display" id="month-label">-</div>
             <button id="btn-today-header" class="btn-hoy" title="Ir al mes de hoy">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="5" width="18" height="16" rx="3"></rect>
-                <line x1="3" y1="10" x2="21" y2="10"></line>
-                <line x1="8" y1="3" x2="8" y2="7"></line>
-                <line x1="16" y1="3" x2="16" y2="7"></line>
-                <circle cx="12" cy="15" r="1.6" fill="currentColor" stroke="none"></circle>
-              </svg>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"></rect><line x1="3" y1="10" x2="21" y2="10"></line><line x1="8" y1="3" x2="8" y2="7"></line><line x1="16" y1="3" x2="16" y2="7"></line><circle cx="12" cy="15" r="1.6" fill="currentColor" stroke="none"></circle></svg>
               Hoy
             </button>
             <button id="btn-next-month" aria-label="Mes siguiente">&#8250;</button>
           </div>
-
           <div class="cal-grid glass">
             <div class="cal-row head">
-              <div class="cal-head-cell">Sem</div>
-              <div class="cal-head-cell clickable" data-weekday="0">L</div>
-              <div class="cal-head-cell clickable" data-weekday="1">M</div>
-              <div class="cal-head-cell clickable" data-weekday="2" title="Miercoles">M</div>
-              <div class="cal-head-cell clickable" data-weekday="3">J</div>
-              <div class="cal-head-cell clickable" data-weekday="4">V</div>
-              <div class="cal-head-cell weekend-head" title="Sabado (sin viajes)">S</div>
-              <div class="cal-head-cell weekend-head" title="Domingo (sin viajes)">D</div>
+              <div class="cal-head-cell">Sem</div><div class="cal-head-cell clickable" data-weekday="0">L</div><div class="cal-head-cell clickable" data-weekday="1">M</div><div class="cal-head-cell clickable" data-weekday="2" title="Miercoles">M</div><div class="cal-head-cell clickable" data-weekday="3">J</div><div class="cal-head-cell clickable" data-weekday="4">V</div><div class="cal-head-cell weekend-head" title="Sabado">S</div><div class="cal-head-cell weekend-head" title="Domingo">D</div>
             </div>
             <div id="cal-body"></div>
           </div>
-
           <div class="cal-legend" style="margin-top:12px;">
-            <span><i style="background:var(--green)"></i> Realizado</span>
-            <span><i style="background:var(--sky-alt)"></i> Programado</span>
-            <span><i style="background:var(--red)"></i> No viaja</span>
-            <span><i style="background:var(--text-faint)"></i> Sin registro</span>
+            <span><i style="background:var(--green)"></i> Realizado</span><span><i style="background:var(--sky-alt)"></i> Programado</span><span><i style="background:var(--red)"></i> No viaja</span><span><i style="background:var(--text-faint)"></i> Sin registro</span>
           </div>
         </div>
-
-        <div class="tips-col">
-          <div class="tips-card glass">
-            <ul>
-              <li>Toca un dia futuro para marcarlo</li>
-              <li>Toca un dia pasado para ver que paso ese dia</li>
-              <li>Toca una letra (L-V) para seleccionar la columna</li>
-              <li>Toca el numero de semana para la fila completa</li>
-            </ul>
-          </div>
-        </div>
+        <div class="tips-col"><div class="tips-card glass"><ul><li>Toca un dia futuro para marcarlo</li><li>Toca un dia pasado para ver que paso ese dia</li><li>Toca una letra (L-V) para seleccionar la columna</li><li>Toca el numero de semana para la fila completa</li></ul></div></div>
       </div>
     </section>
 
     <section id="tab-mapa" class="tab-panel hidden">
       <div id="map"></div>
       <div class="map-overlay-top glass hidden" id="map-info">
-        <div class="chofer" id="map-chofer">-</div>
-        <div class="meta" id="map-unidad">-</div>
-        <div class="address" id="map-address">-</div>
-        <div class="updated" id="map-updated">-</div>
+        <div class="chofer" id="map-chofer">-</div><div class="meta" id="map-unidad">-</div><div class="address" id="map-address">-</div><div class="updated" id="map-updated">-</div>
       </div>
       <div class="map-unavailable hidden" id="map-unavailable-box">
-        <div class="box">
-          <h3>Seguimiento no disponible</h3>
-          <p id="map-unavailable-text">No hay una unidad en vivo para mostrarte en este turno.</p>
-          <button type="button" class="btn btn-ghost" id="btn-map-volver">Volver a Inicio</button>
+        <div class="box"><h3>Seguimiento no disponible</h3><p id="map-unavailable-text">No hay una unidad en vivo para mostrarte en este turno.</p><button type="button" class="btn btn-ghost" id="btn-map-volver">Volver a Inicio</button></div>
+      </div>
+    </section>
+
+    <section id="tab-perfil" class="tab-panel hidden">
+      <div class="home-wrap" style="max-width: 560px;">
+        <h2 class="section-title" style="margin-bottom: 14px; font-size: 1.15rem;">Mi Perfil</h2>
+        <div class="glass form-card">
+          <div class="field"><label>Nombre</label><input type="text" id="perfil-nombre" disabled /></div>
+          <div class="field"><label>Teléfono</label><input type="tel" id="perfil-telefono" /></div>
+          <div style="display:flex; gap:10px;">
+            <div class="field" style="flex:1;"><label>Punto de subida</label><input type="text" id="perfil-subida" /></div>
+            <div class="field" style="flex:1;"><label>Hora de subida</label><input type="time" id="perfil-hora-subida" /></div>
+          </div>
+          <div style="display:flex; gap:10px;">
+            <div class="field" style="flex:1; margin-bottom:0;"><label>Punto de bajada</label><input type="text" id="perfil-bajada" /></div>
+            <div class="field" style="flex:1; margin-bottom:0;"><label>Hora de bajada</label><input type="time" id="perfil-hora-bajada" /></div>
+          </div>
+          <button type="button" class="btn btn-primary" id="btn-guardar-perfil" style="margin-top: 18px;">Guardar cambios</button>
+          <div id="perfil-msg" class="form-msg"></div>
         </div>
       </div>
     </section>
   </main>
 
   <nav class="bottom-nav glass" aria-label="Navegacion principal">
-    <button type="button" class="nav-btn active" data-tab="inicio">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M3 11l9-8 9 8"></path>
-        <path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"></path>
-      </svg>
-      <span>Inicio</span>
-    </button>
-    <button type="button" class="nav-btn" data-tab="calendario">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="3" y="5" width="18" height="16" rx="2"></rect>
-        <line x1="3" y1="10" x2="21" y2="10"></line>
-        <line x1="8" y1="3" x2="8" y2="7"></line>
-        <line x1="16" y1="3" x2="16" y2="7"></line>
-      </svg>
-      <span>Calendario</span>
-    </button>
-    <button type="button" class="nav-btn" data-tab="mapa">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"></path>
-        <circle cx="12" cy="10" r="2.5"></circle>
-      </svg>
-      <span>Mapa</span>
-    </button>
+    <button type="button" class="nav-btn active" data-tab="inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"></path><path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"></path></svg><span>Inicio</span></button>
+    <button type="button" class="nav-btn" data-tab="calendario"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"></rect><line x1="3" y1="10" x2="21" y2="10"></line><line x1="8" y1="3" x2="8" y2="7"></line><line x1="16" y1="3" x2="16" y2="7"></line></svg><span>Calendario</span></button>
+    <button type="button" class="nav-btn" data-tab="mapa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"></path><circle cx="12" cy="10" r="2.5"></circle></svg><span>Mapa</span></button>
+    <button type="button" class="nav-btn" data-tab="perfil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg><span>Perfil</span></button>
   </nav>
 </section>
 
-<!-- BOTTOM SHEET / PANEL DE ACCION Y DE HISTORIAL -->
 <div id="action-panel">
-  <button type="button" class="action-panel-handle" id="action-panel-handle" aria-label="Expandir o colapsar">
-    <span class="bar"></span>
-  </button>
-
+  <button type="button" class="action-panel-handle" id="action-panel-handle"><span class="bar"></span></button>
   <div class="action-panel-scroll">
-    <div class="count" id="action-panel-count-row">
-      <span id="action-count">0 dias seleccionados</span>
-      <a href="#" id="action-clear">Cancelar</a>
-    </div>
-
-    <!-- Modo edición: fecha >= hoy -->
+    <div class="count" id="action-panel-count-row"><span id="action-count">0 dias seleccionados</span><a href="#" id="action-clear">Cancelar</a></div>
     <div class="action-panel-body" id="panel-edit-block">
-      <div class="viaja-toggle" id="viaja-toggle" role="group" aria-label="Estado de asistencia">
-        <button type="button" id="opt-viajo" class="seg-btn active" data-viaja="1">Viajo</button>
-        <button type="button" id="opt-noviajo" class="seg-btn" data-viaja="0">No viajo</button>
-      </div>
-
-      <div id="turno-box" class="turno-box">
-        <span class="recurrence-title">Turno</span>
-        <div class="viaja-toggle" id="turno-toggle" role="group" aria-label="Turno">
-          <button type="button" class="seg-btn" data-turno="manana">Mañana</button>
-          <button type="button" class="seg-btn" data-turno="tarde">Tarde</button>
-          <button type="button" class="seg-btn active" data-turno="ambos">Ambos</button>
-        </div>
-      </div>
-
-      <div id="recurrence-box" class="recurrence-box hidden">
-        <label for="recurrence-select" class="recurrence-title">Repetición</label>
-        <select id="recurrence-select" class="recurrence-select"></select>
-        <div id="recurrence-extent" class="recurrence-extent hidden">
-          <label for="extent-select">Aplicar durante</label>
-          <div class="extent-row">
-            <select id="extent-select">
-              <option value="weeks">Próximas semanas</option>
-              <option value="months">Próximos meses</option>
-              <option value="year">Resto del año</option>
-            </select>
-            <input id="extent-number" type="number" min="1" max="52" value="4" />
-          </div>
-        </div>
-      </div>
+      <div class="viaja-toggle" id="viaja-toggle"><button type="button" id="opt-viajo" class="seg-btn active" data-viaja="1">Viajo</button><button type="button" id="opt-noviajo" class="seg-btn" data-viaja="0">No viajo</button></div>
+      <div id="turno-box" class="turno-box"><span class="recurrence-title">Turno</span><div class="viaja-toggle" id="turno-toggle"><button type="button" class="seg-btn" data-turno="manana">Mañana</button><button type="button" class="seg-btn" data-turno="tarde">Tarde</button><button type="button" class="seg-btn active" data-turno="ambos">Ambos</button></div></div>
+      <div id="recurrence-box" class="recurrence-box hidden"><label for="recurrence-select" class="recurrence-title">Repetición</label><select id="recurrence-select" class="recurrence-select"></select><div id="recurrence-extent" class="recurrence-extent hidden"><label for="extent-select">Aplicar durante</label><div class="extent-row"><select id="extent-select"><option value="weeks">Próximas semanas</option><option value="months">Próximos meses</option><option value="year">Resto del año</option></select><input id="extent-number" type="number" min="1" max="52" value="4" /></div></div></div>
     </div>
-
-    <!-- Modo solo lectura: fecha < hoy -->
-    <div class="action-panel-body hidden" id="panel-readonly-block">
-      <div id="readonly-turnos"></div>
-    </div>
+    <div class="action-panel-body hidden" id="panel-readonly-block"><div id="readonly-turnos"></div></div>
   </div>
-
-  <div class="action-panel-footer">
-    <button id="btn-guardar" class="btn btn-primary" disabled>Guardar</button>
-    <button id="btn-cerrar-readonly" class="btn btn-ghost hidden">Cerrar</button>
-  </div>
+  <div class="action-panel-footer"><button id="btn-guardar" class="btn btn-primary" disabled>Guardar</button><button id="btn-cerrar-readonly" class="btn btn-ghost hidden">Cerrar</button></div>
 </div>
 
-<!-- MODAL DE IMPACTO -->
 <div id="modal-impact" class="modal-overlay hidden">
-  <div class="modal-card glass">
-    <h3>Confirmar cambios</h3>
-    <p id="modal-impact-summary" class="modal-summary">Calculando impacto...</p>
-    <div class="modal-actions">
-      <button type="button" class="btn btn-primary" id="modal-impact-confirm">Sobrescribir y guardar</button>
-      <button type="button" id="modal-impact-cancel" class="btn btn-ghost">Cancelar</button>
-    </div>
-  </div>
+  <div class="modal-card glass"><h3>Confirmar cambios</h3><p id="modal-impact-summary" class="modal-summary">Calculando impacto...</p><div class="modal-actions"><button type="button" class="btn btn-primary" id="modal-impact-confirm">Sobrescribir y guardar</button><button type="button" id="modal-impact-cancel" class="btn btn-ghost">Cancelar</button></div></div>
 </div>
 
 <div id="toast"></div>
@@ -660,1274 +372,390 @@
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   const WEEKDAY_LABELS = ["Lun", "Mar", "Mie", "Jue", "Vie", "Sab", "Dom"];
-  const MONTH_LABELS = [
-    "enero", "febrero", "marzo", "abril", "mayo", "junio",
-    "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre",
-  ];
+  const MONTH_LABELS = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
   const FULL_WEEKDAY_LOWER = ["lunes", "martes", "miercoles", "jueves", "viernes", "sabado", "domingo"];
   const ORDINAL_WEEK_FEM = ["primeras", "segundas", "terceras", "cuartas", "quintas"];
   const TURNO_LABELS = { manana: "Mañana", tarde: "Tarde" };
 
-  const CELL_TINT = {
-    done: "rgba(44, 184, 122, 0.30)",
-    scheduled: "rgba(85, 179, 245, 0.30)",
-    no: "rgba(224, 68, 68, 0.20)",
-    absent: "rgba(255, 255, 255, 0.03)",
-  };
+  const CELL_TINT = { done: "rgba(44, 184, 122, 0.30)", scheduled: "rgba(85, 179, 245, 0.30)", no: "rgba(224, 68, 68, 0.20)", absent: "rgba(255, 255, 255, 0.03)" };
 
-  // Variables para Realtime
   let canalPasajero = null;
 
   function suscribirRealtimePasajero() {
     if (canalPasajero) return;
     canalPasajero = supabase.channel('pasajero-live')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'despacho' }, (payload) => {
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'despacho' }, () => {
         if (state.activeTab === 'inicio') updateHomeBanner();
         if (state.activeTab === 'mapa') pollPosition();
       })
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'asistencias' }, (payload) => {
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'asistencias' }, () => {
         if (state.activeTab === 'inicio') loadHomeWidgets();
       })
       .subscribe();
   }
 
   function desuscribirRealtimePasajero() {
-    if (canalPasajero) {
-      supabase.removeChannel(canalPasajero);
-      canalPasajero = null;
-    }
+    if (canalPasajero) { supabase.removeChannel(canalPasajero); canalPasajero = null; }
   }
 
   const state = {
-    profile: null,
-    activeTab: "inicio",
-
-    viewYear: new Date().getFullYear(),
-    viewMonth: new Date().getMonth() + 1,
-    calendarByDate: {},
-
-    selected: new Set(),
-    inspectingDate: null,
-    panelMode: "edit",
-    sheetPeek: false,
-
-    viajaChoice: true,
-    turnoChoice: "ambos",
-    recurrenceChoice: "none",
-    extentType: "weeks",
-    extentValue: 4,
-    pendingDates: [],
-
-    monthCache: {},
-    detalleDiaCache: new Map(),
-
-    map: null,
-    mapMarker: null,
-    pollTimer: null,
-    homePollTimer: null,
+    profile: null, activeTab: "inicio", viewYear: new Date().getFullYear(), viewMonth: new Date().getMonth() + 1, calendarByDate: {},
+    selected: new Set(), inspectingDate: null, panelMode: "edit", sheetPeek: false,
+    viajaChoice: true, turnoChoice: "ambos", recurrenceChoice: "none", extentType: "weeks", extentValue: 4, pendingDates: [],
+    monthCache: {}, detalleDiaCache: new Map(), map: null, mapMarker: null, pollTimer: null, homePollTimer: null,
   };
 
   function pad2(n) { return String(n).padStart(2, "0"); }
   function toISODate(y, m, d) { return `${y}-${pad2(m)}-${pad2(d)}`; }
-  function todayISO() {
-    const t = new Date();
-    return toISODate(t.getFullYear(), t.getMonth() + 1, t.getDate());
-  }
-  function parseISO(iso) {
-    const [y, m, d] = iso.split("-").map(Number);
-    return new Date(y, m - 1, d);
-  }
+  function todayISO() { const t = new Date(); return toISODate(t.getFullYear(), t.getMonth() + 1, t.getDate()); }
+  function parseISO(iso) { const [y, m, d] = iso.split("-").map(Number); return new Date(y, m - 1, d); }
   function isoFromDate(d) { return toISODate(d.getFullYear(), d.getMonth() + 1, d.getDate()); }
   function isoWeekdayMonFirst(d) { return (d.getDay() + 6) % 7; }
   function addDays(d, n) { const r = new Date(d); r.setDate(r.getDate() + n); return r; }
-  function addMonthsKeepDay(d, n) {
-    const day = d.getDate();
-    const r = new Date(d.getFullYear(), d.getMonth() + n, 1);
-    const lastDay = new Date(r.getFullYear(), r.getMonth() + 1, 0).getDate();
-    r.setDate(Math.min(day, lastDay));
-    return r;
-  }
+  function addMonthsKeepDay(d, n) { const day = d.getDate(); const r = new Date(d.getFullYear(), d.getMonth() + n, 1); const lastDay = new Date(r.getFullYear(), r.getMonth() + 1, 0).getDate(); r.setDate(Math.min(day, lastDay)); return r; }
   function capitalize(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
 
   let toastTimer = null;
-  function toast(msg, kind) {
-    const el = document.getElementById("toast");
-    el.textContent = msg;
-    el.className = "show" + (kind ? " " + kind : "");
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => { el.className = ""; }, 2600);
-  }
+  function toast(msg, kind) { const el = document.getElementById("toast"); el.textContent = msg; el.className = "show" + (kind ? " " + kind : ""); clearTimeout(toastTimer); toastTimer = setTimeout(() => { el.className = ""; }, 2600); }
 
   const formLogin = document.getElementById("form-login");
   const btnLogin = document.getElementById("btn-login");
   const loginError = document.getElementById("login-error");
 
-  // =========================================================================
-  // LOGIN (SUPABASE AUTH)
-  // =========================================================================
   formLogin.addEventListener("submit", async (ev) => {
     ev.preventDefault();
     const dni = document.getElementById("input-dni").value.trim();
     const pass = document.getElementById("input-pass").value;
-    
     loginError.textContent = "";
-    if (!/^[0-9]{6,9}$/.test(dni)) {
-      loginError.textContent = "Ingresa un DNI valido (solo numeros).";
-      return;
-    }
-    
-    btnLogin.disabled = true;
-    btnLogin.textContent = "Verificando...";
-    
+    if (!/^[0-9]{6,9}$/.test(dni)) { loginError.textContent = "Ingresa un DNI valido (solo numeros)."; return; }
+    btnLogin.disabled = true; btnLogin.textContent = "Verificando...";
     try {
       const email = `${dni}@abonados.app`;
-      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-        email: email,
-        password: pass
-      });
-      
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({ email: email, password: pass });
       if (authError) throw authError;
-      
       const { data: profileData, error: rpcError } = await supabase.rpc("rpc_login_pasajero");
       if (rpcError) throw rpcError;
-      
       const row = Array.isArray(profileData) ? profileData[0] : profileData;
-      if (!row) {
-        await supabase.auth.signOut();
-        throw new Error("DNI no encontrado o no es abonado. Consulta con administracion.");
-      }
-      
+      if (!row) { await supabase.auth.signOut(); throw new Error("DNI no encontrado o no es abonado."); }
       enterApp(row);
     } catch (e) {
       console.error(e);
-      loginError.textContent = e.message.includes("Invalid login credentials")
-        ? "DNI o contraseña incorrectos."
-        : "No pudimos verificar tu acceso. Proba de nuevo en unos segundos.";
-    } finally {
-      btnLogin.disabled = false;
-      btnLogin.textContent = "Ingresar";
-    }
+      loginError.textContent = e.message.includes("Invalid login credentials") ? "DNI o contraseña incorrectos." : "No pudimos verificar tu acceso.";
+    } finally { btnLogin.disabled = false; btnLogin.textContent = "Ingresar"; }
   });
 
-  document.getElementById("btn-logout").addEventListener("click", async () => {
-    await supabase.auth.signOut();
-  });
+  document.getElementById("btn-logout").addEventListener("click", async () => { await supabase.auth.signOut(); });
 
   supabase.auth.onAuthStateChange((event, session) => {
     if (event === 'SIGNED_OUT') {
-      stopMapPolling();
-      stopHomePolling();
-      desuscribirRealtimePasajero();
-      state.profile = null;
+      stopMapPolling(); stopHomePolling(); desuscribirRealtimePasajero(); state.profile = null;
       document.getElementById("screen-app").classList.add("hidden");
       document.getElementById("screen-login").classList.remove("hidden");
-      document.getElementById("input-dni").value = "";
-      document.getElementById("input-pass").value = "";
+      document.getElementById("input-dni").value = ""; document.getElementById("input-pass").value = "";
     }
   });
 
   document.getElementById("btn-refresh").addEventListener("click", async () => {
     const btn = document.getElementById("btn-refresh");
     if (!state.profile || btn.disabled) return;
-    btn.disabled = true;
-    btn.classList.add("spinning");
+    btn.disabled = true; btn.classList.add("spinning");
     try {
-      if (state.activeTab === "calendario") {
-        delete state.monthCache[monthCacheKey(state.viewYear, state.viewMonth)];
-        await loadCalendar();
-      } else if (state.activeTab === "mapa") {
-        await pollPosition();
-      } else {
-        const t = new Date();
-        delete state.monthCache[monthCacheKey(t.getFullYear(), t.getMonth() + 1)];
-        state.detalleDiaCache.clear();
-        await loadHomeWidgets();
-      }
+      if (state.activeTab === "calendario") { delete state.monthCache[monthCacheKey(state.viewYear, state.viewMonth)]; await loadCalendar(); }
+      else if (state.activeTab === "mapa") { await pollPosition(); }
+      else { const t = new Date(); delete state.monthCache[monthCacheKey(t.getFullYear(), t.getMonth() + 1)]; state.detalleDiaCache.clear(); await loadHomeWidgets(); }
       toast("Actualizado", "ok");
-    } finally {
-      btn.disabled = false;
-      btn.classList.remove("spinning");
-    }
+    } finally { btn.disabled = false; btn.classList.remove("spinning"); }
   });
+
+  function getDefaultTurno() {
+    if (!state.profile || !state.profile.abono_tipo) return "ambos";
+    if (state.profile.abono_tipo === 'M') return "manana";
+    if (state.profile.abono_tipo === 'T') return "tarde";
+    return "ambos";
+  }
+
+  function setupQuickActions() {
+    const t = getDefaultTurno();
+    const btnViajo = document.getElementById("btn-viajo-hoy");
+    const btnNoViajo = document.getElementById("btn-no-viajo-hoy");
+    let label = "hoy (Ambos)";
+    if (t === "manana") label = "mañana";
+    if (t === "tarde") label = "tarde";
+    btnViajo.textContent = `✓ Viajo ${label}`;
+    btnNoViajo.textContent = `✗ No viajo ${label}`;
+    const bv = btnViajo.cloneNode(true); const bn = btnNoViajo.cloneNode(true);
+    btnViajo.parentNode.replaceChild(bv, btnViajo); btnNoViajo.parentNode.replaceChild(bn, btnNoViajo);
+    bv.addEventListener("click", () => { if (!confirm(`¿Confirmar que viajas ${label}?`)) return; quickSetAsistencia(todayISO(), t, true); });
+    bn.addEventListener("click", () => { if (!confirm(`¿Confirmar que NO viajas ${label}?`)) return; quickSetAsistencia(todayISO(), t, false); });
+  }
 
   function enterApp(profile) {
     state.profile = profile;
     document.getElementById("topbar-name").textContent = profile.nombre || "Pasajero";
     document.getElementById("screen-login").classList.add("hidden");
     document.getElementById("screen-app").classList.remove("hidden");
-    renderMonthLabel();
-    loadCalendar();
-    switchTab("inicio");
-    suscribirRealtimePasajero(); // Iniciamos la escucha en tiempo real
+    renderMonthLabel(); loadCalendar(); switchTab("inicio");
+    suscribirRealtimePasajero(); setupQuickActions();
   }
 
-  document.querySelectorAll(".nav-btn").forEach((btn) => {
-    btn.addEventListener("click", () => switchTab(btn.dataset.tab));
-  });
+  document.querySelectorAll(".nav-btn").forEach((btn) => { btn.addEventListener("click", () => switchTab(btn.dataset.tab)); });
   document.getElementById("btn-map-volver").addEventListener("click", () => switchTab("inicio"));
 
   function switchTab(tab) {
     state.activeTab = tab;
     document.querySelectorAll(".nav-btn").forEach((b) => b.classList.toggle("active", b.dataset.tab === tab));
-    ["inicio", "calendario", "mapa"].forEach((id) => {
-      document.getElementById("tab-" + id).classList.toggle("hidden", id !== tab);
-    });
-
-    if (tab === "mapa") {
-      stopHomePolling();
-      setTimeout(() => {
-        initMapIfNeeded();
-        startMapPolling();
-      }, 100);
-    } else if (tab === "inicio") {
-      stopMapPolling();
-      loadHomeWidgets();
-      startHomePolling();
-    } else {
-      stopMapPolling();
-      stopHomePolling();
-    }
+    ["inicio", "calendario", "mapa", "perfil"].forEach((id) => { document.getElementById("tab-" + id).classList.toggle("hidden", id !== tab); });
+    if (tab === "mapa") { stopHomePolling(); setTimeout(() => { initMapIfNeeded(); startMapPolling(); }, 100); }
+    else if (tab === "inicio") { stopMapPolling(); loadHomeWidgets(); startHomePolling(); }
+    else if (tab === "perfil") { stopMapPolling(); stopHomePolling(); loadPerfil(); }
+    else { stopMapPolling(); stopHomePolling(); }
   }
 
   function classifyDay(info) {
-    const m = info.manana, t = info.tarde;
-    const mViaja = !!(m && m.viaja);
-    const tViaja = !!(t && t.viaja);
+    const m = info.manana, t = info.tarde; const mViaja = !!(m && m.viaja); const tViaja = !!(t && t.viaja);
     if (mViaja || tViaja) return { status: "viaja", mViaja, tViaja };
-    const mNo = !!(m && !m.viaja);
-    const tNo = !!(t && !t.viaja);
+    const mNo = !!(m && !m.viaja); const tNo = !!(t && !t.viaja);
     if (mNo || tNo) return { status: "no" };
     return { status: "unmarked" };
   }
-
-  function turnoState(turnoInfo, isPast) {
-    if (turnoInfo && turnoInfo.viaja === true) return isPast ? "done" : "scheduled";
-    if (turnoInfo && turnoInfo.viaja === false) return "no";
-    return "absent";
-  }
-
+  function turnoState(turnoInfo, isPast) { if (turnoInfo && turnoInfo.viaja === true) return isPast ? "done" : "scheduled"; if (turnoInfo && turnoInfo.viaja === false) return "no"; return "absent"; }
   function monthCacheKey(year, month) { return `${year}-${pad2(month)}`; }
 
   async function fetchMonthData(year, month) {
-    const { data, error } = await supabase.rpc("rpc_calendario_mes", {
-      p_anio: year,
-      p_mes: month,
-    });
-    if (error) throw error;
-    const map = {};
-    (data || []).forEach((row) => {
-      const key = row.fecha;
-      if (!map[key]) map[key] = {};
-      map[key][row.turno] = { viaja: row.viaja, origen: row.origen };
-    });
+    const { data, error } = await supabase.rpc("rpc_calendario_mes", { p_anio: year, p_mes: month });
+    if (error) throw error; const map = {};
+    (data || []).forEach((row) => { const key = row.fecha; if (!map[key]) map[key] = {}; map[key][row.turno] = { viaja: row.viaja, origen: row.origen }; });
     return map;
   }
-
-  async function fetchMonthDataCached(year, month, forceRefresh) {
-    const key = monthCacheKey(year, month);
-    if (!forceRefresh && state.monthCache[key]) {
-      return state.monthCache[key];
-    }
-    const data = await fetchMonthData(year, month);
-    state.monthCache[key] = data;
-    return data;
-  }
-
-  function invalidateMonthCache(dates) {
-    const keys = new Set(dates.map((iso) => iso.slice(0, 7)));
-    keys.forEach((k) => delete state.monthCache[k]);
-  }
+  async function fetchMonthDataCached(year, month, forceRefresh) { const key = monthCacheKey(year, month); if (!forceRefresh && state.monthCache[key]) return state.monthCache[key]; const data = await fetchMonthData(year, month); state.monthCache[key] = data; return data; }
+  function invalidateMonthCache(dates) { const keys = new Set(dates.map((iso) => iso.slice(0, 7))); keys.forEach((k) => delete state.monthCache[k]); }
 
   async function fetchDetalleDia(iso) {
     if (state.detalleDiaCache.has(iso)) return state.detalleDiaCache.get(iso);
     try {
-      const { data, error } = await supabase.rpc("rpc_detalle_dia", {
-        p_fecha: iso,
-      });
-      if (error) throw error;
-      const map = {};
+      const { data, error } = await supabase.rpc("rpc_detalle_dia", { p_fecha: iso });
+      if (error) throw error; const map = {};
       (data || []).forEach((row) => { map[row.turno] = row; });
-      state.detalleDiaCache.set(iso, map);
-      return map;
-    } catch (e) {
-      console.warn("rpc_detalle_dia no disponible todavia, se muestra info basica", e);
-      const fallback = {};
-      state.detalleDiaCache.set(iso, fallback);
-      return fallback;
-    }
+      state.detalleDiaCache.set(iso, map); return map;
+    } catch (e) { console.warn("rpc_detalle_dia error", e); const fallback = {}; state.detalleDiaCache.set(iso, fallback); return fallback; }
   }
 
-  function buildWeeks(year, month) {
-    const first = new Date(year, month - 1, 1);
-    const startOffset = (first.getDay() + 6) % 7;
-    const daysInMonth = new Date(year, month, 0).getDate();
-    const cells = [];
-    for (let i = 0; i < startOffset; i++) cells.push(null);
-    for (let d = 1; d <= daysInMonth; d++) cells.push(d);
-    while (cells.length % 7 !== 0) cells.push(null);
-    const weeks = [];
-    for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7));
-    return weeks;
-  }
+  function buildWeeks(year, month) { const first = new Date(year, month - 1, 1); const startOffset = (first.getDay() + 6) % 7; const daysInMonth = new Date(year, month, 0).getDate(); const cells = []; for (let i = 0; i < startOffset; i++) cells.push(null); for (let d = 1; d <= daysInMonth; d++) cells.push(d); while (cells.length % 7 !== 0) cells.push(null); const weeks = []; for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7)); return weeks; }
 
-  // =========================================================================
-  // INICIO
-  // =========================================================================
-  function setBanner(kind, title, desc) {
-    const el = document.getElementById("home-banner");
-    el.className = "home-banner glass " + kind;
-    document.getElementById("home-banner-title").textContent = title;
-    document.getElementById("home-banner-desc").textContent = desc || "";
-  }
-
-  async function checkServicioEnVivo() {
-    try {
-      const res = await fetch(`${EASYTRACK_FN_URL}?dni=${encodeURIComponent(state.profile.dni)}`);
-      if (!res.ok) return { activo: false };
-      const json = await res.json();
-      const positions = json.data || json;
-      const pos = Array.isArray(positions) ? positions[0] : positions;
-      if (!pos || pos.lat == null) return { activo: false };
-      return { activo: true, address: pos.position };
-    } catch (e) {
-      return null;
-    }
-  }
+  function setBanner(kind, title, desc) { const el = document.getElementById("home-banner"); el.className = "home-banner glass " + kind; document.getElementById("home-banner-title").textContent = title; document.getElementById("home-banner-desc").textContent = desc || ""; }
+  async function checkServicioEnVivo() { try { const res = await fetch(`${EASYTRACK_FN_URL}?dni=${encodeURIComponent(state.profile.dni)}`); if (!res.ok) return { activo: false }; const json = await res.json(); const positions = json.data || json; const pos = Array.isArray(positions) ? positions[0] : positions; if (!pos || pos.lat == null) return { activo: false }; return { activo: true, address: pos.position }; } catch (e) { return null; } }
 
   async function updateHomeBanner() {
-    const t = new Date();
-    const wd = t.getDay();
-    if (wd === 0 || wd === 6) {
-      setBanner("off", "Sin servicio hoy", "Es fin de semana, no hay viajes programados.");
-      return;
-    }
-    let map;
-    try {
-      map = await fetchMonthDataCached(t.getFullYear(), t.getMonth() + 1);
-    } catch (e) {
-      console.error(e);
-      setBanner("off", "No se pudo verificar", "Revisa tu conexion e intenta de nuevo.");
-      return;
-    }
+    const t = new Date(); const wd = t.getDay();
+    if (wd === 0 || wd === 6) { setBanner("off", "Sin servicio hoy", "Es fin de semana."); return; }
+    let map; try { map = await fetchMonthDataCached(t.getFullYear(), t.getMonth() + 1); } catch (e) { setBanner("off", "No se pudo verificar", "Revisa tu conexion."); return; }
     if (state.activeTab !== "inicio") return;
-    const info = map[todayISO()] || {};
-    const c = classifyDay(info);
-    if (c.status !== "viaja") {
-      setBanner(
-        "off",
-        c.status === "no" ? "No viajas hoy" : "Todavia no marcaste hoy",
-        "No hay ninguna unidad en camino para vos en este momento."
-      );
-      return;
-    }
+    const info = map[todayISO()] || {}; const c = classifyDay(info);
+    if (c.status !== "viaja") { setBanner("off", c.status === "no" ? "No viajas hoy" : "Todavia no marcaste hoy", "No hay ninguna unidad en camino."); return; }
     setBanner("scheduled", "Verificando tu unidad...", "");
-    const live = await checkServicioEnVivo();
-    if (state.activeTab !== "inicio") return;
-    if (live && live.activo) {
-      setBanner("live", "Tu unidad esta en camino", live.address || "Segui el recorrido en el mapa.");
-    } else {
-      const partes = [];
-      if (c.mViaja) partes.push("mañana");
-      if (c.tViaja) partes.push("tarde");
-      setBanner("scheduled", `Viaje de ${partes.join(" y ")} programado`, "La unidad todavia no salio.");
-    }
+    const live = await checkServicioEnVivo(); if (state.activeTab !== "inicio") return;
+    if (live && live.activo) { setBanner("live", "Tu unidad esta en camino", live.address || "Segui el recorrido en el mapa."); }
+    else { const partes = []; if (c.mViaja) partes.push("mañana"); if (c.tViaja) partes.push("tarde"); setBanner("scheduled", `Viaje de ${partes.join(" y ")} programado`, "La unidad todavia no salio."); }
   }
-
-  function startHomePolling() {
-    stopHomePolling();
-    state.homePollTimer = setInterval(updateHomeBanner, HOME_POLL_MS);
-  }
-  function stopHomePolling() {
-    if (state.homePollTimer) { clearInterval(state.homePollTimer); state.homePollTimer = null; }
-  }
+  function startHomePolling() { stopHomePolling(); state.homePollTimer = setInterval(updateHomeBanner, HOME_POLL_MS); }
+  function stopHomePolling() { if (state.homePollTimer) { clearInterval(state.homePollTimer); state.homePollTimer = null; } }
 
   async function computeNextTripDescriptor() {
-    const t0 = new Date();
-    let cursor = new Date(t0.getFullYear(), t0.getMonth(), t0.getDate());
-    let firstUnmarked = null;
+    const t0 = new Date(); let cursor = new Date(t0.getFullYear(), t0.getMonth(), t0.getDate()); let firstUnmarked = null;
     for (let i = 0; i < 60; i++) {
-      const iso = isoFromDate(cursor);
-      const wd = cursor.getDay();
+      const iso = isoFromDate(cursor); const wd = cursor.getDay();
       if (wd !== 0 && wd !== 6) {
-        const map = await fetchMonthDataCached(cursor.getFullYear(), cursor.getMonth() + 1);
-        const info = map[iso] || {};
-        const c = classifyDay(info);
-        if (c.status === "viaja") {
-          return { mode: "scheduled", iso, mViaja: c.mViaja, tViaja: c.tViaja };
-        }
-        if (c.status === "unmarked" && firstUnmarked === null) {
-          firstUnmarked = iso;
-        }
-      }
-      cursor = addDays(cursor, 1);
-    }
-    if (firstUnmarked) return { mode: "suggest", iso: firstUnmarked };
-    return { mode: "none" };
+        const map = await fetchMonthDataCached(cursor.getFullYear(), cursor.getMonth() + 1); const info = map[iso] || {}; const c = classifyDay(info);
+        if (c.status === "viaja") return { mode: "scheduled", iso, mViaja: c.mViaja, tViaja: c.tViaja };
+        if (c.status === "unmarked" && firstUnmarked === null) firstUnmarked = iso;
+      } cursor = addDays(cursor, 1);
+    } if (firstUnmarked) return { mode: "suggest", iso: firstUnmarked }; return { mode: "none" };
   }
 
   function renderNextTripBody(descriptor, detalle) {
     const body = document.getElementById("next-trip-body");
-    if (descriptor.mode === "none") {
-      body.innerHTML =
-        `<div class="next-trip-empty">No tenes viajes programados proximamente.</div>
-         <button type="button" class="btn btn-ghost btn-sm" id="btn-ir-calendario">Ir al calendario</button>`;
-      document.getElementById("btn-ir-calendario").addEventListener("click", () => switchTab("calendario"));
-      return;
-    }
-
-    const d = parseISO(descriptor.iso);
-    const fechaTxt = capitalize(`${FULL_WEEKDAY_LOWER[isoWeekdayMonFirst(d)]} ${d.getDate()} de ${MONTH_LABELS[d.getMonth()]}`);
-    const isSuggest = descriptor.mode === "suggest";
-
-    if (isSuggest) {
-      body.innerHTML = `
-        <div class="next-trip-date">${fechaTxt}</div>
-        <div class="next-trip-empty">Todavia no marcaste si viajas ese dia.</div>
-        <button type="button" class="btn btn-primary btn-sm" id="btn-next-trip-action">Confirmar asistencia</button>
-      `;
-      document.getElementById("btn-next-trip-action").addEventListener("click", () => {
-        quickSetAsistencia(descriptor.iso, "ambos", true);
-      });
-      return;
-    }
-
-    const turnoTxt = descriptor.mViaja && descriptor.tViaja ? "Mañana y tarde" : (descriptor.mViaja ? "Mañana" : "Tarde");
-    const turnoParaVehiculo = descriptor.mViaja ? "manana" : "tarde";
-    const det = (detalle && detalle[turnoParaVehiculo]) || {};
-    const vehiculoTxt = det.interno ? `Interno ${det.interno}${det.patente ? " · " + det.patente : ""}` : "A confirmar";
-
-    body.innerHTML = `
-      <div class="next-trip-date">${fechaTxt}</div>
-      <div class="next-trip-row"><span class="label">Turno</span><span>${turnoTxt}</span></div>
-      <div class="next-trip-row"><span class="label">Vehiculo</span><span>${vehiculoTxt}</span></div>
-      ${det.chofer_nombre ? `<div class="next-trip-row"><span class="label">Chofer</span><span>${det.chofer_nombre}</span></div>` : ""}
-      <button type="button" class="btn btn-ghost btn-sm" id="btn-next-trip-action" style="margin-top:12px;">Cancelar viaje</button>
-    `;
-    document.getElementById("btn-next-trip-action").addEventListener("click", () => {
-      if (!confirm(`¿Cancelar tu viaje del ${fechaTxt}?`)) return;
-      const turnoCancel = descriptor.mViaja && descriptor.tViaja ? "ambos" : turnoParaVehiculo;
-      quickSetAsistencia(descriptor.iso, turnoCancel, false);
-    });
+    if (descriptor.mode === "none") { body.innerHTML = `<div class="next-trip-empty">No tenes viajes programados proximamente.</div><button type="button" class="btn btn-ghost btn-sm" id="btn-ir-calendario">Ir al calendario</button>`; document.getElementById("btn-ir-calendario").addEventListener("click", () => switchTab("calendario")); return; }
+    const d = parseISO(descriptor.iso); const fechaTxt = capitalize(`${FULL_WEEKDAY_LOWER[isoWeekdayMonFirst(d)]} ${d.getDate()} de ${MONTH_LABELS[d.getMonth()]}`); const isSuggest = descriptor.mode === "suggest";
+    if (isSuggest) { body.innerHTML = `<div class="next-trip-date">${fechaTxt}</div><div class="next-trip-empty">Todavia no marcaste si viajas ese dia.</div><button type="button" class="btn btn-primary btn-sm" id="btn-next-trip-action">Confirmar asistencia</button>`; document.getElementById("btn-next-trip-action").addEventListener("click", () => { quickSetAsistencia(descriptor.iso, "ambos", true); }); return; }
+    const turnoTxt = descriptor.mViaja && descriptor.tViaja ? "Mañana y tarde" : (descriptor.mViaja ? "Mañana" : "Tarde"); const turnoParaVehiculo = descriptor.mViaja ? "manana" : "tarde"; const det = (detalle && detalle[turnoParaVehiculo]) || {}; const vehiculoTxt = det.interno ? `Interno ${det.interno}${det.patente ? " · " + det.patente : ""}` : "A confirmar";
+    body.innerHTML = `<div class="next-trip-date">${fechaTxt}</div><div class="next-trip-row"><span class="label">Turno</span><span>${turnoTxt}</span></div><div class="next-trip-row"><span class="label">Vehiculo</span><span>${vehiculoTxt}</span></div>${det.chofer_nombre ? `<div class="next-trip-row"><span class="label">Chofer</span><span>${det.chofer_nombre}</span></div>` : ""}<button type="button" class="btn btn-ghost btn-sm" id="btn-next-trip-action" style="margin-top:12px;">Cancelar viaje</button>`;
+    document.getElementById("btn-next-trip-action").addEventListener("click", () => { if (!confirm(`¿Cancelar tu viaje del ${fechaTxt}?`)) return; const turnoCancel = descriptor.mViaja && descriptor.tViaja ? "ambos" : turnoParaVehiculo; quickSetAsistencia(descriptor.iso, turnoCancel, false); });
   }
 
-  async function loadHomeWidgets() {
-    updateHomeBanner();
-    const body = document.getElementById("next-trip-body");
-    body.textContent = "Cargando...";
-    try {
-      const descriptor = await computeNextTripDescriptor();
-      let detalle = {};
-      if (descriptor.mode === "scheduled") {
-        detalle = await fetchDetalleDia(descriptor.iso);
-      }
-      if (state.activeTab === "inicio") renderNextTripBody(descriptor, detalle);
-    } catch (e) {
-      console.error(e);
-      if (state.activeTab === "inicio") {
-        body.innerHTML = `<div class="next-trip-empty">No se pudo cargar tu proximo viaje.</div>`;
-      }
-    }
-  }
+  async function loadHomeWidgets() { updateHomeBanner(); const body = document.getElementById("next-trip-body"); body.textContent = "Cargando..."; try { const descriptor = await computeNextTripDescriptor(); let detalle = {}; if (descriptor.mode === "scheduled") detalle = await fetchDetalleDia(descriptor.iso); if (state.activeTab === "inicio") renderNextTripBody(descriptor, detalle); } catch (e) { console.error(e); if (state.activeTab === "inicio") body.innerHTML = `<div class="next-trip-empty">No se pudo cargar.</div>`; } }
 
   async function quickSetAsistencia(iso, turno, viaja) {
     try {
       const turnos = turno === "ambos" ? ["manana", "tarde"] : [turno];
-      for (const t of turnos) {
-        const { error } = await supabase.rpc("rpc_guardar_asistencia", {
-          p_fechas: [iso],
-          p_turno: t,
-          p_viaja: viaja,
-        });
-        if (error) throw error;
-      }
-      invalidateMonthCache([iso]);
-      state.detalleDiaCache.delete(iso);
-      toast(viaja ? "Asistencia confirmada" : "Viaje cancelado", "ok");
-      await loadHomeWidgets();
-      if (state.activeTab === "calendario" || monthCacheKey(state.viewYear, state.viewMonth) === iso.slice(0, 7)) {
-        await loadCalendar();
-      }
-    } catch (e) {
-      console.error(e);
-      toast("No se pudo actualizar. Reintenta.", "err");
-    }
+      for (const t of turnos) { const { error } = await supabase.rpc("rpc_guardar_asistencia", { p_fechas: [iso], p_turno: t, p_viaja: viaja }); if (error) throw error; }
+      invalidateMonthCache([iso]); state.detalleDiaCache.delete(iso); toast(viaja ? "Asistencia confirmada" : "Viaje cancelado", "ok"); await loadHomeWidgets();
+      if (state.activeTab === "calendario" || monthCacheKey(state.viewYear, state.viewMonth) === iso.slice(0, 7)) await loadCalendar();
+    } catch (e) { console.error(e); toast("No se pudo actualizar.", "err"); }
   }
 
-  // =========================================================================
-  // CALENDARIO
-  // =========================================================================
   document.getElementById("btn-prev-month").addEventListener("click", () => shiftMonth(-1));
   document.getElementById("btn-next-month").addEventListener("click", () => shiftMonth(1));
   document.getElementById("btn-today-header").addEventListener("click", goToToday);
 
-  function shiftMonth(delta) {
-    let m = state.viewMonth + delta;
-    let y = state.viewYear;
-    if (m < 1) { m = 12; y -= 1; }
-    if (m > 12) { m = 1; y += 1; }
-    state.viewMonth = m;
-    state.viewYear = y;
-    closeActionPanel();
-    renderMonthLabel();
-    loadCalendar();
-  }
+  function shiftMonth(delta) { let m = state.viewMonth + delta; let y = state.viewYear; if (m < 1) { m = 12; y -= 1; } if (m > 12) { m = 1; y += 1; } state.viewMonth = m; state.viewYear = y; closeActionPanel(); renderMonthLabel(); loadCalendar(); }
+  function renderMonthLabel() { document.getElementById("month-label").textContent = `${MONTH_LABELS[state.viewMonth - 1]} ${state.viewYear}`; const t = new Date(); const isCurrent = state.viewYear === t.getFullYear() && state.viewMonth === t.getMonth() + 1; document.getElementById("btn-today-header").classList.toggle("hidden", isCurrent); }
 
-  function renderMonthLabel() {
-    document.getElementById("month-label").textContent =
-      `${MONTH_LABELS[state.viewMonth - 1]} ${state.viewYear}`;
-    const t = new Date();
-    const isCurrent = state.viewYear === t.getFullYear() && state.viewMonth === t.getMonth() + 1;
-    document.getElementById("btn-today-header").classList.toggle("hidden", isCurrent);
-  }
-
-  async function loadCalendar() {
-    const body = document.getElementById("cal-body");
-    body.innerHTML = `<div style="padding:24px;text-align:center;color:var(--text-faint);font-size:0.85rem;">Cargando...</div>`;
-    try {
-      state.calendarByDate = await fetchMonthDataCached(state.viewYear, state.viewMonth);
-      renderCalendar();
-    } catch (e) {
-      console.error(e);
-      body.innerHTML = `<div style="padding:24px;text-align:center;color:var(--red);font-size:0.85rem;">No se pudo cargar el calendario.</div>`;
-    }
-  }
+  async function loadCalendar() { const body = document.getElementById("cal-body"); body.innerHTML = `<div style="padding:24px;text-align:center;color:var(--text-faint);font-size:0.85rem;">Cargando...</div>`; try { state.calendarByDate = await fetchMonthDataCached(state.viewYear, state.viewMonth); renderCalendar(); } catch (e) { console.error(e); body.innerHTML = `<div style="padding:24px;text-align:center;color:var(--red);">Error.</div>`; } }
 
   function renderCalendar() {
-    const body = document.getElementById("cal-body");
-    body.innerHTML = "";
-    const weeks = buildWeeks(state.viewYear, state.viewMonth);
-    const today = todayISO();
-
+    const body = document.getElementById("cal-body"); body.innerHTML = ""; const weeks = buildWeeks(state.viewYear, state.viewMonth); const today = todayISO();
     const weekdaysFullySelected = new Set();
-    for (let wd = 0; wd < 5; wd++) {
-      const editableDates = [];
-      weeks.forEach(week => {
-        const day = week[wd];
-        if (day !== null) {
-          const iso = toISODate(state.viewYear, state.viewMonth, day);
-          if (iso >= today) editableDates.push(iso);
-        }
-      });
-      if (editableDates.length > 0 && editableDates.every(d => state.selected.has(d))) {
-        weekdaysFullySelected.add(wd);
-      }
-    }
-    document.querySelectorAll(".cal-head-cell.clickable").forEach(el => {
-      const wd = Number(el.dataset.weekday);
-      el.classList.toggle("active", weekdaysFullySelected.has(wd));
-    });
-
+    for (let wd = 0; wd < 5; wd++) { const editableDates = []; weeks.forEach(week => { const day = week[wd]; if (day !== null) { const iso = toISODate(state.viewYear, state.viewMonth, day); if (iso >= today) editableDates.push(iso); } }); if (editableDates.length > 0 && editableDates.every(d => state.selected.has(d))) weekdaysFullySelected.add(wd); }
+    document.querySelectorAll(".cal-head-cell.clickable").forEach(el => { const wd = Number(el.dataset.weekday); el.classList.toggle("active", weekdaysFullySelected.has(wd)); });
     weeks.forEach((week, weekIdx) => {
-      const row = document.createElement("div");
-      row.className = "cal-row";
-
-      const editableWeekDates = week
-        .map((day, wd) => (day !== null && wd < 5 ? toISODate(state.viewYear, state.viewMonth, day) : null))
-        .filter(Boolean)
-        .filter(iso => iso >= today);
+      const row = document.createElement("div"); row.className = "cal-row";
+      const editableWeekDates = week.map((day, wd) => (day !== null && wd < 5 ? toISODate(state.viewYear, state.viewMonth, day) : null)).filter(Boolean).filter(iso => iso >= today);
       const weekFullySelected = editableWeekDates.length > 0 && editableWeekDates.every(d => state.selected.has(d));
-
-      const weekNumCell = document.createElement("div");
-      weekNumCell.className = "week-num" + (weekFullySelected ? " active" : "");
-      weekNumCell.textContent = weekIdx + 1;
-      weekNumCell.addEventListener("click", () => toggleWeekSelection(week));
-      row.appendChild(weekNumCell);
-
+      const weekNumCell = document.createElement("div"); weekNumCell.className = "week-num" + (weekFullySelected ? " active" : ""); weekNumCell.textContent = weekIdx + 1; weekNumCell.addEventListener("click", () => toggleWeekSelection(week)); row.appendChild(weekNumCell);
       week.forEach((day, weekdayIdx) => {
         const cell = document.createElement("div");
-        if (day === null) {
-          cell.className = "day-cell empty";
-          row.appendChild(cell);
-          return;
-        }
-        const iso = toISODate(state.viewYear, state.viewMonth, day);
-        const isWeekend = weekdayIdx >= 5;
-        const isPast = iso < today;
-        const info = state.calendarByDate[iso] || {};
-
-        cell.className = "day-cell";
-        cell.dataset.date = iso;
-
-        const num = document.createElement("span");
-        num.className = "num";
-        num.textContent = day;
-        cell.appendChild(num);
-
-        if (isWeekend) {
-          cell.classList.add("weekend");
-        } else {
-          const stAM = turnoState(info.manana, isPast);
-          const stPM = turnoState(info.tarde, isPast);
-          const colorAM = CELL_TINT[stAM];
-          const colorPM = CELL_TINT[stPM];
-          cell.style.background = colorAM === colorPM
-            ? colorAM
-            : `linear-gradient(135deg, ${colorAM} 50%, ${colorPM} 50%)`;
+        if (day === null) { cell.className = "day-cell empty"; row.appendChild(cell); return; }
+        const iso = toISODate(state.viewYear, state.viewMonth, day); const isWeekend = weekdayIdx >= 5; const isPast = iso < today; const info = state.calendarByDate[iso] || {};
+        cell.className = "day-cell"; cell.dataset.date = iso; const num = document.createElement("span"); num.className = "num"; num.textContent = day; cell.appendChild(num);
+        if (isWeekend) { cell.classList.add("weekend"); } else {
+          const stAM = turnoState(info.manana, isPast); const stPM = turnoState(info.tarde, isPast); const colorAM = CELL_TINT[stAM]; const colorPM = CELL_TINT[stPM];
+          cell.style.background = colorAM === colorPM ? colorAM : `linear-gradient(135deg, ${colorAM} 50%, ${colorPM} 50%)`;
           if (stAM === "absent" && stPM === "absent") cell.classList.add("dim-text");
-
-          const dots = document.createElement("span");
-          dots.className = "dots";
-          const amDot = document.createElement("i");
-          amDot.className = "dot dot-" + stAM;
-          const pmDot = document.createElement("i");
-          pmDot.className = "dot dot-" + stPM;
-          dots.appendChild(amDot);
-          dots.appendChild(pmDot);
-          cell.appendChild(dots);
-
-          cell.addEventListener("click", () => {
-            if (isPast) openReadonly(iso);
-            else toggleDateSelection(iso);
-          });
+          const dots = document.createElement("span"); dots.className = "dots"; const amDot = document.createElement("i"); amDot.className = "dot dot-" + stAM; const pmDot = document.createElement("i"); pmDot.className = "dot dot-" + stPM; dots.appendChild(amDot); dots.appendChild(pmDot); cell.appendChild(dots);
+          cell.addEventListener("click", () => { if (isPast) openReadonly(iso); else toggleDateSelection(iso); });
         }
-
-        if (iso === today) cell.classList.add("today");
-        if (state.selected.has(iso)) cell.classList.add("selected");
-        if (state.inspectingDate === iso) cell.classList.add("inspecting");
-
-        row.appendChild(cell);
-      });
-
-      body.appendChild(row);
+        if (iso === today) cell.classList.add("today"); if (state.selected.has(iso)) cell.classList.add("selected"); if (state.inspectingDate === iso) cell.classList.add("inspecting"); row.appendChild(cell);
+      }); body.appendChild(row);
     });
   }
 
-  document.querySelectorAll(".cal-head-cell.clickable").forEach((el) => {
-    el.addEventListener("click", () => toggleWeekdaySelection(Number(el.dataset.weekday)));
-  });
+  document.querySelectorAll(".cal-head-cell.clickable").forEach((el) => { el.addEventListener("click", () => toggleWeekdaySelection(Number(el.dataset.weekday))); });
+  function updatePeekAfterCalendarTap(wasEmpty) { state.sheetPeek = state.selected.size > 0 && !wasEmpty; }
 
-  function updatePeekAfterCalendarTap(wasEmpty) {
-    state.sheetPeek = state.selected.size > 0 && !wasEmpty;
-  }
+  function toggleDateSelection(iso) { const wasEmpty = state.selected.size === 0; state.inspectingDate = null; state.panelMode = "edit"; if (state.selected.has(iso)) state.selected.delete(iso); else state.selected.add(iso); state.recurrenceChoice = "none"; state.turnoChoice = getDefaultTurno(); updatePeekAfterCalendarTap(wasEmpty); renderCalendar(); renderActionPanel(); }
+  function toggleWeekdaySelection(weekdayIdx) { if (weekdayIdx >= 5) return; const wasEmpty = state.selected.size === 0; const today = todayISO(); state.inspectingDate = null; state.panelMode = "edit"; const weeks = buildWeeks(state.viewYear, state.viewMonth); const dates = []; weeks.forEach((week) => { const day = week[weekdayIdx]; if (day !== null) { const iso = toISODate(state.viewYear, state.viewMonth, day); if (iso >= today) dates.push(iso); } }); if (!dates.length) return; const allSelected = dates.every(d => state.selected.has(d)); if (allSelected) dates.forEach(d => state.selected.delete(d)); else dates.forEach(d => state.selected.add(d)); state.recurrenceChoice = "none"; state.turnoChoice = getDefaultTurno(); updatePeekAfterCalendarTap(wasEmpty); renderCalendar(); renderActionPanel(); }
+  function toggleWeekSelection(week) { const wasEmpty = state.selected.size === 0; const today = todayISO(); state.inspectingDate = null; state.panelMode = "edit"; const dates = week.map((day, wd) => (day !== null && wd < 5 ? toISODate(state.viewYear, state.viewMonth, day) : null)).filter(Boolean).filter(iso => iso >= today); if (!dates.length) return; const allSelected = dates.every(d => state.selected.has(d)); if (allSelected) dates.forEach(d => state.selected.delete(d)); else dates.forEach(d => state.selected.add(d)); state.recurrenceChoice = "none"; state.turnoChoice = getDefaultTurno(); updatePeekAfterCalendarTap(wasEmpty); renderCalendar(); renderActionPanel(); }
 
-  function toggleDateSelection(iso) {
-    const wasEmpty = state.selected.size === 0;
-    state.inspectingDate = null;
-    state.panelMode = "edit";
-    if (state.selected.has(iso)) state.selected.delete(iso);
-    else state.selected.add(iso);
-    state.recurrenceChoice = "none";
-    updatePeekAfterCalendarTap(wasEmpty);
-    renderCalendar();
-    renderActionPanel();
-  }
-
-  function toggleWeekdaySelection(weekdayIdx) {
-    if (weekdayIdx >= 5) return;
-    const wasEmpty = state.selected.size === 0;
-    const today = todayISO();
-    state.inspectingDate = null;
-    state.panelMode = "edit";
-    const weeks = buildWeeks(state.viewYear, state.viewMonth);
-    const dates = [];
-    weeks.forEach((week) => {
-      const day = week[weekdayIdx];
-      if (day !== null) {
-        const iso = toISODate(state.viewYear, state.viewMonth, day);
-        if (iso >= today) dates.push(iso);
-      }
-    });
-    if (!dates.length) return;
-    const allSelected = dates.every(d => state.selected.has(d));
-    if (allSelected) dates.forEach(d => state.selected.delete(d));
-    else dates.forEach(d => state.selected.add(d));
-    state.recurrenceChoice = "none";
-    updatePeekAfterCalendarTap(wasEmpty);
-    renderCalendar();
-    renderActionPanel();
-  }
-
-  function toggleWeekSelection(week) {
-    const wasEmpty = state.selected.size === 0;
-    const today = todayISO();
-    state.inspectingDate = null;
-    state.panelMode = "edit";
-    const dates = week
-      .map((day, wd) => (day !== null && wd < 5 ? toISODate(state.viewYear, state.viewMonth, day) : null))
-      .filter(Boolean)
-      .filter(iso => iso >= today);
-    if (!dates.length) return;
-    const allSelected = dates.every(d => state.selected.has(d));
-    if (allSelected) dates.forEach(d => state.selected.delete(d));
-    else dates.forEach(d => state.selected.add(d));
-    state.recurrenceChoice = "none";
-    updatePeekAfterCalendarTap(wasEmpty);
-    renderCalendar();
-    renderActionPanel();
-  }
-
-  async function openReadonly(iso) {
-    state.selected.clear();
-    state.inspectingDate = iso;
-    state.panelMode = "readonly";
-    state.sheetPeek = false;
-    renderCalendar();
-    renderActionPanel();
-    document.getElementById("readonly-turnos").innerHTML = `<div class="empty-note">Cargando...</div>`;
-    const detalle = await fetchDetalleDia(iso);
-    if (state.inspectingDate !== iso) return; 
-    renderReadonlyCard(iso, detalle);
-  }
+  async function openReadonly(iso) { state.selected.clear(); state.inspectingDate = iso; state.panelMode = "readonly"; state.sheetPeek = false; renderCalendar(); renderActionPanel(); document.getElementById("readonly-turnos").innerHTML = `<div class="empty-note">Cargando...</div>`; const detalle = await fetchDetalleDia(iso); if (state.inspectingDate !== iso) return; renderReadonlyCard(iso, detalle); }
 
   function renderReadonlyCard(iso, detalle) {
-    const info = state.calendarByDate[iso] || {};
-    const wrap = document.getElementById("readonly-turnos");
+    const info = state.calendarByDate[iso] || {}; const wrap = document.getElementById("readonly-turnos");
     const turnosConDato = ["manana", "tarde"].filter(t => info[t]);
-    if (!turnosConDato.length) {
-      wrap.innerHTML = `<div class="empty-note">No hay registro de asistencia para este dia.</div>`;
-      return;
-    }
+    if (!turnosConDato.length) { wrap.innerHTML = `<div class="empty-note">No hay registro.</div>`; return; }
+    
     wrap.innerHTML = turnosConDato.map((t) => {
-      const base = info[t];
-      const det = detalle[t] || {};
-      const viajo = !!base.viaja;
-      const vehiculoLinea = viajo && (det.interno || det.chofer_nombre)
-        ? `<div class="readonly-line">${det.interno ? "Interno " + det.interno : ""}${det.patente ? " · " + det.patente : ""}${det.chofer_nombre ? " · " + det.chofer_nombre : ""}</div>`
-        : "";
-      const novedadesLinea = det.novedades
-        ? `<div class="readonly-novedades">Novedades: ${det.novedades}</div>`
-        : "";
-      return `
-        <div class="readonly-turno">
-          <div class="readonly-turno-head">
-            <span class="chip ${viajo ? "am" : "no"}">${TURNO_LABELS[t]}</span>
-            <span class="readonly-estado">${viajo ? "Viajo" : "No viajo"}</span>
-          </div>
-          ${vehiculoLinea}
-          ${novedadesLinea}
-        </div>`;
+      const base = info[t]; const det = detalle[t] || {}; const viajo = !!base.viaja;
+      const vehiculoLinea = viajo && (det.interno || det.chofer_nombre) ? `<div class="readonly-line">${det.interno ? "Interno " + det.interno : ""}${det.patente ? " · " + det.patente : ""}${det.chofer_nombre ? " · " + det.chofer_nombre : ""}</div>` : "";
+      const novedadesLinea = det.novedades ? `<div class="readonly-novedades">Novedades: ${det.novedades}</div>` : "";
+      const notaValor = det.nota_pasajero || "";
+      const notaHtml = `<div style="margin-top: 12px;"><textarea style="height: 60px;" placeholder="Dejar una nota sobre este viaje..." id="nota-text-${t}-${iso}">${notaValor}</textarea><button type="button" class="btn btn-sm btn-primary" style="margin-top: 8px; width: auto;" id="btn-guardar-nota-${t}-${iso}">Guardar Nota</button></div>`;
+      return `<div class="readonly-turno"><div class="readonly-turno-head"><span class="chip ${viajo ? "am" : "no"}">${TURNO_LABELS[t]}</span><span class="readonly-estado">${viajo ? "Viajo" : "No viajo"}</span></div>${vehiculoLinea}${novedadesLinea}${notaHtml}</div>`;
     }).join("");
-  }
 
-  function closeActionPanel() {
-    state.selected.clear();
-    state.inspectingDate = null;
-    state.panelMode = "edit";
-    state.recurrenceChoice = "none";
-    state.sheetPeek = false;
-    renderActionPanel();
-    renderCalendar();
-  }
-
-  document.getElementById("action-clear").addEventListener("click", (ev) => {
-    ev.preventDefault();
-    closeActionPanel();
-  });
-
-  function goToToday() {
-    const t = new Date();
-    const changed = state.viewYear !== t.getFullYear() || state.viewMonth !== t.getMonth() + 1;
-    state.viewYear = t.getFullYear();
-    state.viewMonth = t.getMonth() + 1;
-    closeActionPanel();
-    renderMonthLabel();
-    if (changed) loadCalendar();
-    else renderCalendar();
-  }
-
-  document.querySelectorAll("#viaja-toggle .seg-btn").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      state.viajaChoice = btn.dataset.viaja === "1";
-      document.querySelectorAll("#viaja-toggle .seg-btn").forEach((b) => b.classList.toggle("active", b === btn));
+    turnosConDato.forEach((t) => {
+      const btnNota = document.getElementById(`btn-guardar-nota-${t}-${iso}`);
+      if (btnNota) {
+        btnNota.addEventListener("click", async () => {
+          const txtArea = document.getElementById(`nota-text-${t}-${iso}`); const nota = txtArea.value;
+          const turnoEnum = t === 'manana' ? 'Mañana' : 'Tarde'; const originalText = btnNota.textContent;
+          btnNota.disabled = true; btnNota.textContent = "Guardando...";
+          try { const { error } = await supabase.from('asistencias').update({ nota_pasajero: nota }).eq('dni', state.profile.dni).eq('fecha', iso).eq('turno', turnoEnum); if (error) throw error; toast("Nota guardada", "ok"); state.detalleDiaCache.delete(iso); } catch (e) { console.error(e); toast("Error al guardar", "err"); } finally { btnNota.disabled = false; btnNota.textContent = originalText; }
+        });
+      }
     });
-  });
+  }
 
-  document.querySelectorAll("#turno-toggle .seg-btn").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      state.turnoChoice = btn.dataset.turno;
-      document.querySelectorAll("#turno-toggle .seg-btn").forEach((b) => b.classList.toggle("active", b === btn));
-    });
-  });
+  function closeActionPanel() { state.selected.clear(); state.inspectingDate = null; state.panelMode = "edit"; state.recurrenceChoice = "none"; state.sheetPeek = false; renderActionPanel(); renderCalendar(); }
+  document.getElementById("action-clear").addEventListener("click", (ev) => { ev.preventDefault(); closeActionPanel(); });
+  function goToToday() { const t = new Date(); const changed = state.viewYear !== t.getFullYear() || state.viewMonth !== t.getMonth() + 1; state.viewYear = t.getFullYear(); state.viewMonth = t.getMonth() + 1; closeActionPanel(); renderMonthLabel(); if (changed) loadCalendar(); else renderCalendar(); }
+
+  document.querySelectorAll("#viaja-toggle .seg-btn").forEach((btn) => { btn.addEventListener("click", () => { state.viajaChoice = btn.dataset.viaja === "1"; document.querySelectorAll("#viaja-toggle .seg-btn").forEach((b) => b.classList.toggle("active", b === btn)); }); });
+  document.querySelectorAll("#turno-toggle .seg-btn").forEach((btn) => { btn.addEventListener("click", () => { state.turnoChoice = btn.dataset.turno; document.querySelectorAll("#turno-toggle .seg-btn").forEach((b) => b.classList.toggle("active", b === btn)); }); });
 
   const MAX_RECURRENCE_DATES = 366;
+  function endOfExtent(fromDate, extentType, extentValue) { if (extentType === "year") return new Date(fromDate.getFullYear(), 11, 31); if (extentType === "months") return addMonthsKeepDay(fromDate, extentValue); return addDays(fromDate, extentValue * 7); }
+  function nthWeekOfMonth(year, month, n) { const weeks = buildWeeks(year, month); const week = weeks[n - 1]; if (!week) return []; return week.map((day) => (day === null ? null : new Date(year, month - 1, day))); }
+  function analyzeSelectionPattern() { const dates = Array.from(state.selected).sort(); if (dates.length === 0) return null; const weekdays = new Set(); const weeksOfMonth = new Set(); dates.forEach(iso => { const d = parseISO(iso); weekdays.add(isoWeekdayMonFirst(d)); const firstDay = new Date(d.getFullYear(), d.getMonth(), 1); const firstMondayOffset = (firstDay.getDay() + 6) % 7; const dayOfMonth = d.getDate() + firstMondayOffset; const weekNum = Math.ceil(dayOfMonth / 7); weeksOfMonth.add(weekNum); }); return { weekdays: Array.from(weekdays).sort(), weeksOfMonth: Array.from(weeksOfMonth).sort(), totalDates: dates.length, firstDate: dates[0], lastDate: dates[dates.length - 1] }; }
+  function computeRecurrenceDates(recurrenceId, extentType, extentValue) { const baseDates = Array.from(state.selected).sort(); if (recurrenceId === "none" || baseDates.length === 0) return baseDates; const pattern = analyzeSelectionPattern(); if (!pattern) return baseDates; const lastBase = parseISO(pattern.lastDate); const until = endOfExtent(lastBase, extentType, extentValue); const out = new Set(baseDates); let count = out.size; if (recurrenceId === "weekdays-weekly") { const selectedWeekdays = pattern.weekdays.filter(wd => wd < 5); if (selectedWeekdays.length === 0) return baseDates; let d = addDays(lastBase, 1); while (d <= until && count < MAX_RECURRENCE_DATES) { const currentWeekday = isoWeekdayMonFirst(d); if (selectedWeekdays.includes(currentWeekday)) { out.add(isoFromDate(d)); count++; } d = addDays(d, 1); } } else if (recurrenceId === "monthdays-monthly") { const selectedDays = new Set(); baseDates.forEach(iso => selectedDays.add(parseISO(iso).getDate())); let cursor = new Date(lastBase.getFullYear(), lastBase.getMonth(), 1); while (cursor <= until && count < MAX_RECURRENCE_DATES) { const lastDay = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 0).getDate(); selectedDays.forEach(day => { if (day <= lastDay) { const d = new Date(cursor.getFullYear(), cursor.getMonth(), day); if (d > lastBase && d <= until && count < MAX_RECURRENCE_DATES) { out.add(isoFromDate(d)); count++; } } }); cursor = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1); } } else if (recurrenceId === "weeks-monthly") { const selectedWeeks = pattern.weeksOfMonth; const selectedWeekdays = pattern.weekdays; let cursorY = lastBase.getFullYear(); let cursorM = lastBase.getMonth() + 1; while (count < MAX_RECURRENCE_DATES) { if (cursorM > 11) { cursorM = 0; cursorY += 1; } const monthStart = new Date(cursorY, cursorM, 1); if (monthStart > until) break; selectedWeeks.forEach(weekNum => { const weekDates = nthWeekOfMonth(cursorY, cursorM + 1, weekNum); weekDates.forEach((d, wd) => { if (d && wd < 5 && selectedWeekdays.includes(wd) && d <= until && count < MAX_RECURRENCE_DATES) { out.add(isoFromDate(d)); count++; } }); }); cursorM += 1; } } return Array.from(out).sort(); }
 
-  function endOfExtent(fromDate, extentType, extentValue) {
-    if (extentType === "year") return new Date(fromDate.getFullYear(), 11, 31);
-    if (extentType === "months") return addMonthsKeepDay(fromDate, extentValue);
-    return addDays(fromDate, extentValue * 7);
-  }
-
-  function nthWeekOfMonth(year, month, n) {
-    const weeks = buildWeeks(year, month);
-    const week = weeks[n - 1];
-    if (!week) return [];
-    return week.map((day) => (day === null ? null : new Date(year, month - 1, day)));
-  }
-
-  function analyzeSelectionPattern() {
-    const dates = Array.from(state.selected).sort();
-    if (dates.length === 0) return null;
-    const weekdays = new Set();
-    const weeksOfMonth = new Set();
-    dates.forEach(iso => {
-      const d = parseISO(iso);
-      weekdays.add(isoWeekdayMonFirst(d));
-      const firstDay = new Date(d.getFullYear(), d.getMonth(), 1);
-      const firstMondayOffset = (firstDay.getDay() + 6) % 7;
-      const dayOfMonth = d.getDate() + firstMondayOffset;
-      const weekNum = Math.ceil(dayOfMonth / 7);
-      weeksOfMonth.add(weekNum);
-    });
-    return {
-      weekdays: Array.from(weekdays).sort(),
-      weeksOfMonth: Array.from(weeksOfMonth).sort(),
-      totalDates: dates.length,
-      firstDate: dates[0],
-      lastDate: dates[dates.length - 1],
-    };
-  }
-
-  function computeRecurrenceDates(recurrenceId, extentType, extentValue) {
-    const baseDates = Array.from(state.selected).sort();
-    if (recurrenceId === "none" || baseDates.length === 0) return baseDates;
-    const pattern = analyzeSelectionPattern();
-    if (!pattern) return baseDates;
-    const lastBase = parseISO(pattern.lastDate);
-    const until = endOfExtent(lastBase, extentType, extentValue);
-    const out = new Set(baseDates);
-    let count = out.size;
-
-    if (recurrenceId === "weekdays-weekly") {
-      const selectedWeekdays = pattern.weekdays.filter(wd => wd < 5);
-      if (selectedWeekdays.length === 0) return baseDates;
-      let d = addDays(lastBase, 1);
-      while (d <= until && count < MAX_RECURRENCE_DATES) {
-        const currentWeekday = isoWeekdayMonFirst(d);
-        if (selectedWeekdays.includes(currentWeekday)) {
-          out.add(isoFromDate(d));
-          count++;
-        }
-        d = addDays(d, 1);
-      }
-    } else if (recurrenceId === "monthdays-monthly") {
-      const selectedDays = new Set();
-      baseDates.forEach(iso => selectedDays.add(parseISO(iso).getDate()));
-      let cursor = new Date(lastBase.getFullYear(), lastBase.getMonth(), 1);
-      while (cursor <= until && count < MAX_RECURRENCE_DATES) {
-        const lastDay = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 0).getDate();
-        selectedDays.forEach(day => {
-          if (day <= lastDay) {
-            const d = new Date(cursor.getFullYear(), cursor.getMonth(), day);
-            if (d > lastBase && d <= until && count < MAX_RECURRENCE_DATES) {
-              out.add(isoFromDate(d));
-              count++;
-            }
-          }
-        });
-        cursor = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1);
-      }
-    } else if (recurrenceId === "weeks-monthly") {
-      const selectedWeeks = pattern.weeksOfMonth;
-      const selectedWeekdays = pattern.weekdays;
-      let cursorY = lastBase.getFullYear();
-      let cursorM = lastBase.getMonth() + 1; // mes siguiente al de la ultima fecha base (0-indexado)
-      while (count < MAX_RECURRENCE_DATES) {
-        if (cursorM > 11) { cursorM = 0; cursorY += 1; }
-        const monthStart = new Date(cursorY, cursorM, 1);
-        if (monthStart > until) break;
-        selectedWeeks.forEach(weekNum => {
-          const weekDates = nthWeekOfMonth(cursorY, cursorM + 1, weekNum);
-          weekDates.forEach((d, wd) => {
-            if (d && wd < 5 && selectedWeekdays.includes(wd) && d <= until && count < MAX_RECURRENCE_DATES) {
-              out.add(isoFromDate(d));
-              count++;
-            }
-          });
-        });
-        cursorM += 1;
-      }
-    }
-    return Array.from(out).sort();
-  }
-
-  function applyPanelVisibility() {
-    const panel = document.getElementById("action-panel");
-    const isOpen = state.selected.size > 0 || !!state.inspectingDate;
-    const isTall = state.panelMode === "edit" && state.recurrenceChoice !== "none";
-    panel.classList.toggle("open", isOpen);
-    panel.classList.toggle("peek", isOpen && state.sheetPeek);
-    panel.classList.toggle("tall", isOpen && isTall);
-    document.getElementById("panel-edit-block").classList.toggle("hidden", state.panelMode !== "edit");
-    document.getElementById("panel-readonly-block").classList.toggle("hidden", state.panelMode !== "readonly");
-    document.getElementById("btn-guardar").classList.toggle("hidden", state.panelMode !== "edit");
-    document.getElementById("btn-cerrar-readonly").classList.toggle("hidden", state.panelMode !== "readonly");
-  }
-
-  function renderCountRow() {
-    const countEl = document.getElementById("action-count");
-    const clearLink = document.getElementById("action-clear");
-    if (state.panelMode === "readonly" && state.inspectingDate) {
-      const d = parseISO(state.inspectingDate);
-      countEl.textContent = capitalize(`${FULL_WEEKDAY_LOWER[isoWeekdayMonFirst(d)]} ${d.getDate()} de ${MONTH_LABELS[d.getMonth()]}`);
-      clearLink.textContent = "Cerrar";
-    } else {
-      const n = state.selected.size;
-      countEl.textContent = n === 1 ? "1 dia seleccionado" : `${n} dias seleccionados`;
-      clearLink.textContent = "Cancelar";
-    }
-  }
-
-  function renderActionPanel() {
-    renderCountRow();
-    if (state.panelMode === "edit") {
-      document.getElementById("btn-guardar").disabled = state.selected.size === 0;
-      renderRecurrenceOptions();
-    }
-    applyPanelVisibility();
-  }
-
+  function applyPanelVisibility() { const panel = document.getElementById("action-panel"); const isOpen = state.selected.size > 0 || !!state.inspectingDate; const isTall = state.panelMode === "edit" && state.recurrenceChoice !== "none"; panel.classList.toggle("open", isOpen); panel.classList.toggle("peek", isOpen && state.sheetPeek); panel.classList.toggle("tall", isOpen && isTall); document.getElementById("panel-edit-block").classList.toggle("hidden", state.panelMode !== "edit"); document.getElementById("panel-readonly-block").classList.toggle("hidden", state.panelMode !== "readonly"); document.getElementById("btn-guardar").classList.toggle("hidden", state.panelMode !== "edit"); document.getElementById("btn-cerrar-readonly").classList.toggle("hidden", state.panelMode !== "readonly"); }
+  function renderCountRow() { const countEl = document.getElementById("action-count"); const clearLink = document.getElementById("action-clear"); if (state.panelMode === "readonly" && state.inspectingDate) { const d = parseISO(state.inspectingDate); countEl.textContent = capitalize(`${FULL_WEEKDAY_LOWER[isoWeekdayMonFirst(d)]} ${d.getDate()} de ${MONTH_LABELS[d.getMonth()]}`); clearLink.textContent = "Cerrar"; } else { const n = state.selected.size; countEl.textContent = n === 1 ? "1 dia seleccionado" : `${n} dias seleccionados`; clearLink.textContent = "Cancelar"; } }
+  function renderActionPanel() { renderCountRow(); if (state.panelMode === "edit") { document.getElementById("btn-guardar").disabled = state.selected.size === 0; renderRecurrenceOptions(); document.querySelectorAll("#turno-toggle .seg-btn").forEach(b => b.classList.toggle("active", b.dataset.turno === state.turnoChoice)); } applyPanelVisibility(); }
   document.getElementById("btn-cerrar-readonly").addEventListener("click", closeActionPanel);
+  const panelEl = document.getElementById("action-panel"); const handleEl = document.getElementById("action-panel-handle");
+  handleEl.addEventListener("click", () => { if (!panelEl.classList.contains("open")) return; state.sheetPeek = !state.sheetPeek; applyPanelVisibility(); });
+  document.addEventListener("click", (e) => { if (!panelEl.classList.contains("open") || panelEl.classList.contains("peek")) return; if (panelEl.contains(e.target)) return; if (e.target.closest(".day-cell, .week-num, .cal-head-cell")) return; state.sheetPeek = true; applyPanelVisibility(); });
 
-  const panelEl = document.getElementById("action-panel");
-  const handleEl = document.getElementById("action-panel-handle");
-
-  handleEl.addEventListener("click", () => {
-    if (!panelEl.classList.contains("open")) return;
-    state.sheetPeek = !state.sheetPeek;
-    applyPanelVisibility();
-  });
-
-  document.addEventListener("click", (e) => {
-    if (!panelEl.classList.contains("open") || panelEl.classList.contains("peek")) return;
-    if (panelEl.contains(e.target)) return;
-    if (e.target.closest(".day-cell, .week-num, .cal-head-cell")) return;
-    state.sheetPeek = true;
-    applyPanelVisibility();
-  });
-
-  function renderRecurrenceOptions() {
-    const box = document.getElementById("recurrence-box");
-    const select = document.getElementById("recurrence-select");
-    const extentWrap = document.getElementById("recurrence-extent");
-
-    if (state.selected.size === 0) {
-      box.classList.add("hidden");
-      return;
-    }
-    box.classList.remove("hidden");
-
-    const pattern = analyzeSelectionPattern();
-    const opts = [{ id: "none", label: "Solo esta fecha" }];
-
-    if (pattern) {
-      if (pattern.weekdays.some(wd => wd < 5)) {
-        const weekdaysNames = pattern.weekdays.filter(wd => wd < 5).sort().map(wd => FULL_WEEKDAY_LOWER[wd]);
-        if (weekdaysNames.length === 1) {
-          opts.push({ id: "weekdays-weekly", label: `Todos los ${weekdaysNames[0]}, cada semana` });
-        } else if (weekdaysNames.length > 1) {
-          const label = weekdaysNames.length === 2
-            ? `${capitalize(weekdaysNames[0])} y ${weekdaysNames[1]}, cada semana}`
-            : `${weekdaysNames.slice(0, -1).map(capitalize).join(", ")} y ${weekdaysNames[weekdaysNames.length - 1]}, cada semana`;
-          opts.push({ id: "weekdays-weekly", label });
-        }
-      }
-
-      const daysOfMonth = new Set();
-      state.selected.forEach(iso => daysOfMonth.add(parseISO(iso).getDate()));
-      if (daysOfMonth.size > 0 && daysOfMonth.size <= 5) {
-        const daysList = Array.from(daysOfMonth).sort((a, b) => a - b);
-        opts.push({
-          id: "monthdays-monthly",
-          label: daysList.length === 1
-            ? `Dia ${daysList[0]} de cada mes`
-            : `Dias ${daysList.join(", ")} de cada mes`,
-        });
-      }
-
-      if (pattern.weeksOfMonth.length > 0 && pattern.weekdays.length >= 3) {
-        const weeksNames = pattern.weeksOfMonth.map(w => ORDINAL_WEEK_FEM[w - 1] || `${w}a`);
-        opts.push({
-          id: "weeks-monthly",
-          label: weeksNames.length === 1
-            ? `${capitalize(weeksNames[0])} semana de cada mes`
-            : `Semanas ${weeksNames.join(", ")} de cada mes`,
-        });
-      }
-    }
-
-    if (!opts.find((o) => o.id === state.recurrenceChoice)) state.recurrenceChoice = "none";
-
-    select.innerHTML = opts.map(o =>
-      `<option value="${o.id}"${o.id === state.recurrenceChoice ? " selected" : ""}>${o.label}</option>`
-    ).join("");
-    extentWrap.classList.toggle("hidden", state.recurrenceChoice === "none");
-  }
-
-  document.getElementById("recurrence-select").addEventListener("change", (e) => {
-    state.recurrenceChoice = e.target.value;
-    document.getElementById("recurrence-extent").classList.toggle("hidden", state.recurrenceChoice === "none");
-    applyPanelVisibility();
-    if (state.recurrenceChoice !== "none") {
-      const previewDates = computeRecurrenceDates(state.recurrenceChoice, state.extentType, state.extentValue);
-      toast(`Se aplicara a ${previewDates.length} fechas`);
-    }
-  });
-
-  document.getElementById("extent-select").addEventListener("change", (e) => {
-    state.extentType = e.target.value;
-  });
-  document.getElementById("extent-number").addEventListener("input", (e) => {
-    state.extentValue = Math.max(1, Math.min(52, Number(e.target.value) || 1));
-  });
-
-  document.getElementById("btn-guardar").addEventListener("click", async () => {
-    if (state.selected.size === 0) return;
-    const dates = computeRecurrenceDates(state.recurrenceChoice, state.extentType, state.extentValue);
-    state.pendingDates = dates;
-    const isExpanded = state.recurrenceChoice !== "none" && dates.length > state.selected.size;
-    if (isExpanded) await openImpactModal(dates);
-    else await persistSelection(state.turnoChoice);
-  });
-
-  async function openImpactModal(dates) {
-    const modal = document.getElementById("modal-impact");
-    const summary = document.getElementById("modal-impact-summary");
-    modal.classList.remove("hidden");
-    summary.textContent = "Calculando impacto...";
-    setImpactSaving(true);
-    try {
-      const months = Array.from(new Set(dates.map((d) => d.slice(0, 7))));
-      const results = await Promise.all(
-        months.map((ym) => {
-          const [y, m] = ym.split("-").map(Number);
-          return fetchMonthDataCached(y, m);
-        })
-      );
-      const merged = {};
-      results.forEach((data) => Object.assign(merged, data));
-      let withConfig = 0;
-      dates.forEach((iso) => {
-        const info = merged[iso];
-        if (info && (info.manana || info.tarde)) withConfig++;
-      });
-      summary.textContent = withConfig > 0
-        ? `Vas a modificar ${dates.length} dias, de los cuales ${withConfig} ya tenian una configuracion manual. ¿Deseas sobreescribirlos?`
-        : `Vas a modificar ${dates.length} dias. Ninguno tenia una configuracion previa.`;
-    } catch (e) {
-      console.error(e);
-      summary.textContent =
-        `Vas a modificar ${dates.length} dias. No pudimos verificar si alguno ya tenia una configuracion previa.`;
-    } finally {
-      setImpactSaving(false);
-    }
-  }
-
-  function closeImpactModal() {
-    document.getElementById("modal-impact").classList.add("hidden");
-  }
-
+  function renderRecurrenceOptions() { const box = document.getElementById("recurrence-box"); const select = document.getElementById("recurrence-select"); const extentWrap = document.getElementById("recurrence-extent"); if (state.selected.size === 0) { box.classList.add("hidden"); return; } box.classList.remove("hidden"); const pattern = analyzeSelectionPattern(); const opts = [{ id: "none", label: "Solo esta fecha" }]; if (pattern) { if (pattern.weekdays.some(wd => wd < 5)) { const weekdaysNames = pattern.weekdays.filter(wd => wd < 5).sort().map(wd => FULL_WEEKDAY_LOWER[wd]); if (weekdaysNames.length === 1) opts.push({ id: "weekdays-weekly", label: `Todos los ${weekdaysNames[0]}, cada semana` }); else if (weekdaysNames.length > 1) { const label = weekdaysNames.length === 2 ? `${capitalize(weekdaysNames[0])} y ${weekdaysNames[1]}, cada semana` : `${weekdaysNames.slice(0, -1).map(capitalize).join(", ")} y ${weekdaysNames[weekdaysNames.length - 1]}, cada semana`; opts.push({ id: "weekdays-weekly", label }); } } const daysOfMonth = new Set(); state.selected.forEach(iso => daysOfMonth.add(parseISO(iso).getDate())); if (daysOfMonth.size > 0 && daysOfMonth.size <= 5) { const daysList = Array.from(daysOfMonth).sort((a, b) => a - b); opts.push({ id: "monthdays-monthly", label: daysList.length === 1 ? `Dia ${daysList[0]} de cada mes` : `Dias ${daysList.join(", ")} de cada mes` }); } if (pattern.weeksOfMonth.length > 0 && pattern.weekdays.length >= 3) { const weeksNames = pattern.weeksOfMonth.map(w => ORDINAL_WEEK_FEM[w - 1] || `${w}a`); opts.push({ id: "weeks-monthly", label: weeksNames.length === 1 ? `${capitalize(weeksNames[0])} semana de cada mes` : `Semanas ${weeksNames.join(", ")} de cada mes` }); } } if (!opts.find((o) => o.id === state.recurrenceChoice)) state.recurrenceChoice = "none"; select.innerHTML = opts.map(o => `<option value="${o.id}"${o.id === state.recurrenceChoice ? " selected" : ""}>${o.label}</option>`).join(""); extentWrap.classList.toggle("hidden", state.recurrenceChoice === "none"); }
+  document.getElementById("recurrence-select").addEventListener("change", (e) => { state.recurrenceChoice = e.target.value; document.getElementById("recurrence-extent").classList.toggle("hidden", state.recurrenceChoice === "none"); applyPanelVisibility(); if (state.recurrenceChoice !== "none") { const previewDates = computeRecurrenceDates(state.recurrenceChoice, state.extentType, state.extentValue); toast(`Se aplicara a ${previewDates.length} fechas`); } });
+  document.getElementById("extent-select").addEventListener("change", (e) => { state.extentType = e.target.value; });
+  document.getElementById("extent-number").addEventListener("input", (e) => { state.extentValue = Math.max(1, Math.min(52, Number(e.target.value) || 1)); });
+  document.getElementById("btn-guardar").addEventListener("click", async () => { if (state.selected.size === 0) return; const dates = computeRecurrenceDates(state.recurrenceChoice, state.extentType, state.extentValue); state.pendingDates = dates; const isExpanded = state.recurrenceChoice !== "none" && dates.length > state.selected.size; if (isExpanded) await openImpactModal(dates); else await persistSelection(state.turnoChoice); });
+  async function openImpactModal(dates) { const modal = document.getElementById("modal-impact"); const summary = document.getElementById("modal-impact-summary"); modal.classList.remove("hidden"); summary.textContent = "Calculando impacto..."; setImpactSaving(true); try { const months = Array.from(new Set(dates.map((d) => d.slice(0, 7)))); const results = await Promise.all(months.map((ym) => { const [y, m] = ym.split("-").map(Number); return fetchMonthDataCached(y, m); })); const merged = {}; results.forEach((data) => Object.assign(merged, data)); let withConfig = 0; dates.forEach((iso) => { const info = merged[iso]; if (info && (info.manana || info.tarde)) withConfig++; }); summary.textContent = withConfig > 0 ? `Vas a modificar ${dates.length} dias, de los cuales ${withConfig} ya tenian una configuracion manual. ¿Deseas sobreescribirlos?` : `Vas a modificar ${dates.length} dias. Ninguno tenia una configuracion previa.`; } catch (e) { console.error(e); summary.textContent = `Vas a modificar ${dates.length} dias.`; } finally { setImpactSaving(false); } }
+  function closeImpactModal() { document.getElementById("modal-impact").classList.add("hidden"); }
   document.getElementById("modal-impact-cancel").addEventListener("click", closeImpactModal);
-  document.getElementById("modal-impact-confirm").addEventListener("click", () => {
-    closeImpactModal();
-    persistSelection(state.turnoChoice);
+  document.getElementById("modal-impact-confirm").addEventListener("click", () => { closeImpactModal(); persistSelection(state.turnoChoice); });
+  function setImpactSaving(isSaving) { document.querySelectorAll("#modal-impact button").forEach((b) => (b.disabled = isSaving)); }
+  function setSaving(isSaving) { document.getElementById("btn-guardar").disabled = isSaving || state.selected.size === 0; setImpactSaving(isSaving); }
+  async function persistSelection(turnoChoice) { const dates = state.pendingDates || []; if (dates.length === 0) return; const viaja = state.viajaChoice; const turnos = turnoChoice === "ambos" ? ["manana", "tarde"] : [turnoChoice]; const CHUNK = 200; closeImpactModal(); setSaving(true); try { for (const turno of turnos) { for (let i = 0; i < dates.length; i += CHUNK) { const chunk = dates.slice(i, i + CHUNK); const { error } = await supabase.rpc("rpc_guardar_asistencia", { p_fechas: chunk, p_turno: turno, p_viaja: viaja }); if (error) throw error; } } toast(`Guardado (${dates.length} fecha${dates.length === 1 ? "" : "s"})`, "ok"); invalidateMonthCache(dates); dates.forEach((d) => state.detalleDiaCache.delete(d)); closeActionPanel(); await loadCalendar(); if (dates.includes(todayISO())) updateHomeBanner(); } catch (e) { console.error(e); toast("No se pudo guardar.", "err"); } finally { setSaving(false); } }
+
+  function initMapIfNeeded() { if (state.map) { setTimeout(() => state.map.invalidateSize(), 100); return; } try { state.map = L.map("map", { zoomControl: true, attributionControl: true, center: [-34.9011, -56.1645], zoom: 12 }); L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", { attribution: '&copy; OpenStreetMap &copy; CARTO', subdomains: "abcd", maxZoom: 20 }).addTo(state.map); } catch (e) { console.error("Error al inicializar el mapa:", e); } }
+  function formatUpdatedTime(ts) { if (!ts) return "-"; let iso = String(ts).trim().replace(" ", "T"); if (/[+-]\d{2}$/.test(iso)) iso += ":00"; const d = new Date(iso); if (isNaN(d.getTime())) return String(ts); return d.toLocaleTimeString("es-UY", { hour: "2-digit", minute: "2-digit" }); }
+  function showMapUnavailable(text) { document.getElementById("map-info").classList.add("hidden"); document.getElementById("map-unavailable-text").textContent = text || "No hay una unidad en vivo."; document.getElementById("map-unavailable-box").classList.remove("hidden"); }
+  function hideMapUnavailable() { document.getElementById("map-unavailable-box").classList.add("hidden"); document.getElementById("map-info").classList.remove("hidden"); }
+  function updateMapPosition(payload) { const positions = payload.data || payload; const unidad = payload.unidad || {}; const pos = Array.isArray(positions) ? positions[0] : positions; if (!pos || pos.lat == null || pos.lon == null) { showMapUnavailable("Todavia no hay una posicion reciente."); return; } hideMapUnavailable(); document.getElementById("map-chofer").textContent = unidad.chofer || "Chofer"; document.getElementById("map-unidad").textContent = `Interno ${unidad.interno || "-"} - ${unidad.patente || ""}`; document.getElementById("map-address").textContent = pos.position || "Ubicacion no disponible"; document.getElementById("map-updated").textContent = "Actualizado " + formatUpdatedTime(pos.ts); const latlng = [pos.lat, pos.lon]; if (!state.mapMarker) { const icon = L.divIcon({ className: "", html: '<div class="marker-pulse"></div>', iconSize: [16, 16] }); state.mapMarker = L.marker(latlng, { icon }).addTo(state.map); state.map.setView(latlng, 14); } else { state.mapMarker.setLatLng(latlng); } }
+  async function pollPosition() { if (!state.profile) return; try { const res = await fetch(`${EASYTRACK_FN_URL}?dni=${encodeURIComponent(state.profile.dni)}`); if (res.status === 403 || res.status === 404) { const body = await res.json().catch(() => ({})); showMapUnavailable(body.error || "Seguimiento no disponible."); return; } if (!res.ok) throw new Error("HTTP " + res.status); const json = await res.json(); updateMapPosition(json); } catch (e) { console.error("Error en pollPosition:", e); showMapUnavailable("No pudimos conectar con el GPS."); } }
+  function startMapPolling() { initMapIfNeeded(); pollPosition(); stopMapPolling(); state.pollTimer = setInterval(pollPosition, POLL_MS); }
+  function stopMapPolling() { if (state.pollTimer) { clearInterval(state.pollTimer); state.pollTimer = null; } }
+
+  // PERFIL LOGIC
+  function loadPerfil() {
+    if (!state.profile) return;
+    document.getElementById("perfil-nombre").value = state.profile.nombre || "";
+    document.getElementById("perfil-telefono").value = state.profile.telefono || "";
+    document.getElementById("perfil-subida").value = state.profile.punto_subida || "";
+    document.getElementById("perfil-hora-subida").value = state.profile.horario_subida || "";
+    document.getElementById("perfil-bajada").value = state.profile.punto_baja || "";
+    document.getElementById("perfil-hora-bajada").value = state.profile.horario_baja || "";
+    document.getElementById("perfil-msg").textContent = "";
+  }
+  document.getElementById("btn-guardar-perfil").addEventListener("click", async () => {
+    const btn = document.getElementById("btn-guardar-perfil"); const msg = document.getElementById("perfil-msg");
+    const updates = {
+      telefono: document.getElementById("perfil-telefono").value || null,
+      punto_subida: document.getElementById("perfil-subida").value || null,
+      horario_subida: document.getElementById("perfil-hora-subida").value || null,
+      punto_baja: document.getElementById("perfil-bajada").value || null,
+      horario_baja: document.getElementById("perfil-hora-bajada").value || null,
+    };
+    btn.disabled = true; btn.textContent = "Guardando...";
+    try {
+      const { error } = await supabase.from('pasajeros').update(updates).eq('dni', state.profile.dni);
+      if (error) throw error;
+      state.profile = { ...state.profile, ...updates };
+      msg.textContent = "Datos actualizados correctamente."; msg.className = "form-msg ok"; toast("Perfil actualizado", "ok");
+    } catch (e) { console.error(e); msg.textContent = "Error al guardar."; msg.className = "form-msg err"; }
+    finally { btn.disabled = false; btn.textContent = "Guardar cambios"; setTimeout(() => { msg.textContent = ""; msg.className = "form-msg"; }, 3000); }
   });
 
-  function setImpactSaving(isSaving) {
-    document.querySelectorAll("#modal-impact button").forEach((b) => (b.disabled = isSaving));
-  }
-
-  function setSaving(isSaving) {
-    document.getElementById("btn-guardar").disabled = isSaving || state.selected.size === 0;
-    setImpactSaving(isSaving);
-  }
-
-  async function persistSelection(turnoChoice) {
-    const dates = state.pendingDates || [];
-    if (dates.length === 0) return;
-    const viaja = state.viajaChoice;
-    const turnos = turnoChoice === "ambos" ? ["manana", "tarde"] : [turnoChoice];
-    const CHUNK = 200;
-
-    closeImpactModal();
-    setSaving(true);
-    try {
-      for (const turno of turnos) {
-        for (let i = 0; i < dates.length; i += CHUNK) {
-          const chunk = dates.slice(i, i + CHUNK);
-          const { error } = await supabase.rpc("rpc_guardar_asistencia", {
-            p_fechas: chunk,
-            p_turno: turno,
-            p_viaja: viaja,
-          });
-          if (error) throw error;
-        }
-      }
-      toast(`Guardado (${dates.length} fecha${dates.length === 1 ? "" : "s"})`, "ok");
-      invalidateMonthCache(dates);
-      dates.forEach((d) => state.detalleDiaCache.delete(d));
-      closeActionPanel();
-      await loadCalendar();
-      if (dates.includes(todayISO())) updateHomeBanner();
-    } catch (e) {
-      console.error(e);
-      toast("No se pudo guardar. Reintenta.", "err");
-    } finally {
-      setSaving(false);
-    }
-  }
-
-  // =========================================================================
-  // MAPA
-  // =========================================================================
-  function initMapIfNeeded() {
-    if (state.map) {
-      setTimeout(() => state.map.invalidateSize(), 100);
-      return;
-    }
-    try {
-      state.map = L.map("map", {
-        zoomControl: true,
-        attributionControl: true,
-        center: [-34.9011, -56.1645],
-        zoom: 12
-      });
-      L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
-        subdomains: "abcd",
-        maxZoom: 20,
-      }).addTo(state.map);
-    } catch (e) {
-      console.error("Error al inicializar el mapa:", e);
-    }
-  }
-
-  function formatUpdatedTime(ts) {
-    if (!ts) return "-";
-    let iso = String(ts).trim().replace(" ", "T");
-    if (/[+-]\d{2}$/.test(iso)) iso += ":00";
-    const d = new Date(iso);
-    if (isNaN(d.getTime())) return String(ts);
-    return d.toLocaleTimeString("es-UY", { hour: "2-digit", minute: "2-digit" });
-  }
-
-  function showMapUnavailable(text) {
-    document.getElementById("map-info").classList.add("hidden");
-    document.getElementById("map-unavailable-text").textContent =
-      text || "No hay una unidad en vivo para mostrarte en este turno.";
-    document.getElementById("map-unavailable-box").classList.remove("hidden");
-  }
-
-  function hideMapUnavailable() {
-    document.getElementById("map-unavailable-box").classList.add("hidden");
-    document.getElementById("map-info").classList.remove("hidden");
-  }
-
-  function updateMapPosition(payload) {
-    const positions = payload.data || payload;
-    const unidad = payload.unidad || {};
-    const pos = Array.isArray(positions) ? positions[0] : positions;
-    if (!pos || pos.lat == null || pos.lon == null) {
-      showMapUnavailable("Todavia no hay una posicion reciente para tu unidad.");
-      return;
-    }
-    hideMapUnavailable();
-    document.getElementById("map-chofer").textContent = unidad.chofer || pos.driver || "Chofer";
-    document.getElementById("map-unidad").textContent =
-      `Interno ${unidad.interno || "-"} - ${unidad.patente || pos.domain || ""}`;
-    document.getElementById("map-address").textContent = pos.position || "Ubicacion no disponible";
-    document.getElementById("map-updated").textContent = "Actualizado " + formatUpdatedTime(pos.ts);
-
-    const latlng = [pos.lat, pos.lon];
-    if (!state.mapMarker) {
-      const icon = L.divIcon({ className: "", html: '<div class="marker-pulse"></div>', iconSize: [16, 16] });
-      state.mapMarker = L.marker(latlng, { icon }).addTo(state.map);
-      state.map.setView(latlng, 14);
-    } else {
-      state.mapMarker.setLatLng(latlng);
-    }
-  }
-
-  async function pollPosition() {
-    if (!state.profile) return;
-    try {
-      const res = await fetch(`${EASYTRACK_FN_URL}?dni=${encodeURIComponent(state.profile.dni)}`);
-      if (res.status === 403 || res.status === 404) {
-        const body = await res.json().catch(() => ({}));
-        showMapUnavailable(body.error || "Seguimiento no disponible para este turno.");
-        return;
-      }
-      if (!res.ok) throw new Error("HTTP " + res.status);
-      const json = await res.json();
-      updateMapPosition(json);
-    } catch (e) {
-      console.error("Error en pollPosition:", e);
-      showMapUnavailable("No pudimos conectar con el GPS. Reintentando...");
-    }
-  }
-
-  function startMapPolling() {
-    initMapIfNeeded();
-    pollPosition();
-    stopMapPolling();
-    state.pollTimer = setInterval(pollPosition, POLL_MS);
-  }
-
-  function stopMapPolling() {
-    if (state.pollTimer) {
-      clearInterval(state.pollTimer);
-      state.pollTimer = null;
-    }
-  }
-
-  // =========================================================================
-  // INICIALIZACIÓN DE SESIÓN
-  // =========================================================================
   (async () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        const { data, error } = await supabase.rpc("rpc_login_pasajero");
-        if (!error && data) {
-          const row = Array.isArray(data) ? data[0] : data;
-          if (row) enterApp(row);
-        }
-      }
-    } catch (e) {
-      console.error("Error recuperando sesión inicial", e);
-    }
+      if (session) { const { data, error } = await supabase.rpc("rpc_login_pasajero"); if (!error && data) { const row = Array.isArray(data) ? data[0] : data; if (row) enterApp(row); } }
+    } catch (e) { console.error("Error recuperando sesión inicial", e); }
   })();
 
-  // Fix para iPhone: Volver a primer plano
-  document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible' && state.profile) {
-      if (!canalPasajero) suscribirRealtimePasajero();
-      if (state.activeTab === 'inicio') loadHomeWidgets();
-      if (state.activeTab === 'mapa') pollPosition();
-    }
-  });
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && state.profile) { if (!canalPasajero) suscribirRealtimePasajero(); if (state.activeTab === 'inicio') loadHomeWidgets(); if (state.activeTab === 'mapa') pollPosition(); } });
 
-  // =========================================================================
-  // SERVICE WORKER (Auto-Update para iOS/Android)
-  // =========================================================================
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('/sw.js').then((reg) => {
-        function activarSiHayNuevo(worker) {
-          if (!worker) return;
-          worker.postMessage({ type: 'SKIP_WAITING' });
-        }
-        activarSiHayNuevo(reg.waiting); 
-        reg.addEventListener('updatefound', () => {
-          const nuevoWorker = reg.installing;
-          if (!nuevoWorker) return;
-          nuevoWorker.addEventListener('statechange', () => {
-            if (nuevoWorker.state === 'installed' && navigator.serviceWorker.controller) {
-              activarSiHayNuevo(nuevoWorker);
-            }
-          });
-        });
-        reg.update();
-        document.addEventListener('visibilitychange', () => {
-          if (document.visibilityState === 'visible') reg.update();
-        });
+        function activarSiHayNuevo(worker) { if (!worker) return; worker.postMessage({ type: 'SKIP_WAITING' }); }
+        activarSiHayNuevo(reg.waiting); reg.addEventListener('updatefound', () => { const nuevoWorker = reg.installing; if (!nuevoWorker) return; nuevoWorker.addEventListener('statechange', () => { if (nuevoWorker.state === 'installed' && navigator.serviceWorker.controller) activarSiHayNuevo(nuevoWorker); }); });
+        reg.update(); document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') reg.update(); });
       }).catch(err => console.log('SW no registrado:', err));
-
       let recargandoPorActualizacion = false;
-      navigator.serviceWorker.addEventListener('controllerchange', () => {
-        if (recargandoPorActualizacion) return;
-        recargandoPorActualizacion = true;
-        window.location.reload();
-      });
+      navigator.serviceWorker.addEventListener('controllerchange', () => { if (recargandoPorActualizacion) return; recargandoPorActualizacion = true; window.location.reload(); });
     });
   }
 })();
